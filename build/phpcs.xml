@@ -1,0 +1,96 @@
+<?xml version="1.0"?>
+<ruleset name="szjani">
+  <description>Janos Szurovecz's coding standard</description>
+  <!-- PSR-1 -->
+  <rule ref="Generic.PHP.DisallowShortOpenTag.EchoFound">
+    <severity>0</severity>
+  </rule>
+  <rule ref="Generic.Files.ByteOrderMark"/>
+  <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
+<!--  <rule ref="Generic.NamingConventions.CamelCapsFunctionName"/>-->
+  <!-- End of PSR-1-->
+ 
+  <!-- PSR-2 -->
+  <rule ref="Generic.Files.LineEndings">
+    <properties>
+      <property name="eolChar" value="\n"/>
+    </properties>
+  </rule>
+
+  <rule ref="Zend.Files.ClosingTag"/>
+
+  <rule ref="Generic.Files.LineLength">
+    <properties>
+      <property name="lineLimit" value="120"/>
+      <property name="absoluteLineLimit" value="0"/>
+    </properties>
+  </rule>
+
+  <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.StartFile">
+    <severity>0</severity>
+  </rule>
+  <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EndFile">
+    <severity>0</severity>
+  </rule>
+  <rule ref="Squiz.WhiteSpace.SuperfluousWhitespace.EmptyLines">
+    <severity>0</severity>
+  </rule>
+
+  <rule ref="Generic.Formatting.DisallowMultipleStatements"/>
+
+  <rule ref="Generic.WhiteSpace.ScopeIndent"/>
+  <rule ref="Generic.WhiteSpace.DisallowTabIndent"/>
+
+  <rule ref="Generic.PHP.LowerCaseConstant"/>
+  <rule ref="Squiz.Scope.MethodScope"/>
+  <rule ref="Squiz.WhiteSpace.ScopeKeywordSpacing"/>
+  <rule ref="Squiz.Functions.FunctionDeclaration"/>
+  <rule ref="Squiz.Functions.LowercaseFunctionKeywords"/>
+<!--  <rule ref="Squiz.Functions.FunctionDeclarationArgumentSpacing">
+    <properties>
+      <property name="equalsSpacing" value="1"/>
+    </properties>
+  </rule>-->
+  <rule ref="PEAR.Functions.ValidDefaultValue"/>
+  <rule ref="Squiz.Functions.MultiLineFunctionDeclaration"/>
+  <rule ref="Squiz.ControlStructures.ControlSignature"/>
+  <rule ref="Squiz.WhiteSpace.ScopeClosingBrace"/>
+  <rule ref="Squiz.ControlStructures.ForEachLoopDeclaration"/>
+  <rule ref="Squiz.ControlStructures.ForLoopDeclaration"/>
+  <rule ref="Squiz.ControlStructures.LowercaseDeclaration"/>
+  <rule ref="Generic.ControlStructures.InlineControlStructure"/>
+  <!--End of PSR-2-->
+ 
+  <rule ref="Generic.CodeAnalysis.ForLoopShouldBeWhileLoop"/>
+  <rule ref="Generic.CodeAnalysis.ForLoopWithTestFunctionCall"/>
+  <rule ref="Generic.CodeAnalysis.JumbledIncrementer"/>
+  <rule ref="Generic.CodeAnalysis.UnconditionalIfStatement"/>
+  <rule ref="Generic.CodeAnalysis.UnnecessaryFinalModifier"/>
+  <rule ref="Generic.CodeAnalysis.UselessOverridingMethod"/>
+  <rule ref="Generic.CodeAnalysis.UnusedFunctionParameter"/>
+ 
+  <rule ref="Generic.Commenting.Fixme"/>
+  <rule ref="Generic.Commenting.Todo"/>
+
+  <rule ref="Generic.PHP.DeprecatedFunctions"/>
+  <rule ref="Generic.PHP.ForbiddenFunctions"/>
+  <rule ref="Generic.PHP.NoSilencedErrors"/>
+  <rule ref="Generic.PHP.DisallowShortOpenTag"/>
+ 
+  <rule ref="Generic.Strings.UnnecessaryStringConcat"/>
+ 
+  <rule ref="Generic.Functions.CallTimePassByReference"/>
+  <rule ref="Generic.Functions.FunctionCallArgumentSpacing"/>
+
+<!--  <rule ref="Generic.Formatting.NoSpaceAfterCast"/>-->
+
+<!--  <rule ref="Generic.Functions.OpeningFunctionBraceKernighanRitchie"/>-->
+
+  <rule ref="Generic.NamingConventions.ConstructorName"/>
+  <rule ref="PEAR.NamingConventions.ValidClassName"/>
+
+  <rule ref="Squiz.Scope.MemberVarScope"/>
+  <rule ref="Squiz.Scope.StaticThisUsage"/>
+  <rule ref="Squiz.Strings.EchoedStrings"/>
+  <rule ref="Squiz.Functions.GlobalFunction"/>
+</ruleset>
