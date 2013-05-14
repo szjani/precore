@@ -2,7 +2,7 @@
     "name": "precore/precore",
     "description": "Common classes and utilities",
     "require": {
-        "lf4php/lf4php": "dev-master"
+        "lf4php/lf4php": "~3.0"
     },
     "autoload": {
         "psr-0": {"precore": "src/"}
