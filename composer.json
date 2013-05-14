@@ -1,7 +1,16 @@
 {
     "name": "precore/precore",
     "description": "Common classes and utilities",
+    "license": "MIT",
+    "keywords": ["common"],
+    "authors": [
+        {
+            "name": "Szurovecz János",
+            "homepage": "http://www.szjani.hu/"
+        }
+    ],
     "require": {
+        "php": ">=5.3.0",
         "lf4php/lf4php": "~3.0"
     },
     "autoload": {
