@@ -24,82 +24,60 @@
 namespace precore\lang;
 
 use lf4php\Logger;
-use lf4php\LoggerFactory;
 
 /**
+ * Do NOT implement this interface. You should use it to extend your interfaces.
+ * You should use Object class as a base class.
+ *
  * @author Szurovecz János <szjani@szjani.hu>
  */
-abstract class Object implements ObjectInterface
+interface ObjectInterface
 {
     /**
      * @return ObjectClass
      */
-    final public static function objectClass()
-    {
-        return new ObjectClass(static::className());
-    }
+    public static function objectClass();
 
     /**
      * @return ObjectClass
      */
-    final public function getObjectClass()
-    {
-        return static::objectClass();
-    }
+    public function getObjectClass();
 
     /**
      * Retrieves the class name.
      *
      * @return string
      */
-    final public static function className()
-    {
-        return get_called_class();
-    }
-
-    final public function getClassName()
-    {
-        return static::className();
-    }
+    public static function className();
 
     /**
      * @return string
      */
-    public function hashCode()
-    {
-        return spl_object_hash($this);
-    }
+    public function getClassName();
+
+    /**
+     * @return string
+     */
+    public function hashCode();
 
     /**
      * @param object $object
      * @return boolean
      */
-    public function equals(ObjectInterface $object = null)
-    {
-        return $this === $object;
-    }
+    public function equals(ObjectInterface $object = null);
 
     /**
      * @return Logger
      */
-    public static function getLogger()
-    {
-        return LoggerFactory::getLogger(static::className());
-    }
+    public static function getLogger();
 
     /**
      * @return string
      */
-    public function toString()
-    {
-        return $this->getClassName() . '@' . $this->hashCode();
-    }
+    public function toString();
 
     /**
      * @return string
      */
-    public function __toString()
-    {
-        return $this->toString();
-    }
+    public function __toString();
 }
