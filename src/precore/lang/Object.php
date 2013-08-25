@@ -31,12 +31,17 @@ use lf4php\LoggerFactory;
  */
 abstract class Object implements ObjectInterface
 {
+    private static $objectClassCache = array();
+
     /**
      * @return ObjectClass
      */
     final public static function objectClass()
     {
-        return new ObjectClass(static::className());
+        if (!array_key_exists(static::className(), self::$objectClassCache)) {
+            self::$objectClassCache[static::className()] = new ObjectClass(static::className());
+        }
+        return self::$objectClassCache[static::className()];
     }
 
     /**

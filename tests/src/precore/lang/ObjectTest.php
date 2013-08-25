@@ -76,6 +76,7 @@ class ObjectTest extends PHPUnit_Framework_TestCase
     {
         self::assertEquals(SampleObject2::className(), SampleObject2::objectClass()->getName());
         self::assertEquals(SampleObject::className(), SampleObject::objectClass()->getName());
+        self::assertSame(SampleObject::objectClass(), SampleObject::objectClass());
     }
 
     public function testGetObjectClass()
