@@ -23,45 +23,6 @@
 
 namespace precore\lang;
 
-use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
-
-require_once 'Color.php';
-require_once 'Animal.php';
-require_once 'EmptyEnum.php';
-
-/**
- * Description of EnumTest
- *
- * @author Szurovecz János <szjani@szjani.hu>
- */
-class EnumTest extends PHPUnit_Framework_TestCase
+class EmptyEnum extends Enum
 {
-    public function testCreate()
-    {
-        $red = Color::$RED;
-        self::assertInstanceOf(Color::className(), $red);
-        self::assertEquals('RED', $red->name());
-        self::assertTrue($red->equals(Color::valueOf('RED')));
-        self::assertEquals(2, count(Color::values()));
-    }
-
-    public function testValues()
-    {
-        $colors = Color::values();
-        $animals = Animal::values();
-        self::assertContains(Color::$RED, $colors);
-        self::assertContains(Animal::$CAT, $animals);
-        self::assertEquals(2, count($colors));
-        self::assertEquals(3, count($animals));
-        self::assertEquals(0, count(EmptyEnum::values()));
-    }
-
-    /**
-     * @expectedException InvalidArgumentException
-     */
-    public function testInvalidValueOf()
-    {
-        Color::valueOf('invalid');
-    }
 }

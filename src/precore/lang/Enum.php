@@ -23,6 +23,7 @@
 
 namespace precore\lang;
 
+use InvalidArgumentException;
 use ReflectionProperty;
 
 /**
@@ -68,10 +69,14 @@ class Enum extends Object
      */
     public static function init()
     {
+        $className = static::className();
+        self::$cache[$className] = array();
         foreach (static::objectClass()->getStaticProperties() as $name => $value) {
-            $property = new ReflectionProperty(static::className(), $name);
+            $property = new ReflectionProperty($className, $name);
             if ($property->isPublic()) {
-                static::objectClass()->setStaticPropertyValue($name, static::valueOf($name));
+                $instance = new static($name);
+                static::objectClass()->setStaticPropertyValue($name, $instance);
+                self::$cache[$className][$name] = $instance;
             }
         }
     }
@@ -81,18 +86,22 @@ class Enum extends Object
      *
      * @param string $name
      * @return Enum
+     * @throws InvalidArgumentException
      */
     public static function valueOf($name)
     {
-        if (!array_key_exists($name, static::$cache)) {
-            static::$cache[$name] = new static($name);
+        $className = static::className();
+        if (!array_key_exists($className, self::$cache) || !array_key_exists($name, self::$cache[$className])) {
+            throw new InvalidArgumentException("The enum '$className' type has no constant with name '$name'");
         }
-        return static::$cache[$name];
+        return self::$cache[$className][$name];
     }
 
     public static function values()
     {
-        return static::$cache;
+        return array_key_exists(static::className(), self::$cache)
+            ? self::$cache[static::className()]
+            : array();
     }
 
     public function equals(ObjectInterface $object = null)
