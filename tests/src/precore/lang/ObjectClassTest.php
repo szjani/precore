@@ -87,4 +87,10 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
         $objectClass = new ObjectClass(Object::className());
         $objectClass->cast($this);
     }
+
+    public function testNewsInstanceWithoutConstructor()
+    {
+        $obj = Psr0Class::objectClass()->newInstanceWithoutConstructor();
+        self::assertInstanceOf(Psr0Class::className(), $obj);
+    }
 }

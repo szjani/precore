@@ -98,4 +98,18 @@ class ObjectClass extends ReflectionClass
         }
         return $object;
     }
+
+    /**
+     * Creates a new class instance without invoking the constructor.
+     *
+     * @link http://php.net/manual/en/reflectionclass.newinstancewithoutconstructor.php
+     * @return object
+     */
+    public function newInstanceWithoutConstructor()
+    {
+        if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
+            return parent::newInstanceWithoutConstructor();
+        }
+        return unserialize(sprintf('O:%u:"%s":0:{}', strlen($this->getName()), $this->getName()));
+    }
 }
