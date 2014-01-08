@@ -29,6 +29,8 @@ use PHPUnit_Framework_TestCase;
 require_once 'Color.php';
 require_once 'Animal.php';
 require_once 'EmptyEnum.php';
+require_once 'EmptyConstructorEnum.php';
+require_once 'MissingConstructorArgs.php';
 
 /**
  * Description of EnumTest
@@ -63,5 +65,19 @@ class EnumTest extends PHPUnit_Framework_TestCase
     public function testInvalidValueOf()
     {
         Color::valueOf('invalid');
+    }
+
+    public function testConstructorCall()
+    {
+        self::assertEquals(Color::BLUE_HEX, Color::$BLUE->getHexCode());
+        self::assertEquals(EmptyConstructorEnum::VALUE, EmptyConstructorEnum::$ITEM1->getValue());
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     */
+    public function testInvalidConstructor()
+    {
+        MissingConstructorArgs::init();
     }
 }

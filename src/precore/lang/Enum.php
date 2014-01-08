@@ -51,17 +51,68 @@ use ReflectionProperty;
  *
  * All public static variables declared in your class will be used as a possible enum constant!
  *
+ * Initializing objects can be done in constructor, which is recommended to defined as private or protected.
+ * Constructor parameters (if any) can be defined by constructorArgs() static method.
+ *
  * @author Szurovecz János <szjani@szjani.hu>
  */
 class Enum extends Object
 {
-    protected static $cache = array();
+    private static $cache = array();
 
     private $name;
 
-    private function __construct($name)
+    /**
+     * Override if you want to pass any arguments to the constructor defined in your class.
+     *
+     * @return array Keys must be the names, values are arrays storing constructor parameters
+     *
+     * For example:
+     *
+     * class Color extends Enum
+     * {
+     *     public static $RED;
+     *
+     *     private $hexValue;
+     *
+     *     protected function __construct($hexValue)
+     *     {
+     *         $this->hexValue = $hexValue;
+     *     }
+     *
+     *     protected static function constructorArgs()
+     *     {
+     *         return array('RED' => array('#ff0000'));
+     *     }
+     * }
+     */
+    protected static function constructorArgs()
     {
-        $this->name = $name;
+        return array();
+    }
+
+    private static function newInstance($name, array $constructorArgs)
+    {
+        $reflectionClass = static::objectClass();
+        $obj = $reflectionClass->newInstanceWithoutConstructor();
+        $obj->name = $name;
+        $constructor = $reflectionClass->getConstructor();
+        if ($constructor !== null) {
+            $constructor->setAccessible(true);
+            $numOfParams = $constructor->getNumberOfParameters();
+            if ($numOfParams == 0) {
+                $constructor->invoke($obj);
+            } else {
+                if (!array_key_exists($name, $constructorArgs) || !is_array($constructorArgs[$name])
+                    || $numOfParams !== count($constructorArgs[$name])) {
+                    throw new InvalidArgumentException(
+                        sprintf('Invalid arguments are provided for constructor in %s:$%s', static::className(), $name)
+                    );
+                }
+                $constructor->invokeArgs($obj, $constructorArgs[$name]);
+            }
+        }
+        return $obj;
     }
 
     /**
@@ -71,10 +122,12 @@ class Enum extends Object
     {
         $className = static::className();
         self::$cache[$className] = array();
-        foreach (static::objectClass()->getStaticProperties() as $name => $value) {
+        $reflectionClass = static::objectClass();
+        $constructorParams = static::constructorArgs();
+        foreach ($reflectionClass->getStaticProperties() as $name => $value) {
             $property = new ReflectionProperty($className, $name);
             if ($property->isPublic()) {
-                $instance = new static($name);
+                $instance = static::newInstance($name, $constructorParams);
                 static::objectClass()->setStaticPropertyValue($name, $instance);
                 self::$cache[$className][$name] = $instance;
             }

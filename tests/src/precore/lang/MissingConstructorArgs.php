@@ -23,37 +23,11 @@
 
 namespace precore\lang;
 
-/**
- * Description of Color
- *
- * @author Szurovecz János <szjani@szjani.hu>
- */
-class Color extends Enum
+class MissingConstructorArgs extends Enum
 {
-    const RED_HEX = '#ff0000';
-    const BLUE_HEX = '#0000ff';
+    public static $MISSING;
 
-    public static $RED;
-    public static $BLUE;
-
-    private $hexCode;
-
-    protected static function constructorArgs()
+    protected function __construct($missing)
     {
-        return array(
-            'RED' => array(self::RED_HEX),
-            'BLUE' => array(self::BLUE_HEX)
-        );
-    }
-
-    protected function __construct($hex)
-    {
-        $this->hexCode = $hex;
-    }
-
-    public function getHexCode()
-    {
-        return $this->hexCode;
     }
 }
-Color::init();
