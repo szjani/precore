@@ -51,4 +51,28 @@ class TimeUnitTest extends PHPUnit_Framework_TestCase
         self::assertEquals(24, TimeUnit::$HOURS->convert(1, TimeUnit::$DAYS));
         self::assertEquals(2 / 60, TimeUnit::$HOURS->convert(2, TimeUnit::$MINUTES));
     }
+
+    public function testToMillis()
+    {
+        self::assertEquals(1000, TimeUnit::$SECONDS->toMillis(1));
+    }
+
+    public function testToMicros()
+    {
+        self::assertEquals(1000, TimeUnit::$MILLISECONDS->toMicros(1));
+    }
+
+    public function testToMinutes()
+    {
+        self::assertEquals(1, TimeUnit::$SECONDS->toMinutes(60));
+    }
+
+    public function testSleep()
+    {
+        $start = microtime(true);
+        $duration = 0.1;
+        TimeUnit::$SECONDS->sleep($duration);
+        $end = microtime(true);
+        self::assertTrue(($end - $start) < ($duration * 1.1));
+    }
 }

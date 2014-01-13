@@ -78,46 +78,99 @@ class TimeUnit extends Enum
         );
     }
 
+    /**
+     * @param $inMicros float The amount of microseconds of this unit.
+     */
     protected function __construct($inMicros)
     {
         $this->inMicros = $inMicros;
     }
 
+    /**
+     * Equivalent to TimeUnit::$MICROSECONDS->convert($duration, $this).
+     *
+     * @param $duration float
+     * @return float
+     */
     public function toMicros($duration)
     {
-        return $duration * ($this->inMicros / self::C0);
+        return TimeUnit::$MICROSECONDS->convert($duration, $this);
     }
 
+    /**
+     * Equivalent to TimeUnit::$MILLISECONDS->convert($duration, $this).
+     *
+     * @param $duration float
+     * @return float
+     */
     public function toMillis($duration)
     {
-        return $duration * ($this->inMicros / self::C1);
+        return TimeUnit::$MILLISECONDS->convert($duration, $this);
     }
 
+    /**
+     * Equivalent to TimeUnit::$MICROSECONDS->convert(duration, $this).
+     *
+     * @param $duration float
+     * @return float
+     */
     public function toSeconds($duration)
     {
-        return $duration * ($this->inMicros / self::C2);
+        return TimeUnit::$SECONDS->convert($duration, $this);
     }
 
+    /**
+     * Equivalent to TimeUnit::$MICROSECONDS->convert(duration, $this).
+     *
+     * @param $duration float
+     * @return float
+     */
     public function toMinutes($duration)
     {
-        return $duration * ($this->inMicros / self::C3);
+        return TimeUnit::$MINUTES->convert($duration, $this);
     }
 
+    /**
+     * Equivalent to TimeUnit::$MICROSECONDS->convert(duration, $this).
+     *
+     * @param $duration float
+     * @return float
+     */
     public function toHours($duration)
     {
-        return $duration * ($this->inMicros / self::C4);
+        return TimeUnit::$HOURS->convert($duration, $this);
     }
 
+    /**
+     * Equivalent to TimeUnit::$DAYS->convert($duration, $this).
+     *
+     * @param $duration float
+     * @return float
+     */
     public function toDays($duration)
     {
-        return $duration * ($this->inMicros / self::C5);
+        return TimeUnit::$DAYS->convert($duration, $this);
     }
 
+    /**
+     * Convert the given time duration in the given unit to this unit.
+     *
+     * For example, to convert 10 minutes to milliseconds, use: TimeUnit::$MILLISECONDS->convert(10, TimeUnit::$MINUTES)
+     *
+     * @param $duration float The time duration in the given sourceUnit
+     * @param TimeUnit $timeUnit the unit of the sourceDuration argument
+     * @return float the converted duration in this unit
+     */
     public function convert($duration, TimeUnit $timeUnit)
     {
         return $duration * ($timeUnit->inMicros / $this->inMicros);
     }
 
+    /**
+     * Sleeps the process using this TimeUnit.
+     *
+     * @param $duration
+     */
     public function sleep($duration)
     {
         usleep($this->toMicros($duration));
