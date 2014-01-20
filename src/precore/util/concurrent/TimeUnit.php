@@ -109,7 +109,7 @@ class TimeUnit extends Enum
     }
 
     /**
-     * Equivalent to TimeUnit::$MICROSECONDS->convert(duration, $this).
+     * Equivalent to TimeUnit::$SECONDS->convert(duration, $this).
      *
      * @param $duration float
      * @return float
@@ -120,7 +120,7 @@ class TimeUnit extends Enum
     }
 
     /**
-     * Equivalent to TimeUnit::$MICROSECONDS->convert(duration, $this).
+     * Equivalent to TimeUnit::$MINUTES->convert(duration, $this).
      *
      * @param $duration float
      * @return float
@@ -131,7 +131,7 @@ class TimeUnit extends Enum
     }
 
     /**
-     * Equivalent to TimeUnit::$MICROSECONDS->convert(duration, $this).
+     * Equivalent to TimeUnit::$HOURS->convert(duration, $this).
      *
      * @param $duration float
      * @return float
