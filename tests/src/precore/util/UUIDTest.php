@@ -49,4 +49,11 @@ class UUIDTest extends PHPUnit_Framework_TestCase
         $deser = unserialize($ser);
         self::assertTrue($uuid->equals($deser));
     }
+
+    public function testFromString()
+    {
+        $uuid = UUID::randomUUID();
+        $res = UUID::fromString($uuid->toString());
+        self::assertEquals($uuid, $res);
+    }
 }

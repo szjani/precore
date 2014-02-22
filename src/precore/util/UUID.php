@@ -74,6 +74,11 @@ final class UUID extends Object implements Serializable
         return $object instanceof self && $this->value === $object->value;
     }
 
+    public static function fromString($string)
+    {
+        return new UUID($string);
+    }
+
     public function toString()
     {
         return $this->value;
