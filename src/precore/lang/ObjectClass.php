@@ -23,16 +23,41 @@
 
 namespace precore\lang;
 
+use LazyMap\CallbackLazyMap;
 use ReflectionClass;
 use RuntimeException;
 
 /**
  * Extends ReflectionClass with some new features.
+ * It caches the instances if you obtain them through ObjectClass::forName().
  *
  * @author Szurovecz János <szjani@szjani.hu>
  */
 class ObjectClass extends ReflectionClass
 {
+    private static $classMap;
+
+    /**
+     * Do not call from your code, workaround to initialize static variable.
+     */
+    public static function init()
+    {
+        self::$classMap = new CallbackLazyMap(
+            function ($className) {
+                return new ObjectClass($className);
+            }
+        );
+    }
+
+    /**
+     * @param string $className FQCN
+     * @return ObjectClass
+     */
+    public static function forName($className)
+    {
+        return self::$classMap->$className;
+    }
+
     protected function getSlashedFileName()
     {
         $classFileName = $this->getFileName();
@@ -113,3 +138,4 @@ class ObjectClass extends ReflectionClass
         return unserialize(sprintf('O:%u:"%s":0:{}', strlen($this->getName()), $this->getName()));
     }
 }
+ObjectClass::init();

@@ -80,7 +80,7 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
     }
 
     /**
-     * @expectedException precore\lang\ClassCastException
+     * @expectedException \precore\lang\ClassCastException
      */
     public function testCastException()
     {
@@ -92,5 +92,12 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
     {
         $obj = Psr0Class::objectClass()->newInstanceWithoutConstructor();
         self::assertInstanceOf(Psr0Class::className(), $obj);
+    }
+
+    public function testForName()
+    {
+        $class1 = ObjectClass::forName(Object::className());
+        $class2 = Object::objectClass();
+        self::assertSame($class2, $class1);
     }
 }
