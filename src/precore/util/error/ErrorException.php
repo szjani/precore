@@ -32,4 +32,12 @@ class ErrorException extends \ErrorException
         parent::__construct($message, $code, $severity, $filename, $line);
         $this->context = $context;
     }
+
+    /**
+     * @return array
+     */
+    public function getContext()
+    {
+        return $this->context;
+    }
 }

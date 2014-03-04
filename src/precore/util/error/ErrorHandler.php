@@ -23,12 +23,23 @@
 
 namespace precore\util\error;
 
+/**
+ * Helper class to be able to catch errors as exceptions.
+ *
+ * @package precore\util\error
+ *
+ * @author Szurovecz János <szjani@szjani.hu>
+ * @see http://hu1.php.net/manual/en/function.set-error-handler.php#112881
+ */
 class ErrorHandler
 {
     private function __construct()
     {
     }
 
+    /**
+     * Converts all errors to the proper exception.
+     */
     public static function register()
     {
         set_error_handler(
