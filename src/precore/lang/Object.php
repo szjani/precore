@@ -71,7 +71,7 @@ abstract class Object implements ObjectInterface
     }
 
     /**
-     * @param object $object
+     * @param ObjectInterface $object
      * @return boolean
      */
     public function equals(ObjectInterface $object = null)
