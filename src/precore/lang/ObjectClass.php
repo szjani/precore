@@ -137,5 +137,18 @@ class ObjectClass extends ReflectionClass
         }
         return unserialize(sprintf('O:%u:"%s":0:{}', strlen($this->getName()), $this->getName()));
     }
+
+    /**
+     * Determines if the class or interface represented by this ObjectClass object is either the same as,
+     * or is a superclass or superinterface of, the class or interface
+     * represented by the specified ObjectClass parameter. It returns true if so; otherwise it returns false.
+     *
+     * @param ObjectClass $class
+     * @return bool
+     */
+    public function isAssignableFrom(ObjectClass $class)
+    {
+        return $this->getName() == $class->getName() || $class->isSubclassOf($this->getName());
+    }
 }
 ObjectClass::init();

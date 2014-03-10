@@ -100,4 +100,17 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
         $class2 = Object::objectClass();
         self::assertSame($class2, $class1);
     }
+
+    public function testIsAssignableFrom()
+    {
+        $thisClass = ObjectClass::forName(__CLASS__);
+        $parentClass = ObjectClass::forName("PHPUnit_Framework_TestCase");
+        self::assertTrue($parentClass->isAssignableFrom($thisClass));
+        self::assertTrue($parentClass->isAssignableFrom($parentClass));
+        self::assertTrue($thisClass->isAssignableFrom($thisClass));
+        self::assertFalse($thisClass->isAssignableFrom($parentClass));
+        $interfaceClass = ObjectClass::forName('\precore\lang\ObjectInterface');
+        self::assertTrue($interfaceClass->isAssignableFrom(ObjectClass::forName('\precore\lang\Object')));
+        self::assertTrue($interfaceClass->isAssignableFrom($interfaceClass));
+    }
 }
