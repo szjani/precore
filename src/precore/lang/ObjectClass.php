@@ -143,10 +143,10 @@ class ObjectClass extends ReflectionClass
      * or is a superclass or superinterface of, the class or interface
      * represented by the specified ObjectClass parameter. It returns true if so; otherwise it returns false.
      *
-     * @param ObjectClass $class
+     * @param ReflectionClass $class
      * @return bool
      */
-    public function isAssignableFrom(ObjectClass $class)
+    public function isAssignableFrom(ReflectionClass $class)
     {
         return $this->getName() == $class->getName() || $class->isSubclassOf($this->getName());
     }
