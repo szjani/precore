@@ -166,4 +166,9 @@ class Enum extends Object
     {
         return $this->name;
     }
+
+    public function toString()
+    {
+        return $this->className() . '::$' . $this->name();
+    }
 }

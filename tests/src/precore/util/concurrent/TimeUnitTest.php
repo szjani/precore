@@ -75,4 +75,9 @@ class TimeUnitTest extends PHPUnit_Framework_TestCase
         $end = microtime(true);
         self::assertTrue(($end - $start) < ($duration * 1.1));
     }
+
+    public function testToString()
+    {
+        self::assertEquals('precore\util\concurrent\TimeUnit::$SECONDS', TimeUnit::$SECONDS->toString());
+    }
 }
