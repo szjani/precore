@@ -65,6 +65,42 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
     {
         self::assertTrue(Objects::equal(1, '1'));
     }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @test
+     */
+    public function invalidToStringHelperIdentifier()
+    {
+        Objects::toStringHelper(4);
+    }
+
+    /**
+     * @test
+     */
+    public function objectBasedToStringHelper()
+    {
+        $helper = Objects::toStringHelper($this);
+        self::assertStringStartsWith(__CLASS__, $helper->toString());
+    }
+
+    /**
+     * @test
+     */
+    public function stringBasedToStringHelper()
+    {
+        $helper = Objects::toStringHelper(__CLASS__);
+        self::assertStringStartsWith(__CLASS__, $helper->toString());
+    }
+
+    /**
+     * @test
+     */
+    public function reflectionBasedToStringHelper()
+    {
+        $helper = Objects::toStringHelper(UUID::objectClass());
+        self::assertStringStartsWith(UUID::className(), $helper->toString());
+    }
 }
 
 class String extends Object

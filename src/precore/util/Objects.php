@@ -23,9 +23,18 @@
 
 namespace precore\util;
 
+use InvalidArgumentException;
 use precore\lang\Object;
 use precore\lang\ObjectInterface;
+use ReflectionClass;
 
+/**
+ * Helper functions that can operate on any ObjectInterface.
+ *
+ * @package precore\util
+ *
+ * @author Szurovecz János <szjani@szjani.hu>
+ */
 final class Objects extends Object
 {
     private function __construct()
@@ -55,5 +64,29 @@ final class Objects extends Object
             return $objA->equals($objB);
         }
         return $objA == $objB;
+    }
+
+    /**
+     * Creates an instance of ToStringHelper.
+     * This is helpful for implementing ObjectInterface::toString().
+     *
+     * @param $identifier
+     * @throws \InvalidArgumentException
+     * @return ToStringHelper
+     */
+    public static function toStringHelper($identifier)
+    {
+        if (!is_object($identifier) && !is_string($identifier)) {
+            throw new InvalidArgumentException("An object, a string, or a ReflectionClass must be used as identifier");
+        }
+        $name = null;
+        if ($identifier instanceof ReflectionClass) {
+            $name = $identifier->getName();
+        } elseif (is_object($identifier)) {
+            $name = get_class($identifier);
+        } elseif (is_string($identifier)) {
+            $name = $identifier;
+        }
+        return new ToStringHelper($name);
     }
 }
