@@ -23,7 +23,9 @@
 
 namespace precore\util;
 
+use DateTime;
 use PHPUnit_Framework_TestCase;
+use precore\util\error\ErrorHandler;
 
 class ToStringHelperTest extends PHPUnit_Framework_TestCase
 {
@@ -76,5 +78,23 @@ class ToStringHelperTest extends PHPUnit_Framework_TestCase
         $helper = new ToStringHelper(__CLASS__);
         $string = $helper->toString();
         self::assertEquals(sprintf('%s{}', __CLASS__), $string);
+    }
+
+    public function testDates()
+    {
+        $helper = new ToStringHelper(__CLASS__);
+        $helper
+            ->add('date', new DateTime())
+            ->toString();
+    }
+
+    public function testStringCastError()
+    {
+        ErrorHandler::register();
+        $helper = new ToStringHelper(__CLASS__);
+        $helper
+            ->add('object', new \stdClass())
+            ->toString();
+        restore_error_handler();
     }
 }

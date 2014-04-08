@@ -23,7 +23,9 @@
 
 namespace precore\util;
 
+use DateTime;
 use precore\lang\Object;
+use precore\util\error\ErrorException;
 
 /**
  * Can be used in ObjectInterface implementations for overriding toString() method.
@@ -50,11 +52,14 @@ class ToStringHelper extends Object
 
     /**
      * @param $name
-     * @param $value
+     * @param mixed $value
      * @return ToStringHelper $this
      */
     public function add($name, $value)
     {
+        if ($value instanceof DateTime) {
+            $value = $value->format(DateTime::ISO8601);
+        }
         $this->values[$name] = $value;
         return $this;
     }
@@ -84,7 +89,12 @@ class ToStringHelper extends Object
         array_walk(
             $values,
             function (&$item, $key) {
-                $value = $item === null ? 'null' : (string) $item;
+                $value = $item === null ? 'null' : $item;
+                try {
+                    $value = (string) $value;
+                } catch (ErrorException $e) {
+                    $value = spl_object_hash($value);
+                }
                 $item = $key . '=' . $value;
             }
         );
