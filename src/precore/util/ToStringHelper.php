@@ -57,9 +57,6 @@ class ToStringHelper extends Object
      */
     public function add($name, $value)
     {
-        if ($value instanceof DateTime) {
-            $value = $value->format(DateTime::ISO8601);
-        }
         $this->values[$name] = $value;
         return $this;
     }
@@ -77,27 +74,32 @@ class ToStringHelper extends Object
 
     public function toString()
     {
-        $values = $this->values;
-        if ($this->omitNullValues) {
-            $values = array_filter(
-                $values,
-                function ($value) {
-                    return $value !== null;
+        return sprintf("%s%s", $this->className, $this->arrayToString($this->values));
+    }
+
+    protected function arrayToString(array $array)
+    {
+        $parts = array();
+        foreach ($array as $fieldName => $value) {
+            $stringValue = null;
+            if ($value === null) {
+                if ($this->omitNullValues) {
+                    continue;
                 }
-            );
-        }
-        array_walk(
-            $values,
-            function (&$item, $key) {
-                $value = $item === null ? 'null' : $item;
+                $stringValue = 'null';
+            } elseif ($value instanceof DateTime) {
+                $stringValue = $value->format(DateTime::ISO8601);
+            } elseif (is_array($value)) {
+                $stringValue = $this->arrayToString($value);
+            } else {
                 try {
-                    $value = (string) $value;
+                    $stringValue = (string) $value;
                 } catch (ErrorException $e) {
-                    $value = spl_object_hash($value);
+                    $stringValue = spl_object_hash($value);
                 }
-                $item = $key . '=' . $value;
             }
-        );
-        return sprintf("%s{%s}", $this->className, implode(', ', $values));
+            $parts[] = $fieldName . '=' . $stringValue;
+        }
+        return sprintf('{%s}', implode(', ', $parts));
     }
 }

@@ -83,18 +83,31 @@ class ToStringHelperTest extends PHPUnit_Framework_TestCase
     public function testDates()
     {
         $helper = new ToStringHelper(__CLASS__);
-        $helper
-            ->add('date', new DateTime())
+        $now = new DateTime();
+        $result = $helper
+            ->add('date', $now)
             ->toString();
+        self::assertTrue(strpos($result, $now->format(DateTime::ISO8601)) !== false);
     }
 
     public function testStringCastError()
     {
         ErrorHandler::register();
         $helper = new ToStringHelper(__CLASS__);
-        $helper
-            ->add('object', new \stdClass())
+        $object = new \stdClass();
+        $result = $helper
+            ->add('object', $object)
             ->toString();
         restore_error_handler();
+        self::assertRegExp('/' . spl_object_hash($object) . '/', $result);
+    }
+
+    public function testArrayProperty()
+    {
+        $helper = new ToStringHelper(__CLASS__);
+        $result = $helper
+            ->add('fields', array(1, new DateTime()))
+            ->toString();
+        self::assertRegExp('/fields={0=1, 1=/', $result);
     }
 }
