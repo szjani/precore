@@ -101,6 +101,13 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
         self::assertSame($class2, $class1);
     }
 
+    public function testSlash()
+    {
+        $class1 = ObjectClass::forName('\precore\lang\Object');
+        $class2 = ObjectClass::forName('precore\lang\Object');
+        self::assertSame($class1, $class2);
+    }
+
     public function testIsAssignableFrom()
     {
         $thisClass = ObjectClass::forName(__CLASS__);

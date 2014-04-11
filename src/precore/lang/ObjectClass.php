@@ -55,6 +55,7 @@ class ObjectClass extends ReflectionClass
      */
     public static function forName($className)
     {
+        $className = trim($className, '\\');
         return self::$classMap->$className;
     }
 
