@@ -56,9 +56,10 @@ use ReflectionProperty;
  *
  * @author Szurovecz János <szjani@szjani.hu>
  */
-class Enum extends Object
+class Enum extends Object implements Comparable
 {
     private static $cache = array();
+    private static $ordinals = array();
 
     private $name;
 
@@ -124,12 +125,14 @@ class Enum extends Object
         self::$cache[$className] = array();
         $reflectionClass = static::objectClass();
         $constructorParams = static::constructorArgs();
+        $ordinal = 0;
         foreach ($reflectionClass->getStaticProperties() as $name => $value) {
             $property = new ReflectionProperty($className, $name);
             if ($property->isPublic()) {
                 $instance = static::newInstance($name, $constructorParams);
                 static::objectClass()->setStaticPropertyValue($name, $instance);
                 self::$cache[$className][$name] = $instance;
+                self::$ordinals[$className][$name] = $ordinal++;
             }
         }
     }
@@ -167,8 +170,32 @@ class Enum extends Object
         return $this->name;
     }
 
+    final public function ordinal()
+    {
+        return self::$ordinals[$this->getClassName()][$this->name()];
+    }
+
     public function toString()
     {
         return $this->className() . '::$' . $this->name();
+    }
+
+    /**
+     * @param $object
+     * @return int a negative integer, zero, or a positive integer
+     *         as this object is less than, equal to, or greater than the specified object.
+     * @throws ClassCastException - if the specified object's type prevents it from being compared to this object.
+     * @throws InvalidArgumentException if the specified object is null
+     */
+    public function compareTo($object)
+    {
+        if ($object === null) {
+            throw new InvalidArgumentException('The given object is null');
+        }
+        if (!($object instanceof self)) {
+            throw new ClassCastException('The given object is not instance of this class');
+        }
+        /* @var $object Enum */
+        return $this->ordinal() - $object->ordinal();
     }
 }

@@ -80,4 +80,25 @@ class EnumTest extends PHPUnit_Framework_TestCase
     {
         MissingConstructorArgs::init();
     }
+
+    public function testOrdinal()
+    {
+        self::assertEquals(0, Color::$RED->ordinal());
+        self::assertEquals(1, Color::$BLUE->ordinal());
+        self::assertGreaterThan(0, Color::$BLUE->compareTo(Color::$RED));
+        self::assertLessThan(0, Color::$RED->compareTo(Color::$BLUE));
+
+        self::assertEquals(0, Animal::$DOG->ordinal());
+        self::assertEquals(1, Animal::$CAT->ordinal());
+        self::assertEquals(2, Animal::$HORSE->ordinal());
+    }
+
+    public function testSerialization()
+    {
+        $obj = Animal::$DOG;
+        $ser = serialize($obj);
+        $ret = unserialize($ser);
+        self::assertEquals($obj->name(), $ret->name());
+        self::assertEquals($obj->ordinal(), $ret->ordinal());
+    }
 }
