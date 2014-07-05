@@ -33,7 +33,14 @@ class Color extends Enum
     const RED_HEX = '#ff0000';
     const BLUE_HEX = '#0000ff';
 
+    /**
+     * @var Color
+     */
     public static $RED;
+
+    /**
+     * @var Color
+     */
     public static $BLUE;
 
     private $hexCode;
