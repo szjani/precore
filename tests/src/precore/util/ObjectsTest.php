@@ -101,6 +101,18 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
         $helper = Objects::toStringHelper(UUID::objectClass());
         self::assertStringStartsWith(UUID::className(), $helper->toString());
     }
+
+    /**
+     * @test
+     */
+    public function shouldCheckReferenceFirst()
+    {
+        $obj = $this->getMock(String::className(), array('equals'), array('any'));
+        $obj
+            ->expects(self::never())
+            ->method('equals');
+        self::assertTrue(Objects::equal($obj, $obj));
+    }
 }
 
 class String extends Object

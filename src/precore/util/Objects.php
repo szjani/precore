@@ -57,7 +57,7 @@ final class Objects extends Object
      */
     public static function equal($objA, $objB)
     {
-        if ($objA === null && $objB === null) {
+        if ($objA === $objB) {
             return true;
         }
         if ($objA instanceof ObjectInterface && $objB instanceof ObjectInterface) {
