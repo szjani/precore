@@ -104,7 +104,7 @@ class ObjectClass extends ReflectionClass
         }
         $slashedFileName = $this->getSlashedFileName();
         $filePath = $resource[0] == '/'
-            ? preg_replace("#{$this->getSlashedName()}\.php$#", '', $slashedFileName) . '/' . $resource
+            ? str_replace("/{$this->getSlashedName()}.php", '', $slashedFileName) . $resource
             : dirname($slashedFileName) . '/' . $resource;
         return is_file($filePath) ? $filePath : null;
     }
