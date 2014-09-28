@@ -23,7 +23,9 @@
 
 namespace precore\util\concurrent;
 
+use DateInterval;
 use precore\lang\Enum;
+use RuntimeException;
 
 class TimeUnit extends Enum
 {
@@ -35,11 +37,15 @@ class TimeUnit extends Enum
     const C5 = 86400000000;
 
     /**
+     * Does not support toDateInterval()
+     *
      * @var TimeUnit
      */
     public static $MICROSECONDS;
 
     /**
+     * Does not support toDateInterval()
+     *
      * @var TimeUnit
      */
     public static $MILLISECONDS;
@@ -65,25 +71,28 @@ class TimeUnit extends Enum
     public static $DAYS;
 
     private $inMicros;
+    private $dateIntervalFormat;
 
     protected static function constructorArgs()
     {
         return array(
-            'MICROSECONDS' => array(self::C0),
-            'MILLISECONDS' => array(self::C1),
-            'SECONDS' => array(self::C2),
-            'MINUTES' => array(self::C3),
-            'HOURS' => array(self::C4),
-            'DAYS' => array(self::C5)
+            'MICROSECONDS' => array(self::C0, null),
+            'MILLISECONDS' => array(self::C1, null),
+            'SECONDS' => array(self::C2, 'PT%dS'),
+            'MINUTES' => array(self::C3, 'PT%dM'),
+            'HOURS' => array(self::C4, 'PT%dH'),
+            'DAYS' => array(self::C5, 'P%dD')
         );
     }
 
     /**
      * @param $inMicros float The amount of microseconds of this unit.
+     * @param $dateIntervalFormat string the format character for DateInterval
      */
-    protected function __construct($inMicros)
+    protected function __construct($inMicros, $dateIntervalFormat)
     {
         $this->inMicros = $inMicros;
+        $this->dateIntervalFormat = $dateIntervalFormat;
     }
 
     /**
@@ -150,6 +159,21 @@ class TimeUnit extends Enum
     public function toDays($duration)
     {
         return TimeUnit::$DAYS->convert($duration, $this);
+    }
+
+    /**
+     * Creates a DateInterval with the given duration and this unit.
+     *
+     * @param $duration int
+     * @throws RuntimeException if this object does not have proper DateInterval format string
+     * @return DateInterval
+     */
+    public function toDateInterval($duration)
+    {
+        if ($this->dateIntervalFormat === null) {
+            throw new RuntimeException(sprintf("[%s] does not support toDateInterval()", $this));
+        }
+        return new DateInterval(sprintf($this->dateIntervalFormat, $duration));
     }
 
     /**

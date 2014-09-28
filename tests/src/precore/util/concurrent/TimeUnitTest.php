@@ -80,4 +80,30 @@ class TimeUnitTest extends PHPUnit_Framework_TestCase
     {
         self::assertEquals('precore\util\concurrent\TimeUnit::$SECONDS', TimeUnit::$SECONDS->toString());
     }
+
+    public function testToDateInterval()
+    {
+        self::assertEquals('1 seconds', TimeUnit::$SECONDS->toDateInterval(1)->format('%s seconds'));
+        self::assertEquals('4 minutes', TimeUnit::$MINUTES->toDateInterval(4)->format('%i minutes'));
+        self::assertEquals('2 hours', TimeUnit::$HOURS->toDateInterval(2)->format('%h hours'));
+        self::assertEquals('3 days', TimeUnit::$DAYS->toDateInterval(3)->format('%d days'));
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @test
+     */
+    public function shouldThrowExceptionToDateIntervalOnMicroseconds()
+    {
+        TimeUnit::$MILLISECONDS->toDateInterval(1);
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @test
+     */
+    public function shouldThrowExceptionToDateIntervalOnMilliseconds()
+    {
+        TimeUnit::$MILLISECONDS->toDateInterval(1);
+    }
 }
