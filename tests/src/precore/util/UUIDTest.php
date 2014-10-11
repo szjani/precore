@@ -56,4 +56,13 @@ class UUIDTest extends PHPUnit_Framework_TestCase
         $res = UUID::fromString($uuid->toString());
         self::assertEquals($uuid, $res);
     }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function shouldFaileWithInvalidString()
+    {
+        UUID::fromString('invalid');
+    }
 }

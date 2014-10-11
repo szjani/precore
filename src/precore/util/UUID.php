@@ -23,6 +23,7 @@
 
 namespace precore\util;
 
+use InvalidArgumentException;
 use precore\lang\Object;
 use precore\lang\ObjectInterface;
 use Serializable;
@@ -76,6 +77,9 @@ final class UUID extends Object implements Serializable
 
     public static function fromString($string)
     {
+        if (preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $string) !== 1) {
+            throw new InvalidArgumentException("'$string' is not a correct UUID");
+        }
         return new UUID($string);
     }
 
