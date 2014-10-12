@@ -35,6 +35,8 @@ use Serializable;
  */
 final class UUID extends Object implements Serializable
 {
+    const FULL_PATTERN = '/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i';
+
     private $value;
 
     private function __construct($value)
@@ -77,7 +79,10 @@ final class UUID extends Object implements Serializable
 
     public static function fromString($string)
     {
-        if (preg_match('/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i', $string) !== 1) {
+        if (!is_string($string)) {
+            throw new InvalidArgumentException('A string must be passed as parameter');
+        }
+        if (preg_match(self::FULL_PATTERN, $string) !== 1) {
             throw new InvalidArgumentException("'$string' is not a correct UUID");
         }
         return new UUID($string);

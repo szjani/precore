@@ -61,7 +61,16 @@ class UUIDTest extends PHPUnit_Framework_TestCase
      * @test
      * @expectedException \InvalidArgumentException
      */
-    public function shouldFaileWithInvalidString()
+    public function shouldFailWithNoString()
+    {
+        UUID::fromString(new \stdClass());
+    }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function shouldFailWithInvalidString()
     {
         UUID::fromString('invalid');
     }
