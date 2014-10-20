@@ -76,9 +76,10 @@ final class Objects extends Object
      */
     public static function toStringHelper($identifier)
     {
-        if (!is_object($identifier) && !is_string($identifier)) {
-            throw new InvalidArgumentException("An object, a string, or a ReflectionClass must be used as identifier");
-        }
+        Preconditions::checkArgument(
+            is_object($identifier) || is_string($identifier),
+            'An object, a string, or a ReflectionClass must be used as identifier'
+        );
         $name = null;
         if ($identifier instanceof ReflectionClass) {
             $name = $identifier->getName();

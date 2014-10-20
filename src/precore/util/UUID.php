@@ -77,14 +77,19 @@ final class UUID extends Object implements Serializable
         return $object instanceof self && $this->value === $object->value;
     }
 
+    /**
+     * @param $string
+     * @return UUID
+     * @throws InvalidArgumentException if the given parameter is not string or not a well formatted UUID
+     */
     public static function fromString($string)
     {
-        if (!is_string($string)) {
-            throw new InvalidArgumentException('A string must be passed as parameter');
-        }
-        if (preg_match(self::FULL_PATTERN, $string) !== 1) {
-            throw new InvalidArgumentException("'$string' is not a correct UUID");
-        }
+        Preconditions::checkArgument(is_string($string), 'A string must be passed as parameter');
+        Preconditions::checkArgument(
+            preg_match(self::FULL_PATTERN, $string) == 1,
+            "'%s' is not a correct UUID",
+            $string
+        );
         return new UUID($string);
     }
 

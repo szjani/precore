@@ -25,6 +25,8 @@ namespace precore\util\concurrent;
 
 use DateInterval;
 use precore\lang\Enum;
+use precore\lang\IllegalStateException;
+use precore\util\Preconditions;
 use RuntimeException;
 
 class TimeUnit extends Enum
@@ -165,14 +167,12 @@ class TimeUnit extends Enum
      * Creates a DateInterval with the given duration and this unit.
      *
      * @param $duration int
-     * @throws RuntimeException if this object does not have proper DateInterval format string
+     * @throws IllegalStateException if this object does not have proper DateInterval format string
      * @return DateInterval
      */
     public function toDateInterval($duration)
     {
-        if ($this->dateIntervalFormat === null) {
-            throw new RuntimeException(sprintf("[%s] does not support toDateInterval()", $this));
-        }
+        Preconditions::checkState($this->dateIntervalFormat !== null, '[%s] does not support toDateInterval()', $this);
         return new DateInterval(sprintf($this->dateIntervalFormat, $duration));
     }
 

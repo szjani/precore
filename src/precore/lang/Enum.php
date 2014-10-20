@@ -24,6 +24,7 @@
 namespace precore\lang;
 
 use InvalidArgumentException;
+use precore\util\Preconditions;
 use ReflectionProperty;
 
 /**
@@ -104,12 +105,13 @@ class Enum extends Object implements Comparable
             if ($numOfParams == 0) {
                 $constructor->invoke($obj);
             } else {
-                if (!array_key_exists($name, $constructorArgs) || !is_array($constructorArgs[$name])
-                    || $numOfParams !== count($constructorArgs[$name])) {
-                    throw new InvalidArgumentException(
-                        sprintf('Invalid arguments are provided for constructor in %s:$%s', static::className(), $name)
-                    );
-                }
+                Preconditions::checkArgument(
+                    array_key_exists($name, $constructorArgs) && is_array($constructorArgs[$name])
+                        && $numOfParams === count($constructorArgs[$name]),
+                    'Invalid arguments are provided for constructor in %s:$%s',
+                    static::className(),
+                    $name
+                );
                 $constructor->invokeArgs($obj, $constructorArgs[$name]);
             }
         }
@@ -147,9 +149,12 @@ class Enum extends Object implements Comparable
     public static function valueOf($name)
     {
         $className = static::className();
-        if (!array_key_exists($className, self::$cache) || !array_key_exists($name, self::$cache[$className])) {
-            throw new InvalidArgumentException("The enum '$className' type has no constant with name '$name'");
-        }
+        Preconditions::checkArgument(
+            array_key_exists($className, self::$cache) && array_key_exists($name, self::$cache[$className]),
+            "The enum '%s' type has no constant with name '%s'",
+            $className,
+            $name
+        );
         return self::$cache[$className][$name];
     }
 
@@ -185,13 +190,11 @@ class Enum extends Object implements Comparable
      * @return int a negative integer, zero, or a positive integer
      *         as this object is less than, equal to, or greater than the specified object.
      * @throws ClassCastException - if the specified object's type prevents it from being compared to this object.
-     * @throws InvalidArgumentException if the specified object is null
+     * @throws NullPointerException if the specified object is null
      */
     public function compareTo($object)
     {
-        if ($object === null) {
-            throw new InvalidArgumentException('The given object is null');
-        }
+        Preconditions::checkNotNull($object, 'The given object is null');
         if (!($object instanceof self)) {
             throw new ClassCastException('The given object is not instance of this class');
         }

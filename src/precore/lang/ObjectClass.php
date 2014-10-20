@@ -24,6 +24,7 @@
 namespace precore\lang;
 
 use LazyMap\CallbackLazyMap;
+use precore\util\Preconditions;
 use ReflectionClass;
 use RuntimeException;
 
@@ -62,9 +63,7 @@ class ObjectClass extends ReflectionClass
     protected function getSlashedFileName()
     {
         $classFileName = $this->getFileName();
-        if ($classFileName === false) {
-            throw new RuntimeException('This method cannot be called for built-in classes!');
-        }
+        Preconditions::checkState($classFileName !== false, 'This method cannot be called for built-in classes!');
         return str_replace('\\', '/', $classFileName);
     }
 
@@ -95,13 +94,11 @@ class ObjectClass extends ReflectionClass
      * @return string File path of $resource or null if not exists
      * @see java.lang.Class
      * @throws RuntimeException Class is built-int
-     * @throws RuntimeException Class is not PSR-0 compatible
+     * @throws IllegalStateException Class is not PSR-0 compatible
      */
     public function getResource($resource)
     {
-        if (!$this->isPsr0Compatible()) {
-            throw new RuntimeException("Class '{$this->getName()}' must be PSR-0 compatible!");
-        }
+        Preconditions::checkState($this->isPsr0Compatible(), "Class '%s' must be PSR-0 compatible!", $this->getName());
         $slashedFileName = $this->getSlashedFileName();
         $filePath = $resource[0] == '/'
             ? str_replace("/{$this->getSlashedName()}.php", '', $slashedFileName) . $resource

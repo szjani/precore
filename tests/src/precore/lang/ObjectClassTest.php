@@ -35,6 +35,7 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @expectedException \RuntimeException
+     * @expectedExceptionMessage This method cannot be called for built-in classes!
      */
     public function testGetResourceBuiltinClass()
     {
@@ -43,7 +44,19 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
      * @expectedException \RuntimeException
+     * @expectedExceptionMessage This method cannot be called for built-in classes!
+     */
+    public function shouldIsPsr0ThrowExceptionOnBuiltinClass()
+    {
+        $objectClass = new ObjectClass('stdClass');
+        self::assertFalse($objectClass->isPsr0Compatible());
+    }
+
+    /**
+     * @expectedException \RuntimeException
+     * @expectedExceptionMessage Class 'invalid\NotPsr0Class' must be PSR-0 compatible!
      */
     public function testNotPsr0Class()
     {
