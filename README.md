@@ -29,7 +29,7 @@ the implementation must be an `Object`, thus `precore\lang\ObjectInterface` can 
 
 * `Object::objectClass()` static function, returns the `ObjectClass` for the particular class
 * `Object::getObjectClass()` the same, but non-static method
-* `Object::className()` the same as `AnyClass.class` in PHP 5.5
+* `Object::className()` the same as `AnyClass::class` in PHP 5.5
 * `Object::getClassName()` returns the class name of the actual object
 * `Object::hashCode()` returns `spl_object_hash($this)`
 * `Object::equals(ObjectInterface $object)` returns true if the actual object and the argument are equal
