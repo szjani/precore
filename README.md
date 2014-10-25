@@ -64,7 +64,7 @@ foreach (Color::values() as $color) {
 }
 ```
 
-The following code produces the following output:
+It produces the following output:
 
 ```
 RED
