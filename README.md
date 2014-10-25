@@ -9,6 +9,8 @@ Precore is a common library which based on ideas coming from the Java world.
 4. [Object utilities](https://github.com/szjani/precore#4-object-utilities)
 5. [Preconditions](https://github.com/szjani/precore#5-preconditions)
 
+For more information, click on the items. If you need even more information, check the phpdoc.
+
 1. Object and ObjectClass
 -------------------------
 
