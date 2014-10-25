@@ -49,7 +49,7 @@ and all possible values must be defined as public static variables which will be
 final class Color extends Enum
 {
     public static $RED;
-    public static $GREED;
+    public static $GREEN;
     public static $BLUE;
 }
 Color::init();
@@ -65,7 +65,7 @@ The following code produces the following output:
 ```
 RED
 RED
-GREED
+GREEN
 BLUE
 ```
 
