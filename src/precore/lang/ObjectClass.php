@@ -36,7 +36,12 @@ use RuntimeException;
  */
 class ObjectClass extends ReflectionClass
 {
-    private static $classMap;
+    /**
+     * Should not be used from outside. It is public due to PHP 5.3 compatibility.
+     *
+     * @var array
+     */
+    public static $classMap;
 
     /**
      * Do not call from your code, workaround to initialize static variable.
