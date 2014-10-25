@@ -41,6 +41,7 @@ final class Color extends Enum
     public static $GREED;
     public static $BLUE;
 }
+Color::init();
 
 echo Color::$RED->name() . PHP_EOL;
 foreach (Color::values() as $color) {
