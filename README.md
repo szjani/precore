@@ -3,11 +3,11 @@ precore
 
 Precore is a common library which based on ideas coming from the Java world.
 
-1. Object and ObjectClass
-2. Enum
-3. Error handling
-4. Object utilities
-5. Preconditions
+1. [Object and ObjectClass](https://github.com/szjani/precore#1-object-and-objectclass)
+2. [Enum](https://github.com/szjani/precore#2-enum)
+3. [Error handling](https://github.com/szjani/precore#3-error-handling)
+4. [Object utilities](https://github.com/szjani/precore#4-object-utilities)
+5. [Preconditions](https://github.com/szjani/precore#5-preconditions)
 
 1. Object and ObjectClass
 -------------------------
