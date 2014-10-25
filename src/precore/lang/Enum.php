@@ -143,7 +143,7 @@ class Enum extends Object implements Comparable
      * You can obtain the appropriate instance by their name.
      *
      * @param string $name
-     * @return Enum
+     * @return static
      * @throws InvalidArgumentException
      */
     public static function valueOf($name)
@@ -158,31 +158,64 @@ class Enum extends Object implements Comparable
         return self::$cache[$className][$name];
     }
 
+    /**
+     * @return static[]
+     */
     public static function values()
     {
-        return array_key_exists(static::className(), self::$cache)
-            ? self::$cache[static::className()]
+        $className = static::className();
+        return array_key_exists($className, self::$cache)
+            ? self::$cache[$className]
             : array();
     }
 
+    /**
+     * The type and the name equality is being checked. Although the reference should be the same,
+     * it can differ if one of the two objects have been deserialized.
+     *
+     * @param ObjectInterface $object
+     * @return bool
+     */
     public function equals(ObjectInterface $object = null)
     {
         return $object instanceof static && $object->name === $this->name;
     }
 
+    /**
+     * Returns the name of this enum constant, exactly as declared in its enum declaration.
+     * Most programmers should use the toString() method in preference to this one, as the toString method
+     * may return a more user-friendly name. This method is designed primarily for use in specialized situations
+     * where correctness depends on getting the exact name, which will not vary from release to release.
+     *
+     * @return string
+     */
     public function name()
     {
         return $this->name;
     }
 
+    /**
+     * Returns the ordinal of this enumeration constant
+     * (its position in its enum declaration, where the initial constant is assigned an ordinal of zero).
+     * Most programmers will have no use for this method.
+     *
+     * @return int
+     */
     final public function ordinal()
     {
         return self::$ordinals[$this->getClassName()][$this->name()];
     }
 
+    /**
+     * Returns the name of this enum constant, as contained in the declaration. This method may be overridden,
+     * though it typically isn't necessary or desirable. An enum type should override this method
+     * when a more "programmer-friendly" string form exists.
+     *
+     * @return string
+     */
     public function toString()
     {
-        return $this->className() . '::$' . $this->name();
+        return $this->name;
     }
 
     /**

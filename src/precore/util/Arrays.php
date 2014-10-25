@@ -36,6 +36,10 @@ abstract class Arrays
     {
     }
 
+    /**
+     * @param array $list
+     * @param Comparator $comparator
+     */
     public static function sortWith(array &$list, Comparator $comparator)
     {
         usort($list, array($comparator, 'compare'));

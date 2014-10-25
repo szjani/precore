@@ -78,7 +78,7 @@ class TimeUnitTest extends PHPUnit_Framework_TestCase
 
     public function testToString()
     {
-        self::assertEquals('precore\util\concurrent\TimeUnit::$SECONDS', TimeUnit::$SECONDS->toString());
+        self::assertEquals('SECONDS', TimeUnit::$SECONDS->toString());
     }
 
     public function testToDateInterval()
