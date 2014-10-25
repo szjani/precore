@@ -45,7 +45,10 @@ class ObjectClass extends ReflectionClass
     {
         self::$classMap = new CallbackLazyMap(
             function ($className) {
-                return new ObjectClass($className);
+                $trimmedClassName = trim($className, '\\');
+                return $trimmedClassName === $className
+                    ? new ObjectClass($className)
+                    : ObjectClass::$classMap->$trimmedClassName;
             }
         );
     }
@@ -56,7 +59,6 @@ class ObjectClass extends ReflectionClass
      */
     public static function forName($className)
     {
-        $className = trim($className, '\\');
         return self::$classMap->$className;
     }
 
