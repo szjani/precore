@@ -60,7 +60,7 @@ function printName(Color $color) {
 
 printName(Color::$RED);
 foreach (Color::values() as $color) {
-    echo $color->name() . PHP_EOL;
+    printName($color);
 }
 ```
 
