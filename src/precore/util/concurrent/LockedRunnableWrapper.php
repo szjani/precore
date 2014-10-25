@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012 Szurovecz János
+ * Copyright (c) 2012 Janos Szurovecz
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -33,7 +33,7 @@ use precore\lang\Runnable;
  * cannot be executed more than once at the same time
  * (if you use the same lock).
  *
- * @author Szurovecz János <szjani@szjani.hu>
+ * @author Janos Szurovecz <szjani@szjani.hu>
  */
 class LockedRunnableWrapper extends Object implements Runnable
 {

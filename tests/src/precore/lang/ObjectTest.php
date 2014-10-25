@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012 Szurovecz János
+ * Copyright (c) 2012 Janos Szurovecz
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -26,7 +26,7 @@ namespace precore\lang;
 use PHPUnit_Framework_TestCase;
 
 /**
- * @author Szurovecz János <szjani@szjani.hu>
+ * @author Janos Szurovecz <szjani@szjani.hu>
  */
 class ObjectTest extends PHPUnit_Framework_TestCase
 {

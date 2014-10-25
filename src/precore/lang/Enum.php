@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012 Szurovecz János
+ * Copyright (c) 2012 Janos Szurovecz
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -55,7 +55,7 @@ use ReflectionProperty;
  * Initializing objects can be done in constructor, which is recommended to defined as private or protected.
  * Constructor parameters (if any) can be defined by constructorArgs() static method.
  *
- * @author Szurovecz János <szjani@szjani.hu>
+ * @author Janos Szurovecz <szjani@szjani.hu>
  */
 class Enum extends Object implements Comparable
 {

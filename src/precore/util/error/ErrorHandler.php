@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012-2014 Szurovecz János
+ * Copyright (c) 2012-2014 Janos Szurovecz
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -28,7 +28,7 @@ namespace precore\util\error;
  *
  * @package precore\util\error
  *
- * @author Szurovecz János <szjani@szjani.hu>
+ * @author Janos Szurovecz <szjani@szjani.hu>
  * @see http://hu1.php.net/manual/en/function.set-error-handler.php#112881
  */
 final class ErrorHandler

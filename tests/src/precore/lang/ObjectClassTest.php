@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012 Szurovecz János
+ * Copyright (c) 2012 Janos Szurovecz
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -29,7 +29,7 @@ require_once __DIR__ . '/NotPsr0Class.php';
 require_once __DIR__ . '/Psr0Class.php';
 
 /**
- * @author Szurovecz János <szjani@szjani.hu>
+ * @author Janos Szurovecz <szjani@szjani.hu>
  */
 class ObjectClassTest extends PHPUnit_Framework_TestCase
 {
