@@ -27,7 +27,6 @@ use DateInterval;
 use precore\lang\Enum;
 use precore\lang\IllegalStateException;
 use precore\util\Preconditions;
-use RuntimeException;
 
 class TimeUnit extends Enum
 {

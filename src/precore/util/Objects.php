@@ -23,7 +23,6 @@
 
 namespace precore\util;
 
-use InvalidArgumentException;
 use precore\lang\Object;
 use precore\lang\ObjectInterface;
 use ReflectionClass;
