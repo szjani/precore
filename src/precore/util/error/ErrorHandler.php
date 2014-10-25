@@ -31,7 +31,7 @@ namespace precore\util\error;
  * @author Szurovecz János <szjani@szjani.hu>
  * @see http://hu1.php.net/manual/en/function.set-error-handler.php#112881
  */
-class ErrorHandler
+final class ErrorHandler
 {
     private function __construct()
     {
