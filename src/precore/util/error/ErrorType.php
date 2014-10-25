@@ -23,8 +23,8 @@
 
 namespace precore\util\error;
 
-use Exception;
 use precore\lang\Enum;
+use precore\util\Preconditions;
 
 class ErrorType extends Enum
 {
@@ -73,15 +73,13 @@ class ErrorType extends Enum
     /**
      * @param int $code
      * @param string $exceptionClass
-     * @throws Exception
+     * @throws \InvalidArgumentException
      */
     private function __construct($code, $exceptionClass)
     {
         $this->code = $code;
         $exceptionClass = __NAMESPACE__ . '\\' . $exceptionClass;
-        if (!class_exists($exceptionClass)) {
-            throw new Exception("Invalid exception class [{$exceptionClass}]");
-        }
+        Preconditions::checkArgument(class_exists($exceptionClass), 'Invalid exception class [%s]', $exceptionClass);
         $this->exceptionClass = $exceptionClass;
         self::$types[$code] = $this;
     }
@@ -89,14 +87,11 @@ class ErrorType extends Enum
     /**
      * @param int $number
      * @return ErrorType
-     * @throws \Exception
+     * @throws \OutOfBoundsException
      */
     public static function forCode($number)
     {
-        if (!array_key_exists($number, self::$types)) {
-            throw new Exception("Invalid error code [{$number}]");
-        }
-        return self::$types[$number];
+        return Preconditions::checkElementExists(self::$types, $number, 'Invalid error code [%s]', $number);
     }
 
     /**
