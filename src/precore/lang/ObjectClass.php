@@ -39,7 +39,7 @@ class ObjectClass extends ReflectionClass
     /**
      * Should not be used from outside. It is public due to PHP 5.3 compatibility.
      *
-     * @var array
+     * @var CallbackLazyMap
      */
     public static $classMap;
 
