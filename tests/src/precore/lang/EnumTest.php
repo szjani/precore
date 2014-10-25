@@ -93,6 +93,15 @@ class EnumTest extends PHPUnit_Framework_TestCase
         self::assertEquals(2, Animal::$HORSE->ordinal());
     }
 
+    /**
+     * @test
+     * @expectedException \precore\lang\ClassCastException
+     */
+    public function shouldFailIfNotTheSameInstancesAreCompared()
+    {
+        Color::$BLUE->compareTo(Animal::$DOG);
+    }
+
     public function testSerialization()
     {
         $obj = Animal::$DOG;

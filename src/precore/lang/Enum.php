@@ -233,7 +233,7 @@ class Enum extends Object implements Comparable
     public function compareTo($object)
     {
         Preconditions::checkNotNull($object, 'The given object is null');
-        if (!($object instanceof self)) {
+        if (!($object instanceof static)) {
             throw new ClassCastException('The given object is not instance of this class');
         }
         /* @var $object Enum */
