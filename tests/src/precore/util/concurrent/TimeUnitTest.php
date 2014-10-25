@@ -69,11 +69,11 @@ class TimeUnitTest extends PHPUnit_Framework_TestCase
 
     public function testSleep()
     {
-        $start = microtime(true);
         $duration = 0.1;
+        $start = microtime(true);
         TimeUnit::$SECONDS->sleep($duration);
         $end = microtime(true);
-        self::assertTrue(($end - $start) < ($duration * 1.1));
+        self::assertTrue(($end - $start) < ($duration * 1.2));
     }
 
     public function testToString()
