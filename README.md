@@ -54,7 +54,11 @@ final class Color extends Enum
 }
 Color::init();
 
-echo Color::$RED->name() . PHP_EOL;
+function printName(Color $color) {
+    echo $color->name() . PHP_EOL;
+}
+
+printName(Color::$RED);
 foreach (Color::values() as $color) {
     echo $color->name() . PHP_EOL;
 }
