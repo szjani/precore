@@ -93,7 +93,12 @@ class Enum extends Object implements Comparable
         return array();
     }
 
-    private static function newInstance($name, array $constructorArgs)
+    /**
+     * @param $name
+     * @param array $constructorArgs
+     * @return static
+     */
+    protected static function newInstance($name, array $constructorArgs)
     {
         $reflectionClass = static::objectClass();
         $obj = $reflectionClass->newInstanceWithoutConstructor();
