@@ -146,7 +146,7 @@ It is a very lightweight assertion tool, which supports argument, object state, 
  * @throws \InvalidArgumentException if $number is 0
  */
 function divide($number) {
-    Preconditions::checkArgument($number !== 0, 'Division by zero');
-    // ...
+    Preconditions::checkArgument($number != 0, 'Division by zero');
+    return $this->value / Preconditions::checkNotNull($number, 'Argument cannot be null');
 }
 ```
