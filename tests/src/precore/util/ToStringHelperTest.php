@@ -58,6 +58,20 @@ class ToStringHelperTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     *  @test
+     */
+    public function shouldOmitNullValuesOnlyInCaseOfMemberVariables()
+    {
+        $helper = new ToStringHelper(__CLASS__);
+        $string = $helper
+            ->add('x', null)
+            ->add('y', array('notNull' => 1, 'null' => null))
+            ->omitNullValues()
+            ->toString();
+        self::assertEquals(sprintf('%s{y=[notNull=1, null=null]}', __CLASS__), $string);
+    }
+
+    /**
      * @test
      */
     public function nullValueAppear()
@@ -108,6 +122,20 @@ class ToStringHelperTest extends PHPUnit_Framework_TestCase
         $result = $helper
             ->add('fields', array(1, new DateTime()))
             ->toString();
-        self::assertRegExp('/fields={0=1, 1=/', $result);
+        self::assertRegExp('/fields=\[0=1, 1=/', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSupportNoKeys()
+    {
+        $helper = new ToStringHelper(__CLASS__);
+        $string = $helper
+            ->add('x', null)
+            ->add(3)
+            ->add(array('notNull' => 1, 'null' => null))
+            ->toString();
+        self::assertEquals(sprintf('%s{x=null, 3, [notNull=1, null=null]}', __CLASS__), $string);
     }
 }

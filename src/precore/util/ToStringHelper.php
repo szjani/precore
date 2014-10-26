@@ -23,9 +23,7 @@
 
 namespace precore\util;
 
-use DateTime;
 use precore\lang\Object;
-use precore\util\error\ErrorException;
 
 /**
  * Can be used in ObjectInterface implementations for overriding toString() method.
@@ -38,6 +36,9 @@ class ToStringHelper extends Object
 {
     private $className;
 
+    /**
+     * @var ToStringHelperItem[]
+     */
     private $values = array();
 
     private $omitNullValues = false;
@@ -51,13 +52,20 @@ class ToStringHelper extends Object
     }
 
     /**
-     * @param $name
-     * @param mixed $value
+     * Can be called with 1 or 2 parameters. In the first case only the value,
+     * otherwise a key/value pair is passed.
+     *
+     * @param string $param
      * @return ToStringHelper $this
      */
-    public function add($name, $value)
+    public function add($param)
     {
-        $this->values[$name] = $value;
+        $args = func_get_args();
+        $count = count($args);
+        Preconditions::checkArgument($count == 1 || $count == 2);
+        $this->values[] = $count == 2
+            ? new ToStringHelperItem($args[0], $args[1])
+            : new ToStringHelperItem(null, $args[0]);
         return $this;
     }
 
@@ -74,31 +82,17 @@ class ToStringHelper extends Object
 
     public function toString()
     {
-        return sprintf("%s%s", $this->className, $this->arrayToString($this->values));
+        return sprintf("%s%s", $this->className, $this->membersToString());
     }
 
-    protected function arrayToString(array $array)
+    protected function membersToString()
     {
         $parts = array();
-        foreach ($array as $fieldName => $value) {
-            $stringValue = null;
-            if ($value === null) {
-                if ($this->omitNullValues) {
-                    continue;
-                }
-                $stringValue = 'null';
-            } elseif ($value instanceof DateTime) {
-                $stringValue = $value->format(DateTime::ISO8601);
-            } elseif (is_array($value)) {
-                $stringValue = $this->arrayToString($value);
-            } else {
-                try {
-                    $stringValue = (string) $value;
-                } catch (ErrorException $e) {
-                    $stringValue = spl_object_hash($value);
-                }
+        foreach ($this->values as $item) {
+            if ($this->omitNullValues && $item->getValue() === null) {
+                continue;
             }
-            $parts[] = $fieldName . '=' . $stringValue;
+            $parts[] = $item->toString();
         }
         return sprintf('{%s}', implode(', ', $parts));
     }
