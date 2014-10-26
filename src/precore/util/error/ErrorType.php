@@ -26,7 +26,7 @@ namespace precore\util\error;
 use precore\lang\Enum;
 use precore\util\Preconditions;
 
-class ErrorType extends Enum
+final class ErrorType extends Enum
 {
     public static $E_ERROR;
     public static $E_WARNING;
