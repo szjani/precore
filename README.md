@@ -17,6 +17,7 @@ Precore is a common library which based on ideas coming from the Java world.
 3. [Error handling](https://github.com/szjani/precore#3-error-handling)
 4. [Object utilities](https://github.com/szjani/precore#4-object-utilities)
 5. [Preconditions](https://github.com/szjani/precore#5-preconditions)
+6. [Stopwatch](https://github.com/szjani/precore#6-stopwatch)
 
 For more information, click on the items. If you need even more information, check the phpdoc.
 
@@ -149,4 +150,19 @@ function divide($number) {
     Preconditions::checkArgument($number != 0, 'Division by zero');
     return $this->value / Preconditions::checkNotNull($number, 'Argument cannot be null');
 }
+```
+
+6. Stopwatch
+------------
+
+Useful for performance measurement, logging, and recognizing bottlenecks. Its `__toString()` method returns the elapsed time with the best abbreviate.
+
+```php
+$stopwatch = Stopwatch::createStarted();
+// ... doing something
+echo $stopwatch->elapsed(TimeUnit::$MILLISECONDS);
+// ... doing something
+echo $stopwatch;
+$stopwatch->reset();
+$stopwatch->start();
 ```

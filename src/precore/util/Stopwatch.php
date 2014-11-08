@@ -50,7 +50,7 @@ use RuntimeException;
  *   $stopwatch = Stopwatch::createStarted();
  *   doSomething();
  *   $stopwatch->stop(); // optional
- *   $millis = stopwatch.elapsed(TimeUnit::$MILLISECONDS);
+ *   $millis = $stopwatch->elapsed(TimeUnit::$MILLISECONDS);
  *   $log->info("time: " . $stopwatch); // formatted string like "12.3 ms"
  * </pre>
  *
