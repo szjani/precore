@@ -5,6 +5,7 @@ nbproject/
 /build/logs
 /build/pdepend
 /build/phpdox
+/build/cache
 vendor/*
 cache.properties
 composer.lock
