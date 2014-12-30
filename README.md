@@ -18,6 +18,7 @@ Precore is a common library which based on ideas coming from the Java world.
 4. [Object utilities](https://github.com/szjani/precore#4-object-utilities)
 5. [Preconditions](https://github.com/szjani/precore#5-preconditions)
 6. [Stopwatch](https://github.com/szjani/precore#6-stopwatch)
+7. [Profiler](https://github.com/szjani/precore#7-profiler)
 
 For more information, click on the items. If you need even more information, check the phpdoc.
 
@@ -165,4 +166,121 @@ echo $stopwatch->elapsed(TimeUnit::$MILLISECONDS);
 echo $stopwatch;
 $stopwatch->reset();
 $stopwatch->start();
+```
+
+7. Profiler
+-----------
+
+### Basics
+
+It helps the developer gather performance data. A profiler consists one or more stopwatches. Stopwatches are driven by statements in the source code.
+
+```php
+$profiler = new Profiler('p1');
+$profiler->start('t1');
+$profiler->start('t2');
+$profiler->stop();
+$profiler->printOut();
+```
+
+The output of the above program would something like this:
+
+```
+ + Profiler [p1]
+ |-- elapsed time                           [t1]     1 ms.
+ |-- elapsed time                           [t2]     2 ms.
+ |-- Total                                  [p1]     3 ms.
+```
+
+It also supports nested profilers.
+
+```php
+$profiler = new Profiler('p1');
+$profiler->start('t1');
+$profiler->startNested('np1');
+
+// this should be in another method
+$nested = ProfilerRegistry::instance()->get('np1');
+$nested->start('np1-t1');
+$nested->stop();
+// ----------------------
+
+$profiler->start('t2');
+$profiler->stop();
+$profiler->printOut();
+```
+
+And the output:
+
+```
+ + Profiler [p1]
+    + Profiler [np1]
+    |-- elapsed time                       [np1-t1]     0 µs.
+    |-- Subtotal                              [np1]  4.501 ms.
+ |-- elapsed time                           [t1]  5.001 ms.
+ |-- elapsed time                           [t2]     0 µs.
+ |-- Total                                  [p1]  5.501 ms.
+```
+
+### AOP
+
+With `precore`, you can use an annotation on methods for profiling them. For this feature, you need to load and configure
+[Go! AOP PHP](https://github.com/lisachenko/go-aop-php). You have to register `ProfileLogAspect` in your `AspectKernel` implementation.
+This aspect manages the necessary `Profiler` objects and the output will be logged via `lf4php`. If you run the unit tests of `precore`,
+you will see the output of a test case.
+
+```php
+class ProfileFixture
+{
+    /**
+     * @Profile(name="Main process")
+     */
+    public function main()
+    {
+        $this->foo1();
+        $this->foo2();
+    }
+
+    /**
+     * @Profile
+     */
+    protected function foo1()
+    {
+        $this->bar();
+    }
+
+    /**
+     * @Profile
+     */
+    protected function bar()
+    {
+    }
+
+    /**
+     * @Profile(name="very fast method")
+     */
+    protected function foo2()
+    {
+    }
+}
+
+$fixture = new ProfileFixture();
+$fixture->main();
+```
+
+In the log:
+
+```
+ + Profiler [Main process]
+    + Profiler [foo1]
+        + Profiler [bar]
+        |-- elapsed time                         [exec]     0 µs.
+        |-- Subtotal                              [bar]   26.5 ms.
+    |-- elapsed time                         [exec]     27 ms.
+    |-- Subtotal                             [foo1]     27 ms.
+    + Profiler [very fast method]
+    |-- elapsed time                         [exec]     0 µs.
+    |-- Subtotal                 [very fast method]     0 µs.
+ |-- elapsed time                         [exec]   30.5 ms.
+ |-- Total                        [Main process]   30.5 ms.
 ```
