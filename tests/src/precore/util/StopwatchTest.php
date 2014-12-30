@@ -127,22 +127,3 @@ class StopwatchTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class IncrementedTicker extends Ticker
-{
-    private $counter = 0;
-
-    public static function instance()
-    {
-        return new IncrementedTicker();
-    }
-
-    /**
-     * Returns the number of microseconds elapsed since this ticker's fixed point of reference.
-     *
-     * @return float
-     */
-    public function read()
-    {
-        return $this->counter++;
-    }
-}
