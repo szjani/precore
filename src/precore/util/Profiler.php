@@ -42,7 +42,7 @@ use precore\lang\Object;
  */
 final class Profiler extends Object
 {
-    const ENTRY_FORMAT = "%-13s%30s%10s.\n";
+    const ENTRY_FORMAT = "%-13s%30s%10s.";
     const ENTRY_PREFIX = ' |-- ';
     const HEAD_PREFIX = ' ';
 
@@ -154,7 +154,7 @@ final class Profiler extends Object
 
     public function toString()
     {
-        $res = sprintf('%' . (($this->level - 1) * 4) . "s+ Profiler [%s]\n", self::HEAD_PREFIX, $this->name);
+        $res = sprintf('%' . (($this->level - 1) * 4) . "s+ Profiler [%s]" . PHP_EOL, self::HEAD_PREFIX, $this->name);
         foreach ($this->entries as $entry) {
             $res .= $entry;
         }
@@ -175,7 +175,7 @@ final class Profiler extends Object
      */
     public function log()
     {
-        self::getLogger()->debug("Profiler output:\n{}", array($this));
+        self::getLogger()->debug("Profiler output:{}{}", array(PHP_EOL, $this));
     }
 
     private function recordEntry()
@@ -187,7 +187,7 @@ final class Profiler extends Object
 
     private function entryString($title, $stopwatchName, Stopwatch $stopwatch)
     {
-        $format = '%' . ($this->level * 4) . 's' . self::ENTRY_FORMAT;
+        $format = '%' . ($this->level * 4) . 's' . self::ENTRY_FORMAT . PHP_EOL;
         return sprintf($format, self::ENTRY_PREFIX, $title, $stopwatchName, $stopwatch);
     }
 }
