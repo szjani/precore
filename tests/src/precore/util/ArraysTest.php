@@ -35,7 +35,7 @@ class ArraysTest extends PHPUnit_Framework_TestCase
 {
     public function testSort()
     {
-        $list = array(Color::$BLUE, Color::$RED);
+        $list = [Color::$BLUE, Color::$RED];
         Arrays::sort($list);
         self::assertSame(Color::$RED, $list[0]);
         self::assertSame(Color::$BLUE, $list[1]);

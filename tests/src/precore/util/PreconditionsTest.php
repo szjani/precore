@@ -79,7 +79,7 @@ class PreconditionsTest extends PHPUnit_Framework_TestCase
     public function shouldReturnElementIfExists()
     {
         $element = 'hello';
-        $messages = array('key' => $element);
+        $messages = ['key' => $element];
         self::assertEquals($element, Preconditions::checkElementExists($messages, 'key'));
     }
 
@@ -91,6 +91,6 @@ class PreconditionsTest extends PHPUnit_Framework_TestCase
     public function shouldThrowExceptionIfKeyDoesNotExist()
     {
         $index = 1;
-        Preconditions::checkElementExists(array(), $index, "Index %d cannot be found", $index);
+        Preconditions::checkElementExists([], $index, "Index %d cannot be found", $index);
     }
 }

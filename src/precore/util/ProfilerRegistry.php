@@ -39,7 +39,7 @@ final class ProfilerRegistry
     /**
      * @var Profiler[]
      */
-    private $profilers = array();
+    private $profilers = [];
 
     public static function init()
     {

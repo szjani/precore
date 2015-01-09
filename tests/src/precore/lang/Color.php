@@ -47,10 +47,10 @@ class Color extends Enum
 
     protected static function constructorArgs()
     {
-        return array(
-            'RED' => array(self::RED_HEX),
-            'BLUE' => array(self::BLUE_HEX)
-        );
+        return [
+            'RED' => [self::RED_HEX],
+            'BLUE' => [self::BLUE_HEX]
+        ];
     }
 
     protected function __construct($hex)

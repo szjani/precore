@@ -44,27 +44,27 @@ final class ErrorType extends Enum
     public static $E_DEPRECATED;
     public static $E_USER_DEPRECATED;
 
-    private static $types = array();
+    private static $types = [];
 
     protected static function constructorArgs()
     {
-        return array(
-            'E_ERROR' => array(E_ERROR, 'ErrorException'),
-            'E_WARNING' => array(E_WARNING, 'WarningException'),
-            'E_PARSE' => array(E_PARSE, 'ParseException'),
-            'E_NOTICE' => array(E_NOTICE, 'NoticeException'),
-            'E_CORE_ERROR' => array(E_CORE_ERROR, 'CoreErrorException'),
-            'E_CORE_WARNING' => array(E_CORE_WARNING, 'CoreWarningException'),
-            'E_COMPILE_ERROR' => array(E_COMPILE_ERROR, 'CompileErrorException'),
-            'E_COMPILE_WARNING' => array(E_COMPILE_WARNING, 'CompileWarningException'),
-            'E_USER_ERROR' => array(E_USER_ERROR, 'UserErrorException'),
-            'E_USER_WARNING' => array(E_USER_WARNING, 'UserWarningException'),
-            'E_USER_NOTICE' => array(E_USER_NOTICE, 'UserNoticeException'),
-            'E_STRICT' => array(E_STRICT, 'StrictException'),
-            'E_RECOVERABLE_ERROR' => array(E_RECOVERABLE_ERROR, 'RecoverableErrorException'),
-            'E_DEPRECATED' => array(E_DEPRECATED, 'DeprecatedException'),
-            'E_USER_DEPRECATED' => array(E_USER_DEPRECATED, 'UserDeprecatedException')
-        );
+        return [
+            'E_ERROR' => [E_ERROR, 'ErrorException'],
+            'E_WARNING' => [E_WARNING, 'WarningException'],
+            'E_PARSE' => [E_PARSE, 'ParseException'],
+            'E_NOTICE' => [E_NOTICE, 'NoticeException'],
+            'E_CORE_ERROR' => [E_CORE_ERROR, 'CoreErrorException'],
+            'E_CORE_WARNING' => [E_CORE_WARNING, 'CoreWarningException'],
+            'E_COMPILE_ERROR' => [E_COMPILE_ERROR, 'CompileErrorException'],
+            'E_COMPILE_WARNING' => [E_COMPILE_WARNING, 'CompileWarningException'],
+            'E_USER_ERROR' => [E_USER_ERROR, 'UserErrorException'],
+            'E_USER_WARNING' => [E_USER_WARNING, 'UserWarningException'],
+            'E_USER_NOTICE' => [E_USER_NOTICE, 'UserNoticeException'],
+            'E_STRICT' => [E_STRICT, 'StrictException'],
+            'E_RECOVERABLE_ERROR' => [E_RECOVERABLE_ERROR, 'RecoverableErrorException'],
+            'E_DEPRECATED' => [E_DEPRECATED, 'DeprecatedException'],
+            'E_USER_DEPRECATED' => [E_USER_DEPRECATED, 'UserDeprecatedException']
+        ];
     }
 
     private $code;

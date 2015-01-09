@@ -39,7 +39,7 @@ class ToStringHelper extends Object
     /**
      * @var ToStringHelperItem[]
      */
-    private $values = array();
+    private $values = [];
 
     private $omitNullValues = false;
 
@@ -87,7 +87,7 @@ class ToStringHelper extends Object
 
     protected function membersToString()
     {
-        $parts = array();
+        $parts = [];
         foreach ($this->values as $item) {
             if ($this->omitNullValues && $item->getValue() === null) {
                 continue;

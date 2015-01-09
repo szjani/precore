@@ -39,11 +39,11 @@ class ProfileLogAspectTest extends PHPUnit_Framework_TestCase
     {
         $kernel = ProfileLogAspectKernel::getInstance();
         $kernel->init(
-            array(
+            [
                 'debug' => true,
                 'cacheDir' => BASEDIR . '/build/cache',
-                'includePaths' => array(__DIR__)
-            )
+                'includePaths' => [__DIR__]
+            ]
         );
         $fixture = new ProfileFixture();
         $result = $fixture->main();

@@ -42,7 +42,7 @@ abstract class Arrays
      */
     public static function sortWith(array &$list, Comparator $comparator)
     {
-        usort($list, array($comparator, 'compare'));
+        usort($list, [$comparator, 'compare']);
     }
 
     /**

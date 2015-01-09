@@ -107,7 +107,7 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
      */
     public function shouldCheckReferenceFirst()
     {
-        $obj = $this->getMock(String::className(), array('equals'), array('any'));
+        $obj = $this->getMock(String::className(), ['equals'], ['any']);
         $obj
             ->expects(self::never())
             ->method('equals');

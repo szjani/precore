@@ -47,6 +47,6 @@ class ErrorTypeTest extends PHPUnit_Framework_TestCase
      */
     public function testThrowException()
     {
-        ErrorType::forCode(E_USER_WARNING)->throwException('Ouch', __FILE__, __LINE__, array());
+        ErrorType::forCode(E_USER_WARNING)->throwException('Ouch', __FILE__, __LINE__, []);
     }
 }

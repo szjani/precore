@@ -52,7 +52,7 @@ final class ToStringHelperItem extends Object
         } elseif ($value instanceof DateTime) {
             $stringValue = $value->format(DateTime::ISO8601);
         } elseif (is_array($value)) {
-            $parts = array();
+            $parts = [];
             foreach ($value as $key => $valueItem) {
                 $parts[] = $key . '=' . self::valueToString($valueItem);
             }

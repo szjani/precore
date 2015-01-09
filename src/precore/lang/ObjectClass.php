@@ -41,7 +41,7 @@ class ObjectClass extends ReflectionClass
      *
      * @var CallbackLazyMap
      */
-    public static $classMap;
+    private static $classMap;
 
     /**
      * Do not call from your code, workaround to initialize static variable.
@@ -127,20 +127,6 @@ class ObjectClass extends ReflectionClass
             throw new ClassCastException("'{$objectClass}' cannot be cast to '{$this->getName()}'");
         }
         return $object;
-    }
-
-    /**
-     * Creates a new class instance without invoking the constructor.
-     *
-     * @link http://php.net/manual/en/reflectionclass.newinstancewithoutconstructor.php
-     * @return object
-     */
-    public function newInstanceWithoutConstructor()
-    {
-        if (version_compare(PHP_VERSION, '5.4.0', '>=')) {
-            return parent::newInstanceWithoutConstructor();
-        }
-        return unserialize(sprintf('O:%u:"%s":0:{}', strlen($this->getName()), $this->getName()));
     }
 
     /**

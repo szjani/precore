@@ -76,14 +76,14 @@ class TimeUnit extends Enum
 
     protected static function constructorArgs()
     {
-        return array(
-            'MICROSECONDS' => array(self::C0, null),
-            'MILLISECONDS' => array(self::C1, null),
-            'SECONDS' => array(self::C2, 'PT%dS'),
-            'MINUTES' => array(self::C3, 'PT%dM'),
-            'HOURS' => array(self::C4, 'PT%dH'),
-            'DAYS' => array(self::C5, 'P%dD')
-        );
+        return [
+            'MICROSECONDS' => [self::C0, null],
+            'MILLISECONDS' => [self::C1, null],
+            'SECONDS' => [self::C2, 'PT%dS'],
+            'MINUTES' => [self::C3, 'PT%dM'],
+            'HOURS' => [self::C4, 'PT%dH'],
+            'DAYS' => [self::C5, 'P%dD']
+        ];
     }
 
     /**

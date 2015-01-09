@@ -65,7 +65,7 @@ class ToStringHelperTest extends PHPUnit_Framework_TestCase
         $helper = new ToStringHelper(__CLASS__);
         $string = $helper
             ->add('x', null)
-            ->add('y', array('notNull' => 1, 'null' => null))
+            ->add('y', ['notNull' => 1, 'null' => null])
             ->omitNullValues()
             ->toString();
         self::assertEquals(sprintf('%s{y=[notNull=1, null=null]}', __CLASS__), $string);
@@ -120,7 +120,7 @@ class ToStringHelperTest extends PHPUnit_Framework_TestCase
     {
         $helper = new ToStringHelper(__CLASS__);
         $result = $helper
-            ->add('fields', array(1, new DateTime()))
+            ->add('fields', [1, new DateTime()])
             ->toString();
         self::assertRegExp('/fields=\[0=1, 1=/', $result);
     }
@@ -134,7 +134,7 @@ class ToStringHelperTest extends PHPUnit_Framework_TestCase
         $string = $helper
             ->add('x', null)
             ->add(3)
-            ->add(array('notNull' => 1, 'null' => null))
+            ->add(['notNull' => 1, 'null' => null])
             ->toString();
         self::assertEquals(sprintf('%s{x=null, 3, [notNull=1, null=null]}', __CLASS__), $string);
     }

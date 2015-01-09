@@ -59,8 +59,8 @@ use ReflectionProperty;
  */
 class Enum extends Object implements Comparable
 {
-    private static $cache = array();
-    private static $ordinals = array();
+    private static $cache = [];
+    private static $ordinals = [];
 
     private $name;
 
@@ -90,7 +90,7 @@ class Enum extends Object implements Comparable
      */
     protected static function constructorArgs()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -129,7 +129,7 @@ class Enum extends Object implements Comparable
     public static function init()
     {
         $className = static::className();
-        self::$cache[$className] = array();
+        self::$cache[$className] = [];
         $reflectionClass = static::objectClass();
         $constructorParams = static::constructorArgs();
         $ordinal = 0;
@@ -171,7 +171,7 @@ class Enum extends Object implements Comparable
         $className = static::className();
         return array_key_exists($className, self::$cache)
             ? self::$cache[$className]
-            : array();
+            : [];
     }
 
     /**

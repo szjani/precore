@@ -61,7 +61,7 @@ final class Profiler extends Object
      *
      * @var object[]
      */
-    private $entries = array();
+    private $entries = [];
 
     /**
      * @var Stopwatch
@@ -175,7 +175,7 @@ final class Profiler extends Object
      */
     public function log()
     {
-        self::getLogger()->debug("Profiler output:{}{}", array(PHP_EOL, $this));
+        self::getLogger()->debug("Profiler output:{}{}", [PHP_EOL, $this]);
     }
 
     private function recordEntry()
