@@ -57,7 +57,7 @@ use ReflectionProperty;
  *
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class Enum extends Object implements Comparable
+abstract class Enum extends Object implements Comparable
 {
     private static $cache = [];
     private static $ordinals = [];
