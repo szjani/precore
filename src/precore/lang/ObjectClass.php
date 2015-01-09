@@ -37,8 +37,6 @@ use RuntimeException;
 class ObjectClass extends ReflectionClass
 {
     /**
-     * Should not be used from outside. It is public due to PHP 5.3 compatibility.
-     *
      * @var CallbackLazyMap
      */
     private static $classMap;
