@@ -48,6 +48,14 @@ class EnumTest extends PHPUnit_Framework_TestCase
         self::assertEquals(2, count(Color::values()));
     }
 
+    /**
+     * @test
+     */
+    public function shouldCheckClassAndNameForEquals()
+    {
+        self::assertFalse(Color::$RED->equals(Color2::$RED));
+    }
+
     public function testValues()
     {
         $colors = Color::values();
@@ -111,3 +119,9 @@ class EnumTest extends PHPUnit_Framework_TestCase
         self::assertEquals($obj->ordinal(), $ret->ordinal());
     }
 }
+
+class Color2 extends Enum
+{
+    public static $RED;
+}
+Color2::init();
