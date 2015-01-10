@@ -98,9 +98,9 @@ abstract class Enum extends Object implements Comparable
      * @param array $constructorArgs
      * @return static
      */
-    protected static function newInstance($name, array $constructorArgs)
+    private static function newInstance($name, array $constructorArgs)
     {
-        $reflectionClass = static::objectClass();
+        $reflectionClass = self::objectClass();
         $obj = $reflectionClass->newInstanceWithoutConstructor();
         $obj->name = $name;
         $constructor = $reflectionClass->getConstructor();
@@ -114,7 +114,7 @@ abstract class Enum extends Object implements Comparable
                     array_key_exists($name, $constructorArgs) && is_array($constructorArgs[$name])
                         && $numOfParams === count($constructorArgs[$name]),
                     'Invalid arguments are provided for constructor in %s:$%s',
-                    static::className(),
+                    self::className(),
                     $name
                 );
                 $constructor->invokeArgs($obj, $constructorArgs[$name]);
@@ -126,18 +126,18 @@ abstract class Enum extends Object implements Comparable
     /**
      * Must be called after your class definition!
      */
-    public static function init()
+    final public static function init()
     {
-        $className = static::className();
+        $className = self::className();
         self::$cache[$className] = [];
-        $reflectionClass = static::objectClass();
+        $reflectionClass = self::objectClass();
         $constructorParams = static::constructorArgs();
         $ordinal = 0;
-        foreach ($reflectionClass->getStaticProperties() as $name => $value) {
-            $property = new ReflectionProperty($className, $name);
+        foreach ($reflectionClass->getProperties(ReflectionProperty::IS_STATIC) as $property) {
             if ($property->isPublic()) {
-                $instance = static::newInstance($name, $constructorParams);
-                static::objectClass()->setStaticPropertyValue($name, $instance);
+                $name = $property->getName();
+                $instance = self::newInstance($name, $constructorParams);
+                $property->setValue($instance);
                 self::$cache[$className][$name] = $instance;
                 self::$ordinals[$className][$name] = $ordinal++;
             }
@@ -151,9 +151,9 @@ abstract class Enum extends Object implements Comparable
      * @return static
      * @throws InvalidArgumentException
      */
-    public static function valueOf($name)
+    final public static function valueOf($name)
     {
-        $className = static::className();
+        $className = self::className();
         Preconditions::checkArgument(
             array_key_exists($className, self::$cache) && array_key_exists($name, self::$cache[$className]),
             "The enum '%s' type has no constant with name '%s'",
@@ -166,9 +166,9 @@ abstract class Enum extends Object implements Comparable
     /**
      * @return static[]
      */
-    public static function values()
+    final public static function values()
     {
-        $className = static::className();
+        $className = self::className();
         return array_key_exists($className, self::$cache)
             ? self::$cache[$className]
             : [];
@@ -194,7 +194,7 @@ abstract class Enum extends Object implements Comparable
      *
      * @return string
      */
-    public function name()
+    final public function name()
     {
         return $this->name;
     }

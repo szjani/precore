@@ -36,7 +36,7 @@ abstract class Object implements ObjectInterface
      */
     final public static function objectClass()
     {
-        return ObjectClass::forName(static::className());
+        return ObjectClass::forName(self::className());
     }
 
     /**
@@ -44,7 +44,7 @@ abstract class Object implements ObjectInterface
      */
     final public function getObjectClass()
     {
-        return static::objectClass();
+        return self::objectClass();
     }
 
     /**
@@ -59,7 +59,7 @@ abstract class Object implements ObjectInterface
 
     final public function getClassName()
     {
-        return static::className();
+        return self::className();
     }
 
     /**
@@ -84,7 +84,7 @@ abstract class Object implements ObjectInterface
      */
     public static function getLogger()
     {
-        return LoggerFactory::getLogger(static::className());
+        return LoggerFactory::getLogger(self::className());
     }
 
     /**
