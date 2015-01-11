@@ -1,6 +1,6 @@
 <?php
 /*
- * Copyright (c) 2012-2014 Janos Szurovecz
+ * Copyright (c) 2012-2015 Janos Szurovecz
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of
  * this software and associated documentation files (the "Software"), to deal in
@@ -39,5 +39,16 @@ class ArraysTest extends PHPUnit_Framework_TestCase
         Arrays::sort($list);
         self::assertSame(Color::$RED, $list[0]);
         self::assertSame(Color::$BLUE, $list[1]);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSortWith()
+    {
+        $list = ['b', 'a'];
+        Arrays::sortWith($list, StringComparator::$BINARY);
+        self::assertSame('a', $list[0]);
+        self::assertSame('b', $list[1]);
     }
 }

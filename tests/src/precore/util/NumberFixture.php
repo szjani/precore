@@ -23,33 +23,24 @@
 
 namespace precore\util;
 
-use precore\lang\Comparable;
+use precore\lang\Enum;
 
 /**
- * @package precore\util
+ * Class NumberFixture
  *
+ * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Arrays
+final class NumberFixture extends Enum
 {
-    private function __construct()
-    {
-    }
+    /**
+     * @var NumberFixture
+     */
+    public static $ONE;
 
     /**
-     * @param array $list
-     * @param Comparator $comparator
+     * @var NumberFixture
      */
-    public static function sortWith(array &$list, Comparator $comparator)
-    {
-        usort($list, Collections::compareFunctionFor($comparator));
-    }
-
-    /**
-     * @param Comparable[] $list
-     */
-    public static function sort(array &$list)
-    {
-        usort($list, ComparableComparator::instance()->compareFunction());
-    }
+    public static $TWO;
 }
+NumberFixture::init();

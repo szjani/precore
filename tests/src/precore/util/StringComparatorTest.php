@@ -23,33 +23,48 @@
 
 namespace precore\util;
 
-use precore\lang\Comparable;
+use PHPUnit_Framework_TestCase;
 
 /**
- * @package precore\util
+ * Class NativeComparatorTest
  *
+ * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Arrays
+class StringComparatorTest extends PHPUnit_Framework_TestCase
 {
-    private function __construct()
+    /**
+     * @test
+     */
+    public function shouldCompareString()
     {
+        self::assertLessThan(0, StringComparator::$BINARY->compare('a', 'b'));
+        self::assertGreaterThan(0, StringComparator::$BINARY->compare('a', 'A'));
+        self::assertGreaterThan(0, StringComparator::$BINARY->compare('2', '10'));
     }
 
     /**
-     * @param array $list
-     * @param Comparator $comparator
+     * @test
      */
-    public static function sortWith(array &$list, Comparator $comparator)
+    public function shouldCompareCaseInsensitiveString()
     {
-        usort($list, Collections::compareFunctionFor($comparator));
+        self::assertEquals(0, StringComparator::$BINARY_CASE_INSENSITIVE->compare('a', 'A'));
     }
 
     /**
-     * @param Comparable[] $list
+     * @test
      */
-    public static function sort(array &$list)
+    public function shouldUseNaturalOrdering()
     {
-        usort($list, ComparableComparator::instance()->compareFunction());
+        self::assertLessThan(0, StringComparator::$NATURAL->compare('2', '10'));
+        self::assertGreaterThan(0, StringComparator::$NATURAL->compare('a2', 'A10'));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldUseCaseInsensitiveNaturalOrdering()
+    {
+        self::assertLessThan(0, StringComparator::$NATURAL_CASE_INSENSITIVE->compare('a2', 'A10'));
     }
 }
