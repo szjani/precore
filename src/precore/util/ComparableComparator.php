@@ -39,11 +39,6 @@ final class ComparableComparator implements Comparator
      */
     private static $instance;
 
-    /**
-     * @var callable
-     */
-    private $compareFunction;
-
     public static function init()
     {
         self::$instance = new self();
@@ -55,19 +50,6 @@ final class ComparableComparator implements Comparator
     public static function instance()
     {
         return self::$instance;
-    }
-
-    private function __construct()
-    {
-        $this->compareFunction = Collections::compareFunctionFor($this);
-    }
-
-    /**
-     * @return callable
-     */
-    public function compareFunction()
-    {
-        return $this->compareFunction;
     }
 
     /**
