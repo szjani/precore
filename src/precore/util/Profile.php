@@ -23,8 +23,6 @@
 
 namespace precore\util;
 
-use Doctrine\Common\Annotations\Annotation;
-
 /**
  * Annotation for profiling.
  *
