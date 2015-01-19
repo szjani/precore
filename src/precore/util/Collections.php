@@ -89,7 +89,7 @@ abstract class Collections
      * For example, suppose a is an array. Then:
      *
      * <pre>
-     *   Arrays.sortWith(a, Collections::reverseOrder());
+     *   Arrays::sortWith(a, Collections::reverseOrder());
      * </pre>
      *
      * sorts the array in reverse order.
