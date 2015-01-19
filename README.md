@@ -19,6 +19,7 @@ Precore is a common library which based on ideas coming from the Java world.
 5. [Preconditions](https://github.com/szjani/precore#5-preconditions)
 6. [Stopwatch](https://github.com/szjani/precore#6-stopwatch)
 7. [Profiler](https://github.com/szjani/precore#7-profiler)
+8. [Collections](https://github.com/szjani/precore#8-collections)
 
 For more information, click on the items. If you need even more information, check the phpdoc.
 
@@ -283,4 +284,82 @@ In the log:
     |-- Subtotal                 [very fast method]     0 µs.
  |-- elapsed time                         [exec]   30.5 ms.
  |-- Total                        [Main process]   30.5 ms.
+```
+
+8. Collections
+--------------
+
+Collection related static functions help you sorting objects. The comparing logic can be based on the `compareTo` method if objects implement `Comparable` interface,
+or you can utilize a `Comparator`. Currently `ArrayObject` instances and `array`s can be sorted, and an `SplHeap` implementation can be created
+for that. `StringComparator` enum contains the 4 basic string comparison algorithm provided by PHP.
+
+Using a heap to sort strings in natural order:
+
+```php
+$heap = Collections::createHeap(Collections::reverseOrder(StringComparator::$NATURAL));
+$heap->insert('rfc1.txt');
+$heap->insert('rfc2086.txt');
+$heap->insert('rfc822.txt');
+foreach ($heap as $string) {
+    echo $string . "\n";
+}
+```
+
+The above program results the following output:
+
+```
+rfc1.txt
+rfc822.txt
+rfc2086.txt
+```
+
+A more complex example, where the given people should be sorted according to their name. If the name is the same, their age must be considered:
+
+```php
+final class Person implements Comparable
+{
+    private $name;
+    private $age;
+
+    public function __construct($name, $age)
+    {
+        $this->name = Preconditions::checkNotNull($name);
+        $this->age = Preconditions::checkNotNull($age);
+    }
+
+    public function compareTo($object)
+    {
+        ObjectClass::forName(__CLASS__)->cast(Preconditions::checkNotNull($object));
+        /* @var $object Person */
+        return ComparisonChain::start()
+            ->withComparator($this->name, $object->name, StringComparator::$NATURAL_CASE_INSENSITIVE)
+            ->withClosure($this->age, $object->age, function ($age1, $age2) {
+                return $age1 - $age2;
+            })
+            ->result();
+    }
+
+    public function __toString()
+    {
+        return Objects::toStringHelper($this)
+            ->add($this->name)
+            ->add($this->age)
+            ->toString();
+    }
+}
+
+$array = [
+    new Person('John', 21),
+    new Person('Johnny', 10),
+    new Person('John', 70),
+    new Person('Mary', 13)
+];
+Arrays::sort($array);
+echo Objects::toStringHelper('people')->add($array)->toString();
+```
+
+This program prints out the following:
+
+```
+people{[0=Person{John, 21}, 1=Person{John, 70}, 2=Person{Johnny, 10}, 3=Person{Mary, 13}]}
 ```
