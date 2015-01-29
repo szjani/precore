@@ -355,11 +355,11 @@ $array = [
     new Person('Mary', 13)
 ];
 Arrays::sort($array);
-echo Objects::toStringHelper('people')->add($array)->toString();
+echo Joiner::on(', ')->join($array);
 ```
 
 This program prints out the following:
 
 ```
-people{[0=Person{John, 21}, 1=Person{John, 70}, 2=Person{Johnny, 10}, 3=Person{Mary, 13}]}
+Person{John, 21}, Person{John, 70}, Person{Johnny, 10}, Person{Mary, 13}
 ```
