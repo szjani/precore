@@ -23,6 +23,8 @@
 
 namespace precore\util;
 
+use DateTime;
+use ErrorException;
 use precore\lang\Object;
 
 /**
@@ -49,6 +51,29 @@ class ToStringHelper extends Object
     public function __construct($className)
     {
         $this->className = $className;
+    }
+
+    public static function valueToString($value)
+    {
+        $stringValue = null;
+        if ($value === null) {
+            $stringValue = 'null';
+        } elseif ($value instanceof DateTime) {
+            $stringValue = $value->format(DateTime::ISO8601);
+        } elseif (is_array($value)) {
+            $parts = [];
+            foreach ($value as $key => $valueItem) {
+                $parts[] = $key . '=' . self::valueToString($valueItem);
+            }
+            $stringValue = sprintf('[%s]', implode(', ', $parts));
+        } else {
+            try {
+                $stringValue = (string) $value;
+            } catch (ErrorException $e) {
+                $stringValue = spl_object_hash($value);
+            }
+        }
+        return $stringValue;
     }
 
     /**
