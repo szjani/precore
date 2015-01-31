@@ -6,6 +6,7 @@ use ArrayIterator;
 use CallbackFilterIterator;
 use Iterator;
 use IteratorIterator;
+use RuntimeException;
 use Traversable;
 
 /**
@@ -303,15 +304,8 @@ final class FixedLengthSplitter extends Splitter
 
 final class ConverterIterator extends IteratorIterator
 {
-    /**
-     * @var callable
-     */
     private $converter;
 
-    /**
-     * @param Iterator $iterator
-     * @param callable $converter
-     */
     public function __construct(Iterator $iterator, callable $converter)
     {
         parent::__construct($iterator);
@@ -369,6 +363,8 @@ final class SimpleSplitIterator implements Iterator
         if (!$this->started) {
             $this->started = true;
             $this->calculateCurrent();
+        } else {
+            throw new RuntimeException('this iterator cannot be rewound');
         }
     }
 
