@@ -4,7 +4,6 @@ namespace precore\util;
 
 use ArrayIterator;
 use CallbackFilterIterator;
-use FilterIterator;
 use Iterator;
 use IteratorIterator;
 use Traversable;
@@ -183,19 +182,19 @@ final class SimpleSplitter extends Splitter
     /**
      * @var bool
      */
-    private $lazy;
+    private $eager;
 
     /**
      * @param string $delimiter
-     * @param boolean $lazy
+     * @param boolean $eager
      * @param callable $converter
      */
-    public function __construct($delimiter, $lazy = true, callable $converter = null)
+    public function __construct($delimiter, $eager = false, callable $converter = null)
     {
         parent::__construct($converter);
         Preconditions::checkArgument(is_string($delimiter), 'delimiter must be a string');
         $this->delimiter = $delimiter;
-        $this->lazy = $lazy;
+        $this->eager = $eager;
     }
 
     /**
@@ -203,7 +202,7 @@ final class SimpleSplitter extends Splitter
      */
     public function eager()
     {
-        return new SimpleSplitter($this->delimiter, false, $this->converter());
+        return new SimpleSplitter($this->delimiter, true, $this->converter());
     }
 
     /**
@@ -212,7 +211,7 @@ final class SimpleSplitter extends Splitter
      */
     protected function copy(callable $newConverter)
     {
-        return new SimpleSplitter($this->delimiter, $this->lazy, $newConverter);
+        return new SimpleSplitter($this->delimiter, $this->eager, $newConverter);
     }
 
     /**
@@ -221,9 +220,9 @@ final class SimpleSplitter extends Splitter
      */
     protected function rawSplitIterator($input)
     {
-        return $this->lazy
-            ? new SimpleSplitIterator($this->delimiter, $input)
-            : new ArrayIterator(explode($this->delimiter, $input));
+        return $this->eager
+            ? new ArrayIterator(explode($this->delimiter, $input))
+            : new SimpleSplitIterator($this->delimiter, $input);
     }
 }
 
