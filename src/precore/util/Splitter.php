@@ -409,6 +409,7 @@ final class FixedLengthSplitIterator implements Iterator
     public function next()
     {
         $this->pos += $this->limitLength;
+        $this->calculateCurrent();
     }
 
     public function key()
@@ -418,12 +419,17 @@ final class FixedLengthSplitIterator implements Iterator
 
     public function valid()
     {
-        $this->current = mb_substr($this->input, $this->pos, $this->limitLength, Splitter::UTF_8);
         return $this->pos < $this->fullLength;
     }
 
     public function rewind()
     {
         $this->pos = 0;
+        $this->calculateCurrent();
+    }
+
+    private function calculateCurrent()
+    {
+        $this->current = mb_substr($this->input, $this->pos, $this->limitLength, Splitter::UTF_8);
     }
 }
