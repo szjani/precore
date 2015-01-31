@@ -13,7 +13,7 @@ use Traversable;
  */
 class SplitterTest extends PHPUnit_Framework_TestCase
 {
-    const A_SEPARATOR = ',';
+    const A_SEPARATOR = ',,';
 
     /**
      * @test
@@ -174,7 +174,23 @@ class SplitterTest extends PHPUnit_Framework_TestCase
         $input = '12345';
         $result = Splitter::fixedLength(3)->split($input);
         self::assertMatches(['123', '45'], $result);
+    }
 
+    /**
+     * @test
+     */
+    public function shouldHandleEmptyString()
+    {
+        self::assertMatches([''], Splitter::on(',')->split(''));
+        self::assertMatches([], Splitter::on(',')->omitEmptyStrings()->split(''));
+        self::assertMatches([], Splitter::fixedLength(3)->split(''));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldTrimAndOmitFixedLengthSplit()
+    {
         $input = '12 456   7 ';
         $result = Splitter::fixedLength(3)
             ->trimResults()
@@ -190,9 +206,12 @@ class SplitterTest extends PHPUnit_Framework_TestCase
     private static function assertMatches(array $expected, Traversable $result)
     {
         reset($expected);
+        $counter = 0;
         foreach ($result as $item) {
             self::assertEquals(current($expected), $item);
             next($expected);
+            $counter++;
         }
+        self::assertEquals(count($expected), $counter);
     }
 }

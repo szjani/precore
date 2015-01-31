@@ -3,6 +3,8 @@
 namespace precore\util;
 
 use ArrayIterator;
+use FilterIterator;
+use Iterator;
 use Traversable;
 
 /**
@@ -98,9 +100,9 @@ abstract class Splitter
 
     /**
      * @param $input
-     * @return array
+     * @return Iterator
      */
-    protected abstract function rawSplit($input);
+    protected abstract function rawSplitIterator($input);
 
     /**
      * Returns a splitter that behaves equivalently to this splitter, but
@@ -150,15 +152,7 @@ abstract class Splitter
     public final function split($input)
     {
         Preconditions::checkArgument(is_string($input), 'input must be a string');
-        $unfilteredResult = $this->rawSplit($input);
-        $result = [];
-        foreach ($unfilteredResult as $item) {
-            $value = call_user_func($this->converter, $item);
-            if ($value !== null) {
-                $result[] = $value;
-            }
-        }
-        return new ArrayIterator($result);
+        return new ConverterFilterIterator($this->rawSplitIterator($input), $this->converter);
     }
 }
 
@@ -191,11 +185,11 @@ final class SimpleSplitter extends Splitter
 
     /**
      * @param $input
-     * @return array
+     * @return Iterator
      */
-    protected function rawSplit($input)
+    protected function rawSplitIterator($input)
     {
-        return explode($this->delimiter, $input);
+        return new SimpleSplitIterator($this->delimiter, $input);
     }
 }
 
@@ -228,11 +222,11 @@ final class PatternSplitter extends Splitter
 
     /**
      * @param $input
-     * @return array
+     * @return Iterator
      */
-    protected function rawSplit($input)
+    protected function rawSplitIterator($input)
     {
-        return preg_split($this->pattern, $input);
+        return new ArrayIterator(preg_split($this->pattern, $input));
     }
 }
 
@@ -266,15 +260,143 @@ final class FixedLengthSplitter extends Splitter
 
     /**
      * @param $input
-     * @return array
+     * @return Iterator
      */
-    protected function rawSplit($input)
+    protected function rawSplitIterator($input)
     {
-        $result = [];
-        $length = mb_strlen($input);
-        for ($i = 0; $i + $this->length <= $length; $i += $this->length) {
-            $result[] = mb_substr($input, $i, $this->length);
+        return new FixedLengthSplitIterator($this->length, $input);
+    }
+}
+
+final class ConverterFilterIterator extends FilterIterator
+{
+    /**
+     * @var callable
+     */
+    private $converter;
+
+    /**
+     * @param Iterator $iterator
+     * @param callable $converter
+     */
+    public function __construct(Iterator $iterator, callable $converter)
+    {
+        parent::__construct($iterator);
+        $this->converter = $converter;
+    }
+
+    public function accept()
+    {
+        return $this->current() !== null;
+    }
+
+    public function current()
+    {
+        return call_user_func($this->converter, parent::current());
+    }
+}
+
+final class SimpleSplitIterator implements Iterator
+{
+    private $origInput;
+    private $origInputLength;
+    private $delimiter;
+    private $delimiterLength;
+    private $input;
+    private $length = 0;
+    private $current;
+
+    public function __construct($delimiter, $input)
+    {
+        $this->delimiter = $delimiter;
+        $this->delimiterLength = mb_strlen($delimiter);
+        $this->input = $input;
+        $this->origInput = $input;
+        $this->origInputLength = mb_strlen($input);
+    }
+
+    public function current()
+    {
+        return $this->current;
+    }
+
+    public function next()
+    {
+        if ($this->length !== null) {
+            $this->input = mb_substr($this->input, $this->length + $this->delimiterLength);
+            $this->calculateCurrent();
+        } else {
+            $this->current = null;
         }
-        return $result;
+    }
+
+    public function key()
+    {
+        return null;
+    }
+
+    public function valid()
+    {
+        return $this->current !== null;
+    }
+
+    public function rewind()
+    {
+        $this->input = $this->origInput;
+        $this->length = 0;
+        $this->calculateCurrent();
+    }
+
+    private function calculateCurrent()
+    {
+        $this->length = mb_strpos($this->input, $this->delimiter);
+        if ($this->length === false) {
+            $this->length = null;
+            $this->current = $this->input;
+        } else {
+            $this->current = mb_substr($this->input, 0, $this->length);
+        }
+    }
+}
+
+final class FixedLengthSplitIterator implements Iterator
+{
+    private $fullLength;
+    private $limitLength;
+    private $input;
+    private $current;
+    private $pos = 0;
+
+    public function __construct($limitLength, $input)
+    {
+        $this->fullLength = mb_strlen($input);
+        $this->limitLength = $limitLength;
+        $this->input = $input;
+    }
+
+    public function current()
+    {
+        return $this->current;
+    }
+
+    public function next()
+    {
+        $this->pos += $this->limitLength;
+    }
+
+    public function key()
+    {
+        return null;
+    }
+
+    public function valid()
+    {
+        $this->current = mb_substr($this->input, $this->pos, $this->limitLength);
+        return $this->pos < $this->fullLength;
+    }
+
+    public function rewind()
+    {
+        $this->pos = 0;
     }
 }
