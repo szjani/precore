@@ -47,6 +47,8 @@ use Traversable;
  */
 abstract class Splitter
 {
+    const UTF_8 = 'UTF-8';
+
     /**
      * @var callable
      */
@@ -309,10 +311,10 @@ final class SimpleSplitIterator implements Iterator
     public function __construct($delimiter, $input)
     {
         $this->delimiter = $delimiter;
-        $this->delimiterLength = mb_strlen($delimiter);
+        $this->delimiterLength = mb_strlen($delimiter, Splitter::UTF_8);
         $this->input = $input;
         $this->origInput = $input;
-        $this->origInputLength = mb_strlen($input);
+        $this->origInputLength = mb_strlen($input, Splitter::UTF_8);
     }
 
     public function current()
@@ -323,7 +325,7 @@ final class SimpleSplitIterator implements Iterator
     public function next()
     {
         if ($this->length !== null) {
-            $this->input = mb_substr($this->input, $this->length + $this->delimiterLength);
+            $this->input = mb_substr($this->input, $this->length + $this->delimiterLength, null, Splitter::UTF_8);
             $this->calculateCurrent();
         } else {
             $this->current = null;
@@ -349,12 +351,12 @@ final class SimpleSplitIterator implements Iterator
 
     private function calculateCurrent()
     {
-        $this->length = mb_strpos($this->input, $this->delimiter);
+        $this->length = mb_strpos($this->input, $this->delimiter, null, Splitter::UTF_8);
         if ($this->length === false) {
             $this->length = null;
             $this->current = $this->input;
         } else {
-            $this->current = mb_substr($this->input, 0, $this->length);
+            $this->current = mb_substr($this->input, 0, $this->length, Splitter::UTF_8);
         }
     }
 }
@@ -369,7 +371,7 @@ final class FixedLengthSplitIterator implements Iterator
 
     public function __construct($limitLength, $input)
     {
-        $this->fullLength = mb_strlen($input);
+        $this->fullLength = mb_strlen($input, Splitter::UTF_8);
         $this->limitLength = $limitLength;
         $this->input = $input;
     }
@@ -391,7 +393,7 @@ final class FixedLengthSplitIterator implements Iterator
 
     public function valid()
     {
-        $this->current = mb_substr($this->input, $this->pos, $this->limitLength);
+        $this->current = mb_substr($this->input, $this->pos, $this->limitLength, Splitter::UTF_8);
         return $this->pos < $this->fullLength;
     }
 
