@@ -3,8 +3,10 @@
 namespace precore\util;
 
 use ArrayIterator;
+use CallbackFilterIterator;
 use FilterIterator;
 use Iterator;
+use IteratorIterator;
 use Traversable;
 
 /**
@@ -162,7 +164,12 @@ abstract class Splitter
     public final function split($input)
     {
         Preconditions::checkArgument(is_string($input), 'input must be a string');
-        return new ConverterFilterIterator($this->rawSplitIterator($input), $this->converter);
+        return new CallbackFilterIterator(
+            new ConverterIterator($this->rawSplitIterator($input), $this->converter),
+            function ($current) {
+                return $current !== null;
+            }
+        );
     }
 }
 
@@ -295,7 +302,7 @@ final class FixedLengthSplitter extends Splitter
     }
 }
 
-final class ConverterFilterIterator extends FilterIterator
+final class ConverterIterator extends IteratorIterator
 {
     /**
      * @var callable
@@ -312,11 +319,6 @@ final class ConverterFilterIterator extends FilterIterator
         $this->converter = $converter;
     }
 
-    public function accept()
-    {
-        return $this->current() !== null;
-    }
-
     public function current()
     {
         return call_user_func($this->converter, parent::current());
@@ -325,21 +327,18 @@ final class ConverterFilterIterator extends FilterIterator
 
 final class SimpleSplitIterator implements Iterator
 {
-    private $origInput;
-    private $origInputLength;
     private $delimiter;
     private $delimiterLength;
     private $input;
-    private $length = 0;
+    private $end = false;
     private $current;
+    private $started = false;
 
     public function __construct($delimiter, $input)
     {
         $this->delimiter = $delimiter;
         $this->delimiterLength = mb_strlen($delimiter, Splitter::UTF_8);
         $this->input = $input;
-        $this->origInput = $input;
-        $this->origInputLength = mb_strlen($input, Splitter::UTF_8);
     }
 
     public function current()
@@ -349,8 +348,7 @@ final class SimpleSplitIterator implements Iterator
 
     public function next()
     {
-        if ($this->length !== null) {
-            $this->input = mb_substr($this->input, $this->length + $this->delimiterLength, null, Splitter::UTF_8);
+        if (!$this->end) {
             $this->calculateCurrent();
         } else {
             $this->current = null;
@@ -369,19 +367,21 @@ final class SimpleSplitIterator implements Iterator
 
     public function rewind()
     {
-        $this->input = $this->origInput;
-        $this->length = 0;
-        $this->calculateCurrent();
+        if (!$this->started) {
+            $this->started = true;
+            $this->calculateCurrent();
+        }
     }
 
     private function calculateCurrent()
     {
-        $this->length = mb_strpos($this->input, $this->delimiter, null, Splitter::UTF_8);
-        if ($this->length === false) {
-            $this->length = null;
+        $delimiterPos = mb_strpos($this->input, $this->delimiter, null, Splitter::UTF_8);
+        if ($delimiterPos === false) {
+            $this->end = true;
             $this->current = $this->input;
         } else {
-            $this->current = mb_substr($this->input, 0, $this->length, Splitter::UTF_8);
+            $this->current = mb_substr($this->input, 0, $delimiterPos, Splitter::UTF_8);
+            $this->input = mb_substr($this->input, $delimiterPos + $this->delimiterLength, null, Splitter::UTF_8);
         }
     }
 }
