@@ -21,9 +21,8 @@ class SplitterTest extends PHPUnit_Framework_TestCase
     public function shouldReturnInputIfSeparatorNotFound()
     {
         $input = 'test';
-        $result = Splitter::on(self::A_SEPARATOR)->split($input);
-
-        self::assertMatches([$input], $result);
+        self::assertMatches([$input], Splitter::on(self::A_SEPARATOR)->split($input));
+        self::assertMatches([$input], Splitter::on(self::A_SEPARATOR)->eager()->split($input));
     }
 
     /**
@@ -34,8 +33,9 @@ class SplitterTest extends PHPUnit_Framework_TestCase
         $part1 = 'part1';
         $part2 = 'part2';
         $input = $part1 . self::A_SEPARATOR . $part2;
-        $result = Splitter::on(self::A_SEPARATOR)->split($input);
-        self::assertMatches([$part1, $part2], $result);
+        $expected = [$part1, $part2];
+        self::assertMatches($expected, Splitter::on(self::A_SEPARATOR)->split($input));
+        self::assertMatches($expected, Splitter::on(self::A_SEPARATOR)->eager()->split($input));
     }
 
     /**
@@ -62,8 +62,9 @@ class SplitterTest extends PHPUnit_Framework_TestCase
     public function shouldTrimResults()
     {
         $input = 'foo,bar,   qux';
-        $result = Splitter::on(',')->trimResults()->split($input);
-        self::assertMatches(['foo', 'bar', 'qux'], $result);
+        $expected = ['foo', 'bar', 'qux'];
+        self::assertMatches($expected, Splitter::on(',')->trimResults()->split($input));
+        self::assertMatches($expected, Splitter::on(',')->trimResults()->eager()->split($input));
     }
 
     /**
@@ -72,8 +73,9 @@ class SplitterTest extends PHPUnit_Framework_TestCase
     public function shouldOmitEmptyStrings()
     {
         $input = 'foo,bar,,qux';
-        $result = Splitter::on(',')->omitEmptyStrings()->split($input);
-        self::assertMatches(['foo', 'bar', 'qux'], $result);
+        $expected = ['foo', 'bar', 'qux'];
+        self::assertMatches($expected, Splitter::on(',')->omitEmptyStrings()->split($input));
+        self::assertMatches($expected, Splitter::on(',')->omitEmptyStrings()->eager()->split($input));
     }
 
     /**

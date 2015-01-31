@@ -56,7 +56,7 @@ abstract class Splitter
 
     /**
      * @param $delimiter
-     * @return Splitter
+     * @return SimpleSplitter
      */
     public static function on($delimiter)
     {
@@ -65,7 +65,7 @@ abstract class Splitter
 
     /**
      * @param string $pattern
-     * @return Splitter
+     * @return PatternSplitter
      */
     public static function onPattern($pattern)
     {
@@ -74,7 +74,7 @@ abstract class Splitter
 
     /**
      * @param int $length
-     * @return Splitter
+     * @return FixedLengthSplitter
      */
     public static function fixedLength($length)
     {
@@ -96,7 +96,7 @@ abstract class Splitter
 
     /**
      * @param callable $newConverter
-     * @return Splitter
+     * @return static
      */
     protected abstract function copy(callable $newConverter);
 
@@ -107,6 +107,14 @@ abstract class Splitter
     protected abstract function rawSplitIterator($input);
 
     /**
+     * @return callable
+     */
+    protected function converter()
+    {
+        return $this->converter;
+    }
+
+    /**
      * Returns a splitter that behaves equivalently to this splitter, but
      * automatically removes leading and trailing whitespace characters
      * from each returned substring. For example
@@ -115,7 +123,7 @@ abstract class Splitter
      * </pre>
      * returns a Traversable containing ["a", "b", "c"].
      *
-     * @return Splitter
+     * @return static
      */
     public final function trimResults()
     {
@@ -135,7 +143,7 @@ abstract class Splitter
      * </pre>
      * returns a Traversable containing only ["a", "b", "c"].
      *
-     * @return Splitter
+     * @return static
      */
     public final function omitEmptyStrings()
     {
@@ -166,14 +174,29 @@ final class SimpleSplitter extends Splitter
     private $delimiter;
 
     /**
-     * @param $delimiter
+     * @var bool
+     */
+    private $lazy;
+
+    /**
+     * @param string $delimiter
+     * @param boolean $lazy
      * @param callable $converter
      */
-    public function __construct($delimiter, callable $converter = null)
+    public function __construct($delimiter, $lazy = true, callable $converter = null)
     {
         parent::__construct($converter);
         Preconditions::checkArgument(is_string($delimiter), 'delimiter must be a string');
         $this->delimiter = $delimiter;
+        $this->lazy = $lazy;
+    }
+
+    /**
+     * @return SimpleSplitter
+     */
+    public function eager()
+    {
+        return new SimpleSplitter($this->delimiter, false, $this->converter());
     }
 
     /**
@@ -182,7 +205,7 @@ final class SimpleSplitter extends Splitter
      */
     protected function copy(callable $newConverter)
     {
-        return new SimpleSplitter($this->delimiter, $newConverter);
+        return new SimpleSplitter($this->delimiter, $this->lazy, $newConverter);
     }
 
     /**
@@ -191,7 +214,9 @@ final class SimpleSplitter extends Splitter
      */
     protected function rawSplitIterator($input)
     {
-        return new SimpleSplitIterator($this->delimiter, $input);
+        return $this->lazy
+            ? new SimpleSplitIterator($this->delimiter, $input)
+            : new ArrayIterator(explode($this->delimiter, $input));
     }
 }
 
