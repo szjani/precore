@@ -20,6 +20,7 @@ Precore is a common library which based on ideas coming from the Java world.
 6. [Stopwatch](https://github.com/szjani/precore#6-stopwatch)
 7. [Profiler](https://github.com/szjani/precore#7-profiler)
 8. [Collections](https://github.com/szjani/precore#8-collections)
+9. [String utilities](https://github.com/szjani/precore#9-string-utilities)
 
 For more information, click on the items. If you need even more information, check the phpdoc.
 
@@ -375,7 +376,7 @@ Although PHP provides `implode()` function, skipping or replacing `null`s is not
 ```php
 $joiner = Joiner::on(', ')->skipNulls();
 $joiner->join(['Harry', null, 'Ron', 'Hermione']);
-// returns Harry, Ron, Hermione
+// returns 'Harry, Ron, Hermione'
 ```
 
 ### Splitter
