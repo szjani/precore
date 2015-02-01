@@ -363,3 +363,46 @@ This program prints out the following:
 ```
 Person{John, 21}, Person{John, 70}, Person{Johnny, 10}, Person{Mary, 13}
 ```
+
+9. String utilities
+-------------------
+
+### Joiner
+
+Although PHP provides `implode()` function, skipping or replacing `null`s is not simple, moreover
+`array` or `DateTime` cannot be passed as parameter. Joiner solves all of it.
+
+```php
+$joiner = Joiner::on(', ')->skipNulls();
+$joiner->join(['Harry', null, 'Ron', 'Hermione']);
+// returns Harry, Ron, Hermione
+```
+
+### Splitter
+
+Splitter is the opposite of `Joiner`. Compared with `explode()`, it can trim the results, and skip empty strings.
+
+```php
+$result = Splitter::on(',')
+    ->trimResults()
+    ->omitEmptyStrings()
+    ->split('foo,bar, ,   qux');
+```
+
+The `$result` variable is a `Traversable`, iterating over it the following items will be provided: `'foo', 'bar', 'qux'`
+
+Splitting is possible with a regular expression:
+
+```php
+$result = Splitter::onPattern('/[\s,]+/')->split('hypertext language, programming');
+```
+
+The output is the following: `'hypertext', 'language', 'programming'`
+
+It is also possible to split strings into substrings of a specified fixed length:
+
+```php
+$result = Splitter::fixedLength(3)->split('1234567');
+```
+
+The result will be the following: `'123', '456', '7'`
