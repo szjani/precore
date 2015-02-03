@@ -24,7 +24,6 @@
 namespace precore\util;
 
 use ArrayIterator;
-use precore\lang\NullPointerException;
 use Traversable;
 
 /**
@@ -68,10 +67,7 @@ final class Joiner
         Preconditions::checkArgument(is_string($separator), 'separator must be a string');
         if ($converter === null) {
             $converter = function ($element) {
-                if ($element === null) {
-                    throw new NullPointerException('An element is null in the given collection');
-                };
-                return $element;
+                return Preconditions::checkNotNull($element, 'An element is null in the given collection');
             };
         }
         $this->separator = $separator;
