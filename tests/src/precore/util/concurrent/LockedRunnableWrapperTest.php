@@ -47,7 +47,7 @@ class LockedRunnableWrapperTest extends PHPUnit_Framework_TestCase
     public function testRunWithException()
     {
         $lock = new FileLock(new SplFileInfo(__DIR__ . '/.LockedRunnableWrapperTest'));
-        $expectedException = new Exception('Must be throwed!');
+        $expectedException = new Exception('Must be thrown!');
         $runnable = $this->getMock('precore\lang\Runnable');
         $runnable
             ->expects(self::once())
@@ -56,7 +56,7 @@ class LockedRunnableWrapperTest extends PHPUnit_Framework_TestCase
         $wrapper = new LockedRunnableWrapper($runnable, $lock);
         try {
             $wrapper->run();
-            self::fail('Exception should have been throwed!');
+            self::fail('Exception should have been thrown!');
         } catch (Exception $e) {
             self::assertInstanceOf('precore\lang\RunException', $e);
             self::assertSame($expectedException, $e->getPrevious());
