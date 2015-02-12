@@ -85,6 +85,15 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
         self::assertNull($filePath);
     }
 
+    /**
+     * @test
+     */
+    public function shouldCastNullToEverything()
+    {
+        $res = Object::objectClass()->cast(null);
+        self::assertNull($res);
+    }
+
     public function testCast()
     {
         $objectClass = new ObjectClass(Object::className());

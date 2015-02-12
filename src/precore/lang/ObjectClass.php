@@ -113,6 +113,7 @@ class ObjectClass extends ReflectionClass
 
     /**
      * Check whether $object can be cast to $this->getName().
+     * Note, that null can be cast to anything. In other words, it returns null if the given object is null.
      *
      * @param object $object
      * @return object $object itself
@@ -120,7 +121,7 @@ class ObjectClass extends ReflectionClass
      */
     public function cast($object)
     {
-        if (!$this->isInstance($object)) {
+        if ($object !== null && !$this->isInstance($object)) {
             $objectClass = get_class($object);
             throw new ClassCastException("'{$objectClass}' cannot be cast to '{$this->getName()}'");
         }
