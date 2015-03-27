@@ -24,6 +24,7 @@
 namespace precore\util;
 
 use ArrayIterator;
+use CallbackFilterIterator;
 use Traversable;
 
 /**
@@ -45,33 +46,21 @@ use Traversable;
  */
 final class Joiner
 {
-    /**
-     * @var string
-     */
     private $separator;
-
-    /**
-     * input element -> output element conversion
-     * If the return value is null, it will be omitted from the output.
-     *
-     * @var callable
-     */
-    private $converter;
+    private $skipNulls;
+    private $useForNull;
 
     /**
      * @param $separator
-     * @param callable $converter
+     * @param $skipNulls
+     * @param $useForNull
      */
-    private function __construct($separator, callable $converter = null)
+    private function __construct($separator, $skipNulls, $useForNull)
     {
         Preconditions::checkArgument(is_string($separator), 'separator must be a string');
-        if ($converter === null) {
-            $converter = function ($element) {
-                return Preconditions::checkNotNull($element, 'An element is null in the given collection');
-            };
-        }
         $this->separator = $separator;
-        $this->converter = $converter;
+        $this->skipNulls = $skipNulls;
+        $this->useForNull = $useForNull;
     }
 
     /**
@@ -82,7 +71,7 @@ final class Joiner
      */
     public static function on($separator)
     {
-        return new Joiner($separator);
+        return new Joiner($separator, false, null);
     }
 
     /**
@@ -93,11 +82,7 @@ final class Joiner
      */
     public function skipNulls()
     {
-        return new Joiner($this->separator,
-            function ($element) {
-                return $element;
-            }
-        );
+        return new Joiner($this->separator, true, $this->useForNull);
     }
 
     /**
@@ -110,12 +95,7 @@ final class Joiner
     public function useForNull($nullText)
     {
         Preconditions::checkArgument(is_string($nullText), 'nullText must be a string');
-        return new Joiner(
-            $this->separator,
-            function ($element) use ($nullText) {
-                return $element !== null ? $element : $nullText;
-            }
-        );
+        return new Joiner($this->separator, $this->skipNulls, $nullText);
     }
 
     /**
@@ -131,13 +111,24 @@ final class Joiner
             $parts = new ArrayIterator($parts);
         }
         Preconditions::checkArgument($parts instanceof Traversable, 'parts must be an array or a Traversable');
-        $transformed = [];
-        foreach ($parts as $part) {
-            $value = call_user_func($this->converter, $part);
-            if ($value !== null) {
-                $transformed[] = ToStringHelper::valueToString($value);
+        $iterator = new CallbackFilterIterator(
+            new TransformerIterator(
+                $parts,
+                function ($element) {
+                    return $element !== null ? $element : $this->useForNull;
+                }
+            ),
+            function ($element) {
+                if (!$this->skipNulls) {
+                    Preconditions::checkNotNull($element, "There is a null input, consider to use skipNulls()");
+                }
+                return $element !== null;
             }
+        );
+        $result = [];
+        foreach ($iterator as $element) {
+            $result[] = ToStringHelper::valueToString($element);
         }
-        return implode($this->separator, $transformed);
+        return implode($this->separator, $result);
     }
 }

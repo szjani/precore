@@ -5,7 +5,6 @@ namespace precore\util;
 use ArrayIterator;
 use CallbackFilterIterator;
 use Iterator;
-use IteratorIterator;
 use RuntimeException;
 use Traversable;
 
@@ -51,10 +50,8 @@ abstract class Splitter
 {
     const UTF_8 = 'UTF-8';
 
-    /**
-     * @var callable
-     */
-    private $converter;
+    protected $omitEmptyStrings;
+    protected $trimResults;
 
     /**
      * @param $delimiter
@@ -62,7 +59,7 @@ abstract class Splitter
      */
     public static function on($delimiter)
     {
-        return new SimpleSplitter($delimiter);
+        return new SimpleSplitter($delimiter, false, false);
     }
 
     /**
@@ -71,7 +68,7 @@ abstract class Splitter
      */
     public static function onPattern($pattern)
     {
-        return new PatternSplitter($pattern);
+        return new PatternSplitter($pattern, false, false);
     }
 
     /**
@@ -80,41 +77,25 @@ abstract class Splitter
      */
     public static function fixedLength($length)
     {
-        return new FixedLengthSplitter($length);
+        return new FixedLengthSplitter($length, false, false);
     }
 
-    /**
-     * @param callable $converter
-     */
-    protected function __construct(callable $converter = null)
+    protected function __construct($trimResult, $omitEmptyStrings)
     {
-        if ($converter === null) {
-            $converter = function ($element) {
-                return $element;
-            };
-        }
-        $this->converter = $converter;
+        $this->trimResults = $trimResult;
+        $this->omitEmptyStrings = $omitEmptyStrings;
     }
 
     /**
-     * @param callable $newConverter
      * @return static
      */
-    protected abstract function copy(callable $newConverter);
+    protected abstract function copy();
 
     /**
      * @param $input
      * @return Iterator
      */
     protected abstract function rawSplitIterator($input);
-
-    /**
-     * @return callable
-     */
-    protected function converter()
-    {
-        return $this->converter;
-    }
 
     /**
      * Returns a splitter that behaves equivalently to this splitter, but
@@ -129,12 +110,10 @@ abstract class Splitter
      */
     public final function trimResults()
     {
-        return $this->copy(
-            function ($element) {
-                $element = $element === null ? null : trim($element);
-                return call_user_func($this->converter, $element);
-            }
-        );
+        $splitter = $this->copy();
+        $splitter->omitEmptyStrings = $this->omitEmptyStrings;
+        $splitter->trimResults = true;
+        return $splitter;
     }
 
     /**
@@ -149,12 +128,10 @@ abstract class Splitter
      */
     public final function omitEmptyStrings()
     {
-        return $this->copy(
-            function ($element) {
-                $element = call_user_func($this->converter, $element);
-                return $element === '' ? null : $element;
-            }
-        );
+        $splitter = $this->copy();
+        $splitter->omitEmptyStrings = true;
+        $splitter->trimResults = $this->trimResults;
+        return $splitter;
     }
 
     /**
@@ -165,7 +142,17 @@ abstract class Splitter
     {
         Preconditions::checkArgument(is_string($input), 'input must be a string');
         return new CallbackFilterIterator(
-            new ConverterIterator($this->rawSplitIterator($input), $this->converter),
+            new CallbackFilterIterator(
+                new TransformerIterator(
+                    $this->rawSplitIterator($input),
+                    function ($element) {
+                        return $this->trimResults ? trim($element) : $element;
+                    }
+                ),
+                function ($element) {
+                    return !$this->omitEmptyStrings || $element !== '';
+                }
+            ),
             function ($current) {
                 return $current !== null;
             }
@@ -187,12 +174,13 @@ final class SimpleSplitter extends Splitter
 
     /**
      * @param string $delimiter
+     * @param $trimResult
+     * @param $omitEmptyStrings
      * @param boolean $eager
-     * @param callable $converter
      */
-    public function __construct($delimiter, $eager = false, callable $converter = null)
+    public function __construct($delimiter, $trimResult, $omitEmptyStrings, $eager = false)
     {
-        parent::__construct($converter);
+        parent::__construct($trimResult, $omitEmptyStrings);
         Preconditions::checkArgument(is_string($delimiter), 'delimiter must be a string');
         $this->delimiter = $delimiter;
         $this->eager = $eager;
@@ -203,16 +191,15 @@ final class SimpleSplitter extends Splitter
      */
     public function eager()
     {
-        return new SimpleSplitter($this->delimiter, true, $this->converter());
+        return new SimpleSplitter($this->delimiter, $this->trimResults, $this->omitEmptyStrings, true);
     }
 
     /**
-     * @param callable $newConverter
      * @return Splitter
      */
-    protected function copy(callable $newConverter)
+    protected function copy()
     {
-        return new SimpleSplitter($this->delimiter, $this->eager, $newConverter);
+        return new SimpleSplitter($this->delimiter, $this->trimResults, $this->omitEmptyStrings, $this->eager);
     }
 
     /**
@@ -236,22 +223,22 @@ final class PatternSplitter extends Splitter
 
     /**
      * @param string $pattern
-     * @param callable $converter
+     * @param $trimResult
+     * @param $omitEmptyStrings
      */
-    protected function __construct($pattern, callable $converter = null)
+    protected function __construct($pattern, $trimResult, $omitEmptyStrings)
     {
-        parent::__construct($converter);
+        parent::__construct($trimResult, $omitEmptyStrings);
         Preconditions::checkArgument(is_string($pattern), 'pattern must be a string');
         $this->pattern = $pattern;
     }
 
     /**
-     * @param callable $newConverter
      * @return Splitter
      */
-    protected function copy(callable $newConverter)
+    protected function copy()
     {
-        return new PatternSplitter($this->pattern, $newConverter);
+        return new PatternSplitter($this->pattern, $this->trimResults, $this->omitEmptyStrings);
     }
 
     /**
@@ -273,23 +260,23 @@ final class FixedLengthSplitter extends Splitter
 
     /**
      * @param int $length
-     * @param callable $converter
+     * @param $trimResult
+     * @param $omitEmptyStrings
      */
-    protected function __construct($length, callable $converter = null)
+    protected function __construct($length, $trimResult, $omitEmptyStrings)
     {
-        parent::__construct($converter);
+        parent::__construct($trimResult, $omitEmptyStrings);
         Preconditions::checkArgument(is_int($length) && 0 < $length, 'length must be a positive integer');
         $this->length = $length;
     }
 
 
     /**
-     * @param callable $newConverter
      * @return Splitter
      */
-    protected function copy(callable $newConverter)
+    protected function copy()
     {
-        return new FixedLengthSplitter($this->length, $newConverter);
+        return new FixedLengthSplitter($this->length, $this->trimResults, $this->omitEmptyStrings);
     }
 
     /**
@@ -299,22 +286,6 @@ final class FixedLengthSplitter extends Splitter
     protected function rawSplitIterator($input)
     {
         return new FixedLengthSplitIterator($this->length, $input);
-    }
-}
-
-final class ConverterIterator extends IteratorIterator
-{
-    private $converter;
-
-    public function __construct(Iterator $iterator, callable $converter)
-    {
-        parent::__construct($iterator);
-        $this->converter = $converter;
-    }
-
-    public function current()
-    {
-        return call_user_func($this->converter, parent::current());
     }
 }
 
