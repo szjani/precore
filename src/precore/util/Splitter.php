@@ -142,19 +142,14 @@ abstract class Splitter
     {
         Preconditions::checkArgument(is_string($input), 'input must be a string');
         return new CallbackFilterIterator(
-            new CallbackFilterIterator(
-                new TransformerIterator(
-                    $this->rawSplitIterator($input),
-                    function ($element) {
-                        return $this->trimResults ? trim($element) : $element;
-                    }
-                ),
+            new TransformerIterator(
+                $this->rawSplitIterator($input),
                 function ($element) {
-                    return !$this->omitEmptyStrings || $element !== '';
+                    return $this->trimResults ? trim($element) : $element;
                 }
             ),
-            function ($current) {
-                return $current !== null;
+            function ($element) {
+                return !$this->omitEmptyStrings || $element !== '';
             }
         );
     }
