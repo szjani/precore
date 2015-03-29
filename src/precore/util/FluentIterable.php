@@ -64,7 +64,7 @@ final class FluentIterable implements IteratorAggregate
      * @param array $array
      * @return FluentIterable
      */
-    public static function fromArray(array $array)
+    public static function of(array $array)
     {
         return self::from(Iterables::fromArray($array));
     }

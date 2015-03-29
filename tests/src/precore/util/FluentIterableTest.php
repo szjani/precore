@@ -38,7 +38,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldFilterItems()
     {
-        $fluentIterable = FluentIterable::fromArray([1, null, 2, 3])->filter(Predicates::notNull());
+        $fluentIterable = FluentIterable::of([1, null, 2, 3])->filter(Predicates::notNull());
         self::assertEquals([1, 2, 3], $fluentIterable->toArray());
         self::assertEquals([1, 2, 3], $fluentIterable->toArray());
     }
@@ -48,7 +48,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldLimitItems()
     {
-        $result = FluentIterable::fromArray([1, 2, 3])->limit(2)->toArray();
+        $result = FluentIterable::of([1, 2, 3])->limit(2)->toArray();
         self::assertEquals([1, 2], $result);
     }
 
@@ -60,7 +60,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
         $double = function ($number) {
             return 2 * $number;
         };
-        $result = FluentIterable::fromArray([1, 2, 3])->transform($double)->toArray();
+        $result = FluentIterable::of([1, 2, 3])->transform($double)->toArray();
         self::assertEquals([2, 4, 6], $result);
     }
 
@@ -75,7 +75,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
         $smallerThanFive = function ($number) {
             return $number < 5;
         };
-        $result = FluentIterable::fromArray([1, 2, 3])->transform($double)->filter($smallerThanFive)->toArray();
+        $result = FluentIterable::of([1, 2, 3])->transform($double)->filter($smallerThanFive)->toArray();
         self::assertEquals([2, 4], $result);
     }
 
@@ -84,7 +84,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldRemoveZerosAndNulls()
     {
-        $result = FluentIterable::fromArray([1, 0, 3, null, 3, 0, 4])
+        $result = FluentIterable::of([1, 0, 3, null, 3, 0, 4])
             ->filter(
                 Predicates::ands(
                     Predicates::notNull(),
@@ -100,7 +100,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldSkipItems()
     {
-        $fluentIterable = FluentIterable::fromArray([1, 2, 3]);
+        $fluentIterable = FluentIterable::of([1, 2, 3]);
         self::assertEquals([2, 3], $fluentIterable->skip(1)->toArray());
         self::assertEquals([], $fluentIterable->skip(10)->toArray());
     }
@@ -110,7 +110,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldJoinWithJoiner()
     {
-        $result = FluentIterable::fromArray([1, null, 2, 3])->join(Joiner::on(', ')->useForNull('null'));
+        $result = FluentIterable::of([1, null, 2, 3])->join(Joiner::on(', ')->useForNull('null'));
         self::assertEquals('1, null, 2, 3', $result);
     }
 
@@ -119,7 +119,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldReturnIndex()
     {
-        $iterable = FluentIterable::fromArray([1, 2]);
+        $iterable = FluentIterable::of([1, 2]);
         self::assertEquals(1, $iterable->get(0));
         self::assertEquals(2, $iterable->get(1));
     }
@@ -130,7 +130,7 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldThrowExceptionIfIndexIsInvalid()
     {
-        FluentIterable::fromArray([1, 2])->get(2);
+        FluentIterable::of([1, 2])->get(2);
     }
 
     /**
@@ -138,6 +138,6 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldReturnToString()
     {
-        self::assertEquals('[1, 2]', (string) FluentIterable::fromArray([1, 2]));
+        self::assertEquals('[1, 2]', (string) FluentIterable::of([1, 2]));
     }
 }
