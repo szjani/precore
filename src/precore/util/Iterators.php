@@ -76,6 +76,16 @@ final class Iterators
     }
 
     /**
+     * @param Iterator $iterator
+     * @param $numberToSkip
+     * @return Iterator
+     */
+    public static function skip(Iterator $iterator, $numberToSkip)
+    {
+        return new LimitIterator($iterator, $numberToSkip);
+    }
+
+    /**
      * Checks whether the elements provided by the given iterators are equal correspondingly.
      * It uses {@link Objects::equal()} for equality check.
      *

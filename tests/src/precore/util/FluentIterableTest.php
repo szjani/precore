@@ -94,4 +94,50 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
             ->toArray();
         self::assertEquals([1, 3, 3, 4], $result);
     }
+
+    /**
+     * @test
+     */
+    public function shouldSkipItems()
+    {
+        $fluentIterable = FluentIterable::fromArray([1, 2, 3]);
+        self::assertEquals([2, 3], $fluentIterable->skip(1)->toArray());
+        self::assertEquals([], $fluentIterable->skip(10)->toArray());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldJoinWithJoiner()
+    {
+        $result = FluentIterable::fromArray([1, null, 2, 3])->join(Joiner::on(', ')->useForNull('null'));
+        self::assertEquals('1, null, 2, 3', $result);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnIndex()
+    {
+        $iterable = FluentIterable::fromArray([1, 2]);
+        self::assertEquals(1, $iterable->get(0));
+        self::assertEquals(2, $iterable->get(1));
+    }
+
+    /**
+     * @test
+     * @expectedException \OutOfBoundsException
+     */
+    public function shouldThrowExceptionIfIndexIsInvalid()
+    {
+        FluentIterable::fromArray([1, 2])->get(2);
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnToString()
+    {
+        self::assertEquals('[1, 2]', (string) FluentIterable::fromArray([1, 2]));
+    }
 }

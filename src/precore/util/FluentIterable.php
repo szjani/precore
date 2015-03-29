@@ -25,6 +25,7 @@ namespace precore\util;
 
 use Iterator;
 use IteratorAggregate;
+use OutOfBoundsException;
 use Traversable;
 
 /**
@@ -115,6 +116,37 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * @param $numberToSkip
+     * @return FluentIterable
+     */
+    public function skip($numberToSkip)
+    {
+        return self::from(Iterables::skip($this->iterable, $numberToSkip));
+    }
+
+    /**
+     * @param Joiner $joiner
+     * @return string
+     */
+    public function join(Joiner $joiner)
+    {
+        return $joiner->join($this);
+    }
+
+    /**
+     * @param $index
+     * @return mixed
+     * @throw OutOfBoundsException if $index is invalid
+     */
+    public function get($index)
+    {
+        foreach (Iterables::limit(Iterables::skip($this->iterable, $index), 1)->getIterator() as $element) {
+            return $element;
+        }
+        throw new OutOfBoundsException("The requested index '{$index}' is invalid");
+    }
+
+    /**
      * Returns an iterator provided by the inner {@link IteratorAggregate}.
      *
      * @return Iterator
@@ -145,5 +177,10 @@ final class FluentIterable implements IteratorAggregate
     public function getIterator()
     {
         return $this->iterator();
+    }
+
+    public function __toString()
+    {
+        return '[' . Joiner::on(', ')->useForNull('null')->join($this) . ']';
     }
 }

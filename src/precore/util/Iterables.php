@@ -90,6 +90,16 @@ final class Iterables
     }
 
     /**
+     * @param IteratorAggregate $iterable
+     * @param $numberToSkip
+     * @return IteratorAggregate
+     */
+    public static function skip(IteratorAggregate $iterable, $numberToSkip)
+    {
+        return new SkipIterable($iterable, $numberToSkip);
+    }
+
+    /**
      * @param IteratorAggregate $iterable1
      * @param IteratorAggregate $iterable2
      * @return bool
@@ -186,6 +196,38 @@ final class LimitIterable implements IteratorAggregate
     public function getIterator()
     {
         return Iterators::limit(new IteratorIterator($this->iterable->getIterator()), $this->limit);
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class SkipIterable implements IteratorAggregate
+{
+    private $skip;
+
+    /**
+     * @var IteratorAggregate
+     */
+    private $iterable;
+
+    /**
+     * LimitIterable constructor.
+     * @param IteratorAggregate $iterable
+     * @param $skip
+     */
+    public function __construct(IteratorAggregate $iterable, $skip)
+    {
+        $this->skip = $skip;
+        $this->iterable = $iterable;
+    }
+
+    public function getIterator()
+    {
+        return Iterators::skip(new IteratorIterator($this->iterable->getIterator()), $this->skip);
     }
 }
 
