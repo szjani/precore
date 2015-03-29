@@ -375,7 +375,7 @@ common predicates. Predicates are useful e.g. for filtering.
 These things can be easily used with `FluentIterable`.
 
 ```php
-$topAdminUserNames = FluentIterable::from(repository.getUsers())
+$topAdminUserNames = FluentIterable::from($repository->getUsers())
   ->filter($hasAdminRoleFilter)
   ->transform($userNameTransformer)
   ->limit(10);

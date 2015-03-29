@@ -11,7 +11,7 @@ use Traversable;
  * All of it is managed in a lazy manner, thus constructing an object is cheap. All methods return a new instance.
  *
  * <pre>
- * $topAdminUserNames = FluentIterable::from(repository.getUsers())
+ * $topAdminUserNames = FluentIterable::from($repository->getUsers())
  *   ->filter($hasAdminRoleFilter)
  *   ->transform($userNameTransformer)
  *   ->limit(10);
