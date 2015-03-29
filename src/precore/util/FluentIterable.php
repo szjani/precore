@@ -147,6 +147,17 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * @return boolean
+     */
+    public function isEmpty()
+    {
+        foreach ($this as $item) {
+            return false;
+        }
+        return true;
+    }
+
+    /**
      * @param $element
      * @return boolean
      */

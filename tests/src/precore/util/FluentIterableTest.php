@@ -150,4 +150,13 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
         self::assertTrue($iterable->contains(1));
         self::assertFalse($iterable->contains(3));
     }
+
+    /**
+     * @test
+     */
+    public function shouldIsEmptyWork()
+    {
+        self::assertFalse(FluentIterable::of([1, 2])->isEmpty());
+        self::assertTrue(FluentIterable::of([null])->filter(Predicates::notNull())->isEmpty());
+    }
 }
