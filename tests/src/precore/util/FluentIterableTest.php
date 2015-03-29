@@ -140,4 +140,14 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
     {
         self::assertEquals('[1, 2]', (string) FluentIterable::of([1, 2]));
     }
+
+    /**
+     * @test
+     */
+    public function shouldContainExistingAndNotContainNonExistingElement()
+    {
+        $iterable = FluentIterable::of([1, 2]);
+        self::assertTrue($iterable->contains(1));
+        self::assertFalse($iterable->contains(3));
+    }
 }

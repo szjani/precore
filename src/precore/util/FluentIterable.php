@@ -147,6 +147,20 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * @param $element
+     * @return boolean
+     */
+    public function contains($element)
+    {
+        foreach ($this as $item) {
+            if (Objects::equal($item, $element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns an iterator provided by the inner {@link IteratorAggregate}.
      *
      * @return Iterator
