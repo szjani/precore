@@ -24,7 +24,6 @@
 namespace precore\util;
 
 use ArrayIterator;
-use CallbackFilterIterator;
 use Traversable;
 
 /**
@@ -111,24 +110,27 @@ final class Joiner
             $parts = new ArrayIterator($parts);
         }
         Preconditions::checkArgument($parts instanceof Traversable, 'parts must be an array or a Traversable');
-        $iterator = new CallbackFilterIterator(
-            new TransformerIterator(
-                $parts,
+
+        $result = FluentIterable::from($parts)
+            ->transform(
                 function ($element) {
                     return $element !== null ? $element : $this->useForNull;
                 }
-            ),
-            function ($element) {
-                if (!$this->skipNulls) {
-                    Preconditions::checkNotNull($element, "There is a null input, consider to use skipNulls()");
+            )
+            ->filter(
+                function ($element) {
+                    if (!$this->skipNulls) {
+                        Preconditions::checkNotNull($element, "There is a null input, consider to use skipNulls()");
+                    }
+                    return $element !== null;
                 }
-                return $element !== null;
-            }
-        );
-        $result = [];
-        foreach ($iterator as $element) {
-            $result[] = ToStringHelper::valueToString($element);
-        }
+            )
+            ->transform(
+                function ($element) {
+                    return ToStringHelper::valueToString($element);
+                }
+            )
+            ->toArray();
         return implode($this->separator, $result);
     }
 }

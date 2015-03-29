@@ -364,6 +364,25 @@ This program prints out the following:
 ```
 Person{John, 21}, Person{John, 70}, Person{Johnny, 10}, Person{Mary, 13}
 ```
+### Predicates
+
+A predicate is a function that has one input parameter, and the return value is true or false. This class provides the most
+common predicates. Predicates are useful e.g. for filtering.
+
+### Iterator based utilities
+
+`Iterators` and `Iterables` provides static factories to transform, filter or limit `Iterator`s or `IteratorAggregate`s.
+These things can be easily used with `FluentIterable`.
+
+```php
+$topAdminUserNames = FluentIterable::from(repository.getUsers())
+  ->filter($hasAdminRoleFilter)
+  ->transform($userNameTransformer)
+  ->limit(10);
+```
+
+In the above example, `$hasAdminRoleFilter` is a predicate that accept a user if that is an administrator,
+`$userNameTransformer` returns the name of the input user. Iterating over `$topAdminUserNames` results 10 user names.
 
 9. String utilities
 -------------------

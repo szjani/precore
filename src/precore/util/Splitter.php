@@ -3,7 +3,6 @@
 namespace precore\util;
 
 use ArrayIterator;
-use CallbackFilterIterator;
 use Iterator;
 use RuntimeException;
 use Traversable;
@@ -141,17 +140,17 @@ abstract class Splitter
     public final function split($input)
     {
         Preconditions::checkArgument(is_string($input), 'input must be a string');
-        return new CallbackFilterIterator(
-            new TransformerIterator(
-                $this->rawSplitIterator($input),
+        return FluentIterable::from($this->rawSplitIterator($input))
+            ->transform(
                 function ($element) {
                     return $this->trimResults ? trim($element) : $element;
                 }
-            ),
-            function ($element) {
-                return !$this->omitEmptyStrings || $element !== '';
-            }
-        );
+            )
+            ->filter(
+                function ($element) {
+                    return !$this->omitEmptyStrings || $element !== '';
+                }
+            );
     }
 }
 
