@@ -223,6 +223,29 @@ class SplitterTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * @test
+     */
+    public function shouldEqualWork()
+    {
+        self::assertTrue(Splitter::on(',')->equals(Splitter::on(',')));
+        self::assertTrue(Splitter::fixedLength(3)->equals(Splitter::fixedLength(3)));
+        self::assertTrue(Splitter::onPattern('/.*/')->equals(Splitter::onPattern('/.*/')));
+
+        self::assertFalse(Splitter::fixedLength(3)->equals(Splitter::on(',')));
+        self::assertFalse(Splitter::onPattern('/.*/')->equals(Splitter::on(',')));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldToStringWork()
+    {
+        self::assertEquals(Splitter::on(',')->toString(), Splitter::on(',')->toString());
+        self::assertEquals(Splitter::fixedLength(3)->toString(), Splitter::fixedLength(3)->toString());
+        self::assertEquals(Splitter::onPattern('/.*/')->toString(), Splitter::onPattern('/.*/')->toString());
+    }
+
+    /**
      * @param array $expected
      * @param Traversable $result
      */

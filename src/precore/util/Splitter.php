@@ -25,6 +25,8 @@ namespace precore\util;
 
 use ArrayIterator;
 use Iterator;
+use precore\lang\Object;
+use precore\lang\ObjectInterface;
 use RuntimeException;
 use Traversable;
 
@@ -66,7 +68,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Splitter
+abstract class Splitter extends Object
 {
     const UTF_8 = 'UTF-8';
 
@@ -173,6 +175,26 @@ abstract class Splitter
                 }
             );
     }
+
+    public function equals(ObjectInterface $object = null)
+    {
+        /* @var $object Splitter */
+        return $object !== null
+            && $this->getClassName() === $object->getClassName()
+            && $this->omitEmptyStrings === $object->omitEmptyStrings
+            && $this->trimResults === $object->trimResults;
+    }
+
+
+    public function toString()
+    {
+        return Objects::toStringHelper($this)
+            ->add('trimResults', $this->trimResults)
+            ->add('omitEmptyStrings', $this->omitEmptyStrings)
+            ->toString();
+    }
+
+
 }
 
 final class SimpleSplitter extends Splitter
@@ -227,6 +249,23 @@ final class SimpleSplitter extends Splitter
             ? new ArrayIterator(explode($this->delimiter, $input))
             : new SimpleSplitIterator($this->delimiter, $input);
     }
+
+    public function equals(ObjectInterface $object = null)
+    {
+        /* @var $object SimpleSplitter */
+        return parent::equals($object)
+            && $this->eager === $object->eager
+            && $this->delimiter === $object->delimiter;
+    }
+
+    public function toString()
+    {
+        return Objects::toStringHelper($this)
+            ->add('parent', parent::toString())
+            ->add('delimiter', $this->delimiter)
+            ->add('eager', $this->eager)
+            ->toString();
+    }
 }
 
 final class PatternSplitter extends Splitter
@@ -263,6 +302,21 @@ final class PatternSplitter extends Splitter
     protected function rawSplitIterator($input)
     {
         return new ArrayIterator(preg_split($this->pattern, $input));
+    }
+
+    public function equals(ObjectInterface $object = null)
+    {
+        /* @var $object PatternSplitter */
+        return parent::equals($object)
+            && $this->pattern === $object->pattern;
+    }
+
+    public function toString()
+    {
+        return Objects::toStringHelper($this)
+            ->add('parent', parent::toString())
+            ->add('pattern', $this->pattern)
+            ->toString();
     }
 }
 
@@ -301,6 +355,21 @@ final class FixedLengthSplitter extends Splitter
     protected function rawSplitIterator($input)
     {
         return new FixedLengthSplitIterator($this->length, $input);
+    }
+
+    public function equals(ObjectInterface $object = null)
+    {
+        /* @var $object FixedLengthSplitter */
+        return parent::equals($object)
+            && $this->length === $object->length;
+    }
+
+    public function toString()
+    {
+        return Objects::toStringHelper($this)
+            ->add('parent', parent::toString())
+            ->add('length', $this->length)
+            ->toString();
     }
 }
 

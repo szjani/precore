@@ -24,6 +24,8 @@
 namespace precore\util;
 
 use ArrayIterator;
+use precore\lang\Object;
+use precore\lang\ObjectInterface;
 use Traversable;
 
 /**
@@ -43,7 +45,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Joiner
+final class Joiner extends Object
 {
     private $separator;
     private $skipNulls;
@@ -133,4 +135,23 @@ final class Joiner
             ->toArray();
         return implode($this->separator, $result);
     }
+
+    public function toString()
+    {
+        return Objects::toStringHelper($this)
+            ->add('separator', $this->separator)
+            ->add('skipNulls', $this->skipNulls)
+            ->add('useForNull', $this->useForNull)
+            ->toString();
+    }
+
+    public function equals(ObjectInterface $object = null)
+    {
+        return $object instanceof self
+            && Objects::equal($this->separator, $object->separator)
+            && Objects::equal($this->skipNulls, $object->skipNulls)
+            && Objects::equal($this->useForNull, $object->useForNull);
+    }
+
+
 }
