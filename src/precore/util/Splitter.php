@@ -197,6 +197,12 @@ abstract class Splitter extends Object
 
 }
 
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
 final class SimpleSplitter extends Splitter
 {
     /**
@@ -268,6 +274,12 @@ final class SimpleSplitter extends Splitter
     }
 }
 
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
 final class PatternSplitter extends Splitter
 {
     /**
@@ -280,7 +292,7 @@ final class PatternSplitter extends Splitter
      * @param $trimResult
      * @param $omitEmptyStrings
      */
-    protected function __construct($pattern, $trimResult, $omitEmptyStrings)
+    public function __construct($pattern, $trimResult, $omitEmptyStrings)
     {
         parent::__construct($trimResult, $omitEmptyStrings);
         Preconditions::checkArgument(is_string($pattern), 'pattern must be a string');
@@ -320,6 +332,12 @@ final class PatternSplitter extends Splitter
     }
 }
 
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
 final class FixedLengthSplitter extends Splitter
 {
     /**
@@ -332,7 +350,7 @@ final class FixedLengthSplitter extends Splitter
      * @param $trimResult
      * @param $omitEmptyStrings
      */
-    protected function __construct($length, $trimResult, $omitEmptyStrings)
+    public function __construct($length, $trimResult, $omitEmptyStrings)
     {
         parent::__construct($trimResult, $omitEmptyStrings);
         Preconditions::checkArgument(is_int($length) && 0 < $length, 'length must be a positive integer');
@@ -373,6 +391,12 @@ final class FixedLengthSplitter extends Splitter
     }
 }
 
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
 final class SimpleSplitIterator implements Iterator
 {
     private $delimiter;
@@ -436,6 +460,12 @@ final class SimpleSplitIterator implements Iterator
     }
 }
 
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
 final class FixedLengthSplitIterator implements Iterator
 {
     private $fullLength;
