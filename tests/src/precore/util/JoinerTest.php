@@ -152,4 +152,15 @@ class JoinerTest extends PHPUnit_Framework_TestCase
     {
         Joiner::on(self::A_SEPARATOR)->useForNull(1);
     }
+
+    /**
+     * @test
+     */
+    public function shouldBeEqual()
+    {
+        $joiner1 = Joiner::on(',')->useForNull('null');
+        $joiner2 = Joiner::on(',')->useForNull('null');
+        self::assertTrue($joiner1->equals($joiner2));
+        self::assertFalse($joiner1->equals(Joiner::on(',')->useForNull('other')));
+    }
 }

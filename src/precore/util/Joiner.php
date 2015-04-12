@@ -121,14 +121,14 @@ abstract class Joiner extends Object
         return implode($this->separator, $iterable->toArray());
     }
 
-    final public function toString()
+    public function toString()
     {
         return Objects::toStringHelper($this)
             ->add('separator', $this->separator)
             ->toString();
     }
 
-    final public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null)
     {
         /* @var $object Joiner */
         return $object !== null
@@ -233,5 +233,19 @@ final class UseForNullJoiner extends Joiner
                 return $element !== null ? $element : $this->useForNull;
             }
         );
+    }
+
+    public function equals(ObjectInterface $object = null)
+    {
+        /* @var $object UseForNullJoiner */
+        return parent::equals($object) && $this->useForNull === $object->useForNull;
+    }
+
+    public function toString()
+    {
+        return Objects::toStringHelper($this)
+            ->add('parent', parent::toString())
+            ->add('useForNull', $this->useForNull)
+            ->toString();
     }
 }
