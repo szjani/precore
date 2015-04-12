@@ -24,6 +24,7 @@
 namespace precore\util;
 
 use ArrayIterator;
+use BadMethodCallException;
 use precore\lang\Object;
 use precore\lang\ObjectInterface;
 use Traversable;
@@ -45,23 +46,17 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Joiner extends Object
+abstract class Joiner extends Object
 {
     private $separator;
-    private $skipNulls;
-    private $useForNull;
 
     /**
      * @param $separator
-     * @param $skipNulls
-     * @param $useForNull
      */
-    private function __construct($separator, $skipNulls, $useForNull)
+    protected function __construct($separator)
     {
         Preconditions::checkArgument(is_string($separator), 'separator must be a string');
         $this->separator = $separator;
-        $this->skipNulls = $skipNulls;
-        $this->useForNull = $useForNull;
     }
 
     /**
@@ -72,7 +67,7 @@ final class Joiner extends Object
      */
     public static function on($separator)
     {
-        return new Joiner($separator, false, null);
+        return new SimpleJoiner($separator);
     }
 
     /**
@@ -83,7 +78,7 @@ final class Joiner extends Object
      */
     public function skipNulls()
     {
-        return new Joiner($this->separator, true, $this->useForNull);
+        return new SkipNullJoiner($this->separator);
     }
 
     /**
@@ -95,9 +90,14 @@ final class Joiner extends Object
      */
     public function useForNull($nullText)
     {
-        Preconditions::checkArgument(is_string($nullText), 'nullText must be a string');
-        return new Joiner($this->separator, $this->skipNulls, $nullText);
+        return new UseForNullJoiner($this->separator, $nullText);
     }
+
+    /**
+     * @param FluentIterable $iterable
+     * @return FluentIterable
+     */
+    protected abstract function modifyIterable(FluentIterable $iterable);
 
     /**
      * Returns a string containing the string representation of each element of $parts, using the previously
@@ -106,52 +106,132 @@ final class Joiner extends Object
      * @param array|Traversable $parts
      * @return string
      */
-    public function join($parts)
+    final public function join($parts)
     {
         if (is_array($parts)) {
             $parts = new ArrayIterator($parts);
         }
         Preconditions::checkArgument($parts instanceof Traversable, 'parts must be an array or a Traversable');
-
-        $result = FluentIterable::from($parts)
-            ->transform(
-                function ($element) {
-                    return $element !== null ? $element : $this->useForNull;
-                }
-            )
-            ->filter(
-                function ($element) {
-                    if (!$this->skipNulls) {
-                        Preconditions::checkNotNull($element, "There is a null input, consider to use skipNulls()");
-                    }
-                    return $element !== null;
-                }
-            )
+        $iterable = $this->modifyIterable(FluentIterable::from($parts))
             ->transform(
                 function ($element) {
                     return ToStringHelper::valueToString($element);
                 }
-            )
-            ->toArray();
-        return implode($this->separator, $result);
+            );
+        return implode($this->separator, $iterable->toArray());
     }
 
-    public function toString()
+    final public function toString()
     {
         return Objects::toStringHelper($this)
             ->add('separator', $this->separator)
-            ->add('skipNulls', $this->skipNulls)
-            ->add('useForNull', $this->useForNull)
             ->toString();
     }
 
-    public function equals(ObjectInterface $object = null)
+    final public function equals(ObjectInterface $object = null)
     {
-        return $object instanceof self
-            && Objects::equal($this->separator, $object->separator)
-            && Objects::equal($this->skipNulls, $object->skipNulls)
-            && Objects::equal($this->useForNull, $object->useForNull);
+        /* @var $object Joiner */
+        return $object !== null
+            && $this->getClassName() === $object->getClassName()
+            && $this->separator === $object->separator;
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class SimpleJoiner extends Joiner
+{
+    /**
+     * @param FluentIterable $iterable
+     * @return FluentIterable
+     */
+    protected function modifyIterable(FluentIterable $iterable)
+    {
+        return $iterable->filter(
+            function ($element) {
+                Preconditions::checkNotNull(
+                    $element,
+                    "There is a null input, consider to use skipNulls() or useForNull()"
+                );
+                return true;
+            }
+        );
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class SkipNullJoiner extends Joiner
+{
+    public function skipNulls()
+    {
+        throw new BadMethodCallException('already specified skipNulls');
     }
 
+    public function useForNull($nullText)
+    {
+        throw new BadMethodCallException('already specified skipNulls');
+    }
 
+    /**
+     * @param FluentIterable $iterable
+     * @return FluentIterable
+     */
+    protected function modifyIterable(FluentIterable $iterable)
+    {
+        return $iterable->filter(
+            function ($element) {
+                return $element != null;
+            }
+        );
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class UseForNullJoiner extends Joiner
+{
+    private $useForNull;
+
+    public function __construct($separator, $nullText)
+    {
+        parent::__construct($separator);
+        Preconditions::checkArgument(is_string($nullText), 'nullText must be a string');
+        $this->useForNull = $nullText;
+    }
+
+    public function skipNulls()
+    {
+        throw new BadMethodCallException('already specified useForNull');
+    }
+
+    public function useForNull($nullText)
+    {
+        throw new BadMethodCallException('already specified useForNull');
+    }
+
+    /**
+     * @param FluentIterable $iterable
+     * @return FluentIterable
+     */
+    protected function modifyIterable(FluentIterable $iterable)
+    {
+        return $iterable->transform(
+            function ($element) {
+                return $element !== null ? $element : $this->useForNull;
+            }
+        );
+    }
 }

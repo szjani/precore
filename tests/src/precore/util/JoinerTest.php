@@ -85,6 +85,15 @@ class JoinerTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \BadMethodCallException
+     */
+    public function shouldShouldThrowExceptionIfUseForNullIsCalled()
+    {
+        Joiner::on(self::A_SEPARATOR)->useForNull('null')->skipNulls();
+    }
+
+    /**
+     * @test
      */
     public function shouldCreateNewObject()
     {
