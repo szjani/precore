@@ -104,6 +104,21 @@ final class Iterators
     }
 
     /**
+     * @param Iterator $iterator
+     * @param $element
+     * @return boolean
+     */
+    public static function contains(Iterator $iterator, $element)
+    {
+        foreach ($iterator as $item) {
+            if (Objects::equal($item, $element)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Checks whether the elements provided by the given iterators are equal correspondingly.
      * It uses {@link Objects::equal()} for equality check.
      *

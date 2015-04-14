@@ -72,4 +72,13 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     {
         self::assertEquals(Iterators::size(new ArrayIterator([1, 2, null, 3, null])), 5);
     }
+
+    /**
+     * @test
+     */
+    public function shouldCheckContains()
+    {
+        self::assertTrue(Iterators::contains(new ArrayIterator([1, 2, null, 3, null]), 1));
+        self::assertFalse(Iterators::contains(new ArrayIterator([1, 2, null, 3, null]), 'nonexisting'));
+    }
 }

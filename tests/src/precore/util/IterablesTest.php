@@ -56,5 +56,16 @@ class IterablesTest extends PHPUnit_Framework_TestCase
         self::assertEquals(5, Iterables::size(new TraversableWrapper($object)));
         self::assertEquals(5, Iterables::size(new TraversableWrapper($object->getIterator())));
     }
+
+    /**
+     * @test
+     */
+    public function shouldReturnContains()
+    {
+        $object = new ArrayObject([1, 2, null, 3, null]);
+        self::assertTrue(Iterables::contains($object, 1));
+        self::assertTrue(Iterables::contains(new TraversableWrapper($object), 2));
+        self::assertTrue(Iterables::contains(new TraversableWrapper($object->getIterator()), 3));
+    }
 }
 

@@ -121,6 +121,22 @@ final class Iterables
     }
 
     /**
+     * @param IteratorAggregate $iterable
+     * @param $element
+     * @return boolean
+     */
+    public static function contains(IteratorAggregate $iterable, $element)
+    {
+        $traversable = $iterable->getIterator();
+        if ($traversable instanceof Iterator) {
+            return Iterators::contains($traversable, $element);
+        } elseif ($traversable instanceof IteratorAggregate) {
+            return self::contains($traversable, $element);
+        }
+        throw new InvalidArgumentException('Not supported built-in class');
+    }
+
+    /**
      * @param IteratorAggregate $iterable1
      * @param IteratorAggregate $iterable2
      * @return bool
