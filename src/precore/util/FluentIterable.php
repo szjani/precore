@@ -140,10 +140,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function get($index)
     {
-        foreach (Iterables::limit(Iterables::skip($this->iterable, $index), 1)->getIterator() as $element) {
-            return $element;
-        }
-        throw new OutOfBoundsException("The requested index '{$index}' is invalid");
+        return Iterables::get($this, $index);
     }
 
     /**

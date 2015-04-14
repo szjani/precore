@@ -29,6 +29,7 @@ use Iterator;
 use IteratorIterator;
 use LimitIterator;
 use MultipleIterator;
+use OutOfBoundsException;
 
 /**
  * Helper class for {@link Iterator} objects.
@@ -84,6 +85,19 @@ final class Iterators
     public static function skip(Iterator $iterator, $numberToSkip)
     {
         return new LimitIterator($iterator, $numberToSkip);
+    }
+
+    /**
+     * @param Iterator $iterator
+     * @param $index
+     * @return mixed
+     */
+    public static function get(Iterator $iterator, $index)
+    {
+        foreach (self::limit(self::skip($iterator, $index), 1) as $element) {
+            return $element;
+        }
+        throw new OutOfBoundsException("The requested index '{$index}' is invalid");
     }
 
     /**

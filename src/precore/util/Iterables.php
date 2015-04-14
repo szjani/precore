@@ -94,6 +94,22 @@ final class Iterables
 
     /**
      * @param IteratorAggregate $iterable
+     * @param $index
+     * @return mixed
+     */
+    public static function get(IteratorAggregate $iterable, $index)
+    {
+        $traversable = $iterable->getIterator();
+        if ($traversable instanceof Iterator) {
+            return Iterators::get($traversable, $index);
+        } elseif ($traversable instanceof IteratorAggregate) {
+            return self::get($traversable, $index);
+        }
+        throw new InvalidArgumentException('Not supported built-in class');
+    }
+
+    /**
+     * @param IteratorAggregate $iterable
      * @param $numberToSkip
      * @return IteratorAggregate
      */

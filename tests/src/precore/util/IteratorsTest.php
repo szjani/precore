@@ -70,7 +70,7 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
      */
     public function shouldReturnSize()
     {
-        self::assertEquals(Iterators::size(new ArrayIterator([1, 2, null, 3, null])), 5);
+        self::assertEquals(5, Iterators::size(new ArrayIterator([1, 2, null, 3, null])));
     }
 
     /**
@@ -89,5 +89,22 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     {
         self::assertFalse(Iterators::isEmpty(new ArrayIterator([1])));
         self::assertTrue(Iterators::isEmpty(new ArrayIterator([])));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnIndex()
+    {
+        self::assertEquals(2, Iterators::get(new ArrayIterator([1, 2, null, 3, null]), 1));
+    }
+
+    /**
+     * @test
+     * @expectedException \OutOfBoundsException
+     */
+    public function shouldThrowExceptionIfIndexIsInvalid()
+    {
+        Iterators::get(new ArrayIterator([]), 0);
     }
 }
