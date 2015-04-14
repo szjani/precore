@@ -137,6 +137,21 @@ final class Iterables
     }
 
     /**
+     * @param IteratorAggregate $iterable
+     * @return boolean
+     */
+    public static function isEmpty(IteratorAggregate $iterable)
+    {
+        $traversable = $iterable->getIterator();
+        if ($traversable instanceof Iterator) {
+            return Iterators::isEmpty($traversable);
+        } elseif ($traversable instanceof IteratorAggregate) {
+            return self::isEmpty($traversable);
+        }
+        throw new InvalidArgumentException('Not supported built-in class');
+    }
+
+    /**
      * @param IteratorAggregate $iterable1
      * @param IteratorAggregate $iterable2
      * @return bool

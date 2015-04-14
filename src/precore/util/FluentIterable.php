@@ -151,10 +151,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function isEmpty()
     {
-        foreach ($this as $item) {
-            return false;
-        }
-        return true;
+        return Iterables::isEmpty($this);
     }
 
     /**
@@ -163,12 +160,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function contains($element)
     {
-        foreach ($this as $item) {
-            if (Objects::equal($item, $element)) {
-                return true;
-            }
-        }
-        return false;
+        return Iterables::contains($this, $element);
     }
 
     /**

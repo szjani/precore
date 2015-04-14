@@ -67,5 +67,17 @@ class IterablesTest extends PHPUnit_Framework_TestCase
         self::assertTrue(Iterables::contains(new TraversableWrapper($object), 2));
         self::assertTrue(Iterables::contains(new TraversableWrapper($object->getIterator()), 3));
     }
+
+    /**
+     * @test
+     */
+    public function shouldCheckIsEmpty()
+    {
+        $object = new ArrayObject([1, 2, null, 3, null]);
+        self::assertFalse(Iterables::isEmpty($object));
+        self::assertFalse(Iterables::isEmpty(new TraversableWrapper($object)));
+        self::assertFalse(Iterables::isEmpty(new TraversableWrapper($object->getIterator())));
+        self::assertTrue(Iterables::isEmpty(new ArrayObject([])));
+    }
 }
 

@@ -119,6 +119,15 @@ final class Iterators
     }
 
     /**
+     * @param Iterator $iterator
+     * @return boolean
+     */
+    public static function isEmpty(Iterator $iterator)
+    {
+        return !$iterator->valid();
+    }
+
+    /**
      * Checks whether the elements provided by the given iterators are equal correspondingly.
      * It uses {@link Objects::equal()} for equality check.
      *
