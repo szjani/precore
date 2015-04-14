@@ -24,7 +24,9 @@
 namespace precore\util;
 
 use ArrayObject;
+use IteratorAggregate;
 use PHPUnit_Framework_TestCase;
+use Traversable;
 
 /**
  * Class IterablesTest
@@ -43,4 +45,16 @@ class IterablesTest extends PHPUnit_Framework_TestCase
         $result = Iterables::filter($object, Predicates::notNull());
         self::assertTrue(Iterables::equal(new ArrayObject([1, 2, 3]), $result));
     }
+
+    /**
+     * @test
+     */
+    public function shouldReturnTheSize()
+    {
+        $object = new ArrayObject([1, 2, null, 3, null]);
+        self::assertEquals(5, Iterables::size($object));
+        self::assertEquals(5, Iterables::size(new TraversableWrapper($object)));
+        self::assertEquals(5, Iterables::size(new TraversableWrapper($object->getIterator())));
+    }
 }
+

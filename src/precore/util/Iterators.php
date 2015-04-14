@@ -24,6 +24,7 @@
 namespace precore\util;
 
 use CallbackFilterIterator;
+use Countable;
 use Iterator;
 use IteratorIterator;
 use LimitIterator;
@@ -83,6 +84,23 @@ final class Iterators
     public static function skip(Iterator $iterator, $numberToSkip)
     {
         return new LimitIterator($iterator, $numberToSkip);
+    }
+
+    /**
+     * @param Iterator $iterator
+     * @return int
+     */
+    public static function size(Iterator $iterator)
+    {
+        $result = 0;
+        if ($iterator instanceof Countable) {
+            $result = $iterator->count();
+        } else {
+            foreach ($iterator as $item) {
+                $result++;
+            }
+        }
+        return $result;
     }
 
     /**

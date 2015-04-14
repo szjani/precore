@@ -25,6 +25,9 @@ namespace precore\util;
 
 use ArrayObject;
 use CallbackFilterIterator;
+use Countable;
+use InvalidArgumentException;
+use Iterator;
 use IteratorAggregate;
 use IteratorIterator;
 use Traversable;
@@ -97,6 +100,24 @@ final class Iterables
     public static function skip(IteratorAggregate $iterable, $numberToSkip)
     {
         return new SkipIterable($iterable, $numberToSkip);
+    }
+
+    /**
+     * @param IteratorAggregate $iterable
+     * @return int
+     */
+    public static function size(IteratorAggregate $iterable)
+    {
+        if ($iterable instanceof Countable) {
+            return $iterable->count();
+        }
+        $traversable = $iterable->getIterator();
+        if ($traversable instanceof Iterator) {
+            return Iterators::size($traversable);
+        } elseif ($traversable instanceof IteratorAggregate) {
+            return self::size($traversable);
+        }
+        throw new InvalidArgumentException('Not supported built-in class');
     }
 
     /**

@@ -64,4 +64,12 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
         self::assertTrue(Iterators::equal($iterator1, $iterator2));
         self::assertFalse(Iterators::equal($iterator1, new ArrayIterator()));
     }
+
+    /**
+     * @test
+     */
+    public function shouldReturnSize()
+    {
+        self::assertEquals(Iterators::size(new ArrayIterator([1, 2, null, 3, null])), 5);
+    }
 }
