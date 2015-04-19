@@ -99,13 +99,7 @@ final class Iterables
      */
     public static function get(IteratorAggregate $iterable, $index)
     {
-        $traversable = $iterable->getIterator();
-        if ($traversable instanceof Iterator) {
-            return Iterators::get($traversable, $index);
-        } elseif ($traversable instanceof IteratorAggregate) {
-            return self::get($traversable, $index);
-        }
-        throw new InvalidArgumentException('Not supported built-in class');
+        return Iterators::get(new IteratorIterator($iterable), $index);
     }
 
     /**
@@ -143,13 +137,7 @@ final class Iterables
      */
     public static function contains(IteratorAggregate $iterable, $element)
     {
-        $traversable = $iterable->getIterator();
-        if ($traversable instanceof Iterator) {
-            return Iterators::contains($traversable, $element);
-        } elseif ($traversable instanceof IteratorAggregate) {
-            return self::contains($traversable, $element);
-        }
-        throw new InvalidArgumentException('Not supported built-in class');
+        return Iterators::contains(new IteratorIterator($iterable->getIterator()), $element);
     }
 
     /**
@@ -158,13 +146,7 @@ final class Iterables
      */
     public static function isEmpty(IteratorAggregate $iterable)
     {
-        $traversable = $iterable->getIterator();
-        if ($traversable instanceof Iterator) {
-            return Iterators::isEmpty($traversable);
-        } elseif ($traversable instanceof IteratorAggregate) {
-            return self::isEmpty($traversable);
-        }
-        throw new InvalidArgumentException('Not supported built-in class');
+        return Iterators::isEmpty(new IteratorIterator($iterable));
     }
 
     /**

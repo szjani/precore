@@ -138,6 +138,7 @@ final class Iterators
      */
     public static function isEmpty(Iterator $iterator)
     {
+        $iterator->rewind();
         return !$iterator->valid();
     }
 

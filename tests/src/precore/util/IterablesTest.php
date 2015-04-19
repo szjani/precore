@@ -81,3 +81,21 @@ class IterablesTest extends PHPUnit_Framework_TestCase
     }
 }
 
+class TraversableWrapper implements IteratorAggregate
+{
+    private $traversable;
+
+    /**
+     * TraversableWrapper constructor.
+     * @param Traversable $traversable
+     */
+    public function __construct(Traversable $traversable)
+    {
+        $this->traversable = $traversable;
+    }
+
+    public function getIterator()
+    {
+        return $this->traversable;
+    }
+}
