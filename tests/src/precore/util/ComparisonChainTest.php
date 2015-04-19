@@ -24,7 +24,6 @@
 namespace precore\util;
 
 use PHPUnit_Framework_TestCase;
-use precore\lang\ClassCastException;
 
 class ComparisonChainTest extends PHPUnit_Framework_TestCase
 {

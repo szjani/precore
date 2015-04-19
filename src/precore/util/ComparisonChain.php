@@ -69,7 +69,7 @@ abstract class ComparisonChain
     /**
      * @param $left
      * @param $right
-     * @param callable $closure
+     * @param Closure $closure
      * @return ComparisonChain
      */
     abstract public function withClosure($left, $right, Closure $closure);
@@ -85,4 +85,127 @@ abstract class ComparisonChain
      * @return int
      */
     abstract public function result();
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class ActiveComparisonChain extends ComparisonChain
+{
+    private $less;
+    private $greater;
+
+    protected function __construct(ComparisonChain $less, ComparisonChain $greater)
+    {
+        $this->less = $less;
+        $this->greater = $greater;
+    }
+
+    /**
+     * @param $left
+     * @param $right
+     * @param Comparator $comparator
+     * @return ComparisonChain
+     */
+    public function withComparator($left, $right, Comparator $comparator)
+    {
+        return $this->classify($comparator->compare($left, $right));
+    }
+
+    /**
+     * @param $left
+     * @param $right
+     * @param Closure $closure
+     * @return ComparisonChain
+     */
+    public function withClosure($left, $right, Closure $closure)
+    {
+        return $this->classify(call_user_func($closure, $left, $right));
+    }
+
+    /**
+     * @param Comparable $left
+     * @param Comparable $right
+     * @return ComparisonChain
+     */
+    public function compare(Comparable $left, Comparable $right)
+    {
+        return $this->classify($left->compareTo($right));
+    }
+
+    /**
+     * @return int
+     */
+    public function result()
+    {
+        return 0;
+    }
+
+    /**
+     * @param int $result
+     * @return ComparisonChain
+     */
+    private function classify($result)
+    {
+        return $result < 0 ? $this->less : ($result > 0 ? $this->greater : $this);
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class InactiveComparisonChain extends ComparisonChain
+{
+    private $result;
+
+    protected function __construct($result)
+    {
+        $this->result = (int) $result;
+    }
+
+    /**
+     * @param $left
+     * @param $right
+     * @param Comparator $comparator
+     * @return ComparisonChain
+     */
+    public function withComparator($left, $right, Comparator $comparator)
+    {
+        return $this;
+    }
+
+    /**
+     * @param $left
+     * @param $right
+     * @param Closure $closure
+     * @return ComparisonChain
+     */
+    public function withClosure($left, $right, Closure $closure)
+    {
+        return $this;
+    }
+
+    /**
+     * @param Comparable $left
+     * @param Comparable $right
+     * @return ComparisonChain
+     */
+    public function compare(Comparable $left, Comparable $right)
+    {
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function result()
+    {
+        return $this->result;
+    }
 }
