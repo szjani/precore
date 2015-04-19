@@ -25,7 +25,6 @@ namespace precore\util;
 
 use Iterator;
 use IteratorAggregate;
-use OutOfBoundsException;
 use Traversable;
 
 /**
