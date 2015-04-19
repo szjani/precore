@@ -384,6 +384,32 @@ $topAdminUserNames = FluentIterable::from($repository->getUsers())
 In the above example, `$hasAdminRoleFilter` is a predicate that accept a user if that is an administrator,
 `$userNameTransformer` returns the name of the input user. Iterating over `$topAdminUserNames` results 10 user names.
 
+#### BufferedIterable
+
+If you need to iterate over huge amount of data, you can use `BufferedIterable`. The given `ChunkProvider` is responsible
+to provide data chunks which are being consumed by the `BufferedIterable`.
+
+```php
+$userProvider = function ($offset) {
+    return $userRepository->get($offset, 10);
+}
+$adminFilter = function ($user) {
+    return $user->isAdmin();
+}
+$top100AdminUsers = BufferedIterable::withChunkFunction($userProvider)
+    ->filter($adminFilter)
+    ->providerCallLimit(40)
+    ->limit(100);
+foreach ($top100AdminUsers as $admin) {
+    // do something
+}
+```
+
+In this example the chunk provider loads 10 users in each call, and the `$adminFilter` is a predicate to filter administrators.
+When we iterate over `$top100AdminUsers` we get 100 administrator users. Provider call limit is for avoiding infinite loop when
+the chunk provider never returns empty chunk and there is no limit, or even the filter can cause such an issue. Its default
+value is 1, here 40 is a reasonable choice.
+
 9. String utilities
 -------------------
 
