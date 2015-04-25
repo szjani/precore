@@ -46,6 +46,16 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldFilterType()
+    {
+        $uuid = UUID::randomUUID();
+        $fluentIterable = FluentIterable::of([1, null, $uuid, 3])->filterBy(UUID::className());
+        self::assertEquals([$uuid], $fluentIterable->toArray());
+    }
+
+    /**
+     * @test
+     */
     public function shouldLimitItems()
     {
         $result = FluentIterable::of([1, 2, 3])->limit(2)->toArray();
@@ -158,5 +168,49 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
     {
         self::assertFalse(FluentIterable::of([1, 2])->isEmpty());
         self::assertTrue(FluentIterable::of([null])->filter(Predicates::notNull())->isEmpty());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAnyMatch()
+    {
+        $evenPredicate = function ($number) {
+            return $number % 2 === 0;
+        };
+        self::assertTrue(FluentIterable::of([1, 2])->anyMatch($evenPredicate));
+        self::assertFalse(FluentIterable::of([1, 3])->anyMatch($evenPredicate));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldAllMatch()
+    {
+        $evenPredicate = function ($number) {
+            return $number % 2 === 0;
+        };
+        self::assertTrue(FluentIterable::of([2, 4])->allMatch($evenPredicate));
+        self::assertFalse(FluentIterable::of([2, 4, 1, 6])->allMatch($evenPredicate));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnSize()
+    {
+        self::assertEquals(0, FluentIterable::of([])->size());
+        self::assertEquals(1, FluentIterable::of([2])->size());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSort()
+    {
+        $result = FluentIterable::of(['b', 'a', 'c'])
+            ->sorted(StringComparator::$BINARY)
+            ->toArray();
+        self::assertEquals(['a', 'b', 'c'], $result);
     }
 }

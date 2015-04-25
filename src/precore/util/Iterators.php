@@ -56,6 +56,58 @@ final class Iterators
     }
 
     /**
+     * @param Iterator $iterator
+     * @param string $className
+     * @return Iterator
+     */
+    public static function filterBy(Iterator $iterator, $className)
+    {
+        return self::filter($iterator, Predicates::instance($className));
+    }
+
+    /**
+     * @param Iterator $iterator
+     * @param callable $predicate
+     * @return boolean
+     */
+    public static function any(Iterator $iterator, callable $predicate)
+    {
+        return self::indexOf($iterator, $predicate) !== -1;
+    }
+
+    /**
+     * @param Iterator $iterator
+     * @param callable $predicate
+     * @return boolean
+     */
+    public static function all(Iterator $iterator, callable $predicate)
+    {
+        foreach ($iterator as $element) {
+            if (!Predicates::call($predicate, $element)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /**
+     * @param Iterator $iterator
+     * @param callable $predicate
+     * @return int
+     */
+    public static function indexOf(Iterator $iterator, callable $predicate)
+    {
+        $i = 0;
+        foreach ($iterator as $element) {
+            if (Predicates::call($predicate, $element)) {
+                return $i;
+            }
+            $i++;
+        }
+        return -1;
+    }
+
+    /**
      * Converts each element provided by $iterator with the given $transformer function.
      *
      * @param Iterator $iterator
@@ -71,9 +123,11 @@ final class Iterators
      * @param Iterator $iterator
      * @param int $limit
      * @return Iterator
+     * @throws \InvalidArgumentException if $limit is negative
      */
     public static function limit(Iterator $iterator, $limit)
     {
+        Preconditions::checkArgument(is_int($limit) && 0 <= $limit);
         return new LimitIterator($iterator, 0, $limit);
     }
 

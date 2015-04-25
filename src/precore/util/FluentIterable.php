@@ -93,6 +93,33 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * @param string $className
+     * @return FluentIterable
+     */
+    public function filterBy($className)
+    {
+        return self::from(Iterables::filterBy($this->iterable, $className));
+    }
+
+    /**
+     * @param callable $predicate
+     * @return boolean
+     */
+    public function anyMatch(callable $predicate)
+    {
+        return Iterables::any($this->iterable, $predicate);
+    }
+
+    /**
+     * @param callable $predicate
+     * @return boolean
+     */
+    public function allMatch(callable $predicate)
+    {
+        return Iterables::all($this->iterable, $predicate);
+    }
+
+    /**
      * All objects produced by this object will be converted by the given transformer.
      *
      * @param callable $transformer
@@ -160,6 +187,14 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * @return int
+     */
+    public function size()
+    {
+        return Iterables::size($this->iterable);
+    }
+
+    /**
      * Returns an iterator provided by the inner {@link IteratorAggregate}.
      *
      * @return Iterator
@@ -167,6 +202,17 @@ final class FluentIterable implements IteratorAggregate
     public function iterator()
     {
         return $this->iterable->getIterator();
+    }
+
+    /**
+     * @param Comparator $comparator
+     * @return FluentIterable
+     */
+    public function sorted(Comparator $comparator)
+    {
+        $array = $this->toArray();
+        Arrays::sort($array, $comparator);
+        return self::of($array);
     }
 
     /**

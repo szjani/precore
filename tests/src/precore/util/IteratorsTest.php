@@ -107,4 +107,13 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     {
         Iterators::get(new ArrayIterator([]), 0);
     }
+
+    /**
+     * @test
+     * @expectedException \InvalidArgumentException
+     */
+    public function shouldThrowExceptionIfLimitIsNegative()
+    {
+        Iterators::limit(new ArrayIterator([]), -1);
+    }
 }

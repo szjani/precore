@@ -74,6 +74,36 @@ final class Iterables
 
     /**
      * @param IteratorAggregate $iterable
+     * @param string $className
+     * @return Iterator
+     */
+    public static function filterBy(IteratorAggregate $iterable, $className)
+    {
+        return Iterators::filterBy(new IteratorIterator($iterable), $className);
+    }
+
+    /**
+     * @param IteratorAggregate $iterable
+     * @param callable $predicate
+     * @return boolean
+     */
+    public static function any(IteratorAggregate $iterable, callable $predicate)
+    {
+        return Iterators::any(new IteratorIterator($iterable), $predicate);
+    }
+
+    /**
+     * @param IteratorAggregate $iterable
+     * @param callable $predicate
+     * @return boolean
+     */
+    public static function all(IteratorAggregate $iterable, callable $predicate)
+    {
+        return Iterators::all(new IteratorIterator($iterable), $predicate);
+    }
+
+    /**
+     * @param IteratorAggregate $iterable
      * @param callable $transformer
      * @return IteratorAggregate
      */
