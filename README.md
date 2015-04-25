@@ -139,6 +139,24 @@ $result = ComparisonChain::start()
 
 In the previous example, the third comparison will not be executed, since it is unnecessary.
 
+`Ordering` is a class which you can fine tune any `Comparator` object. This class also implements `Comparator` interface.
+
+```php
+$ordering = Ordering::natural()
+    ->compound(
+        Collections::comparatorFrom(
+            function (Bug $bug1, Bug $bug2) {
+                return $bug1->priority() - $bug2->priority();
+            }
+        )
+    )
+    ->reverse();
+Arrays::sort($bugs, $ordering);
+```
+
+The above ordering based on the fact that `Bug` class implements `Comparable` (natural ordering), but when two bugs are equal,
+their priority is compared to each other, moreover the final order will be reversed.
+
 5. Preconditions
 ----------------
 
