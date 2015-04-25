@@ -83,6 +83,21 @@ final class Iterables
     }
 
     /**
+     * @param IteratorAggregate $iterable1
+     * @param IteratorAggregate $iterable2
+     * @return IteratorAggregate
+     */
+    public static function concat(IteratorAggregate $iterable1, IteratorAggregate $iterable2)
+    {
+        return new FixIterable(
+            Iterators::concat(
+                new IteratorIterator($iterable1),
+                new IteratorIterator($iterable2)
+            )
+        );
+    }
+
+    /**
      * @param IteratorAggregate $iterable
      * @param callable $predicate
      * @return boolean

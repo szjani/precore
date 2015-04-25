@@ -234,4 +234,15 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
             );
         self::assertEquals([3], $array);
     }
+
+    /**
+     * @test
+     */
+    public function shouldAppend()
+    {
+        $result = FluentIterable::of([1, 2])
+            ->append(FluentIterable::of([3, 4]))
+            ->toArray();
+        self::assertEquals([1, 2, 3, 4], $result);
+    }
 }

@@ -79,6 +79,17 @@ class IterablesTest extends PHPUnit_Framework_TestCase
         self::assertFalse(Iterables::isEmpty(new TraversableWrapper($object->getIterator())));
         self::assertTrue(Iterables::isEmpty(new ArrayObject([])));
     }
+
+    /**
+     * @test
+     */
+    public function shouldConcat()
+    {
+        $object1 = new ArrayObject([1, 2]);
+        $object2 = new ArrayObject([3, 4]);
+        self::assertTrue(Iterables::equal(Iterables::concat($object1, $object2), new ArrayObject([1, 2, 3, 4])));
+
+    }
 }
 
 class TraversableWrapper implements IteratorAggregate

@@ -23,6 +23,7 @@
 
 namespace precore\util;
 
+use AppendIterator;
 use CallbackFilterIterator;
 use Countable;
 use Iterator;
@@ -63,6 +64,19 @@ final class Iterators
     public static function filterBy(Iterator $iterator, $className)
     {
         return self::filter($iterator, Predicates::instance($className));
+    }
+
+    /**
+     * @param Iterator $iterator1
+     * @param Iterator $iterator2
+     * @return Iterator
+     */
+    public static function concat(Iterator $iterator1, Iterator $iterator2)
+    {
+        $result = new AppendIterator();
+        $result->append($iterator1);
+        $result->append($iterator2);
+        return $result;
     }
 
     /**

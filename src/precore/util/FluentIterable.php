@@ -82,6 +82,15 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * @param IteratorAggregate $other
+     * @return FluentIterable
+     */
+    public function append(IteratorAggregate $other)
+    {
+        return self::from(Iterables::concat($this->iterable, $other));
+    }
+
+    /**
      * Only those objects will be visible when iterating over this object, which are accepted by the given predicate.
      *
      * @param callable $predicate
