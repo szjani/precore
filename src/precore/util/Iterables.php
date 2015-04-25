@@ -75,11 +75,11 @@ final class Iterables
     /**
      * @param IteratorAggregate $iterable
      * @param string $className
-     * @return Iterator
+     * @return IteratorAggregate
      */
     public static function filterBy(IteratorAggregate $iterable, $className)
     {
-        return Iterators::filterBy(new IteratorIterator($iterable), $className);
+        return self::from(Iterators::filterBy(new IteratorIterator($iterable), $className));
     }
 
     /**
@@ -89,7 +89,7 @@ final class Iterables
      */
     public static function concat(IteratorAggregate $iterable1, IteratorAggregate $iterable2)
     {
-        return new FixIterable(
+        return self::from(
             Iterators::concat(
                 new IteratorIterator($iterable1),
                 new IteratorIterator($iterable2)
