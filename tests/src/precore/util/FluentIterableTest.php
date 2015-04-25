@@ -245,4 +245,19 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
             ->toArray();
         self::assertEquals([1, 2, 3, 4], $result);
     }
+
+    /**
+     * @test
+     */
+    public function shouldTransformAndConcat()
+    {
+        $result = FluentIterable::of([1, 2])
+            ->transformAndConcat(
+                function ($number) {
+                    return FluentIterable::of([$number * 2, $number * 3]);
+                }
+            )
+            ->toArray();
+        self::assertEquals([2, 3, 4, 6], $result);
+    }
 }

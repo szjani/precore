@@ -98,6 +98,28 @@ final class Iterables
     }
 
     /**
+     * Concatenates {@link Traversable} elements from the given {@link IteratorAggregate}.
+     *
+     * @param IteratorAggregate $iterables of Traversable objects
+     * @return IteratorAggregate
+     */
+    public static function concatIterables(IteratorAggregate $iterables)
+    {
+        return self::from(
+            Iterators::concatIterators(
+                new IteratorIterator(
+                    FluentIterable::from($iterables)
+                        ->transform(
+                            function (Traversable $element) {
+                                return new IteratorIterator($element);
+                            }
+                        )
+                )
+            )
+        );
+    }
+
+    /**
      * @param IteratorAggregate $iterable
      * @param callable $predicate
      * @return boolean

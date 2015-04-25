@@ -23,7 +23,7 @@
 
 namespace precore\util;
 
-use AppendIterator;
+use ArrayIterator;
 use CallbackFilterIterator;
 use Countable;
 use Iterator;
@@ -73,10 +73,16 @@ final class Iterators
      */
     public static function concat(Iterator $iterator1, Iterator $iterator2)
     {
-        $result = new AppendIterator();
-        $result->append($iterator1);
-        $result->append($iterator2);
-        return $result;
+        return self::concatIterators(new ArrayIterator([$iterator1, $iterator2]));
+    }
+
+    /**
+     * @param Iterator $iterators
+     * @return Iterator
+     */
+    public static function concatIterators(Iterator $iterators)
+    {
+        return new ConcatIterator($iterators);
     }
 
     /**
@@ -260,3 +266,42 @@ final class TransformerIterator extends IteratorIterator
         return call_user_func($this->transformer, parent::current());
     }
 }
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class ConcatIterator extends IteratorIterator
+{
+    public function current()
+    {
+        return $this->getInnerIterator()->current()->current();
+    }
+
+    public function valid()
+    {
+        return $this->getInnerIterator()->valid() && $this->getInnerIterator()->current()->valid();
+    }
+
+    public function next()
+    {
+        $iterator = $this->getInnerIterator();
+        $iterator->current()->next();
+        if (!$iterator->current()->valid()) {
+            $iterator->next();
+            if ($iterator->current() !== null) {
+                $iterator->current()->rewind();
+            }
+        }
+    }
+
+    public function rewind()
+    {
+        $iterator = $this->getInnerIterator();
+        $iterator->rewind();
+        $iterator->current()->rewind();
+    }
+}
+

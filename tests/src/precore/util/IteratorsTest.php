@@ -116,4 +116,15 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     {
         Iterators::limit(new ArrayIterator([]), -1);
     }
+
+    /**
+     * @test
+     */
+    public function shouldReturnConcat()
+    {
+        $it1 = new ArrayIterator([1, 2]);
+        $it2 = new ArrayIterator([3, 4]);
+        $result = Iterators::concatIterators(new ArrayIterator([$it1, $it2]));
+        self::assertTrue(Iterators::equal(new ArrayIterator([1, 2, 3, 4]), $result));
+    }
 }
