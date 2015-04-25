@@ -54,6 +54,19 @@ abstract class Collections
     }
 
     /**
+     * Creates a {@link Comparator} from the given function.
+     * The function will get two parameters are have to return a negative, 0, or positive
+     * number depending on how the two parameters are compared to each other.
+     *
+     * @param callable $comparator
+     * @return Comparator
+     */
+    public static function comparatorFrom(callable $comparator)
+    {
+        return new CallableBasedComparator($comparator);
+    }
+
+    /**
      * Sorts the specified object according to the order induced by the specified comparator.
      * All elements in the object must be mutually comparable using the specified comparator
      * (that is, c.compare(e1, e2) must not throw a ClassCastException for any elements e1 and e2 in the object).
@@ -200,5 +213,41 @@ final class ReverseComparator implements Comparator
     public function compare($object1, $object2)
     {
         return $this->comparator->compare($object2, $object1);
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class CallableBasedComparator implements Comparator
+{
+    /**
+     * @var callable
+     */
+    private $callable;
+
+    /**
+     * CallableBasedComparator constructor.
+     * @param callable $callable
+     */
+    public function __construct(callable $callable)
+    {
+        $this->callable = $callable;
+    }
+
+
+    /**
+     * @param $object1
+     * @param $object2
+     * @return int a negative integer, zero, or a positive integer
+     *         as the first argument is less than, equal to, or greater than the second.
+     * @throws ClassCastException - if the arguments' types prevent them from being compared by this comparator.
+     */
+    public function compare($object1, $object2)
+    {
+        return call_user_func($this->callable, $object1, $object2);
     }
 }
