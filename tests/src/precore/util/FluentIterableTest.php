@@ -213,4 +213,25 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
             ->toArray();
         self::assertEquals(['a', 'b', 'c'], $result);
     }
+
+    /**
+     * @test
+     */
+    public function shouldRunEach()
+    {
+        $array = [];
+        FluentIterable::of([3, 1, 2])
+            ->filter(
+                function ($number) {
+                    return $number % 2 === 1;
+                }
+            )
+            ->limit(1)
+            ->each(
+                function ($number) use (&$array) {
+                    $array[] = $number;
+                }
+            );
+        self::assertEquals([3], $array);
+    }
 }

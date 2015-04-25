@@ -205,6 +205,19 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Executes the given function on all elements.
+     *
+     * @param callable $function
+     * @return void
+     */
+    public function each(callable $function)
+    {
+        foreach ($this as $element) {
+            call_user_func($function, $element);
+        }
+    }
+
+    /**
      * @param Comparator $comparator
      * @return FluentIterable
      */
