@@ -127,4 +127,24 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
         $result = Iterators::concatIterators(new ArrayIterator([$it1, $it2]));
         self::assertTrue(Iterators::equal(new ArrayIterator([1, 2, 3, 4]), $result));
     }
+
+    /**
+     * @test
+     */
+    public function shouldReturnEmptyConcat()
+    {
+        $it1 = new ArrayIterator([]);
+        $it2 = new ArrayIterator([]);
+        $result = Iterators::concatIterators(new ArrayIterator([$it1, $it2]));
+        self::assertTrue(Iterators::isEmpty($result));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldHandleEmptyIterator()
+    {
+        $result = Iterators::concatIterators(new ArrayIterator([]));
+        self::assertTrue(Iterators::isEmpty($result));
+    }
 }

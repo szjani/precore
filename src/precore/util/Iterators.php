@@ -291,9 +291,7 @@ final class ConcatIterator extends IteratorIterator
         $iterator->current()->next();
         if (!$iterator->current()->valid()) {
             $iterator->next();
-            if ($iterator->current() !== null) {
-                $iterator->current()->rewind();
-            }
+            $this->currentRewind($iterator);
         }
     }
 
@@ -301,7 +299,17 @@ final class ConcatIterator extends IteratorIterator
     {
         $iterator = $this->getInnerIterator();
         $iterator->rewind();
-        $iterator->current()->rewind();
+        $this->currentRewind($iterator);
+    }
+
+    /**
+     * @param $iterator
+     */
+    private function currentRewind(Iterator $iterator)
+    {
+        if ($iterator->current() !== null) {
+            $iterator->current()->rewind();
+        }
     }
 }
 
