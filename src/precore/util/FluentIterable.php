@@ -25,6 +25,7 @@ namespace precore\util;
 
 use Iterator;
 use IteratorAggregate;
+use IteratorIterator;
 use Traversable;
 
 /**
@@ -87,7 +88,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function append(IteratorAggregate $other)
     {
-        return self::from(Iterables::concat($this->iterable, $other));
+        return self::from(Iterables::concat($this, $other));
     }
 
     /**
@@ -98,7 +99,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function filter(callable $predicate)
     {
-        return self::from(Iterables::filter($this->iterable, $predicate));
+        return self::from(Iterables::filter($this, $predicate));
     }
 
     /**
@@ -107,7 +108,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function filterBy($className)
     {
-        return self::from(Iterables::filterBy($this->iterable, $className));
+        return self::from(Iterables::filterBy($this, $className));
     }
 
     /**
@@ -116,7 +117,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function anyMatch(callable $predicate)
     {
-        return Iterables::any($this->iterable, $predicate);
+        return Iterables::any($this, $predicate);
     }
 
     /**
@@ -125,7 +126,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function allMatch(callable $predicate)
     {
-        return Iterables::all($this->iterable, $predicate);
+        return Iterables::all($this, $predicate);
     }
 
     /**
@@ -136,7 +137,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function transform(callable $transformer)
     {
-        return self::from(Iterables::transform($this->iterable, $transformer));
+        return self::from(Iterables::transform($this, $transformer));
     }
 
     /**
@@ -159,7 +160,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function limit($limit)
     {
-        return self::from(Iterables::limit($this->iterable, $limit));
+        return self::from(Iterables::limit($this, $limit));
     }
 
     /**
@@ -168,7 +169,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function skip($numberToSkip)
     {
-        return self::from(Iterables::skip($this->iterable, $numberToSkip));
+        return self::from(Iterables::skip($this, $numberToSkip));
     }
 
     /**
@@ -212,7 +213,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function size()
     {
-        return Iterables::size($this->iterable);
+        return Iterables::size($this);
     }
 
     /**
@@ -222,7 +223,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function iterator()
     {
-        return $this->iterable->getIterator();
+        return new IteratorIterator($this->iterable);
     }
 
     /**
@@ -257,7 +258,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function toArray()
     {
-        return iterator_to_array($this->iterator(), false);
+        return iterator_to_array($this, false);
     }
 
     /**

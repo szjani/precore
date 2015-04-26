@@ -107,14 +107,13 @@ final class Iterables
     {
         return self::from(
             Iterators::concatIterators(
-                new IteratorIterator(
-                    FluentIterable::from($iterables)
-                        ->transform(
-                            function (Traversable $element) {
-                                return new IteratorIterator($element);
-                            }
-                        )
-                )
+                FluentIterable::from($iterables)
+                    ->transform(
+                        function (Traversable $element) {
+                            return new IteratorIterator($element);
+                        }
+                    )
+                    ->iterator()
             )
         );
     }
@@ -204,7 +203,7 @@ final class Iterables
      */
     public static function contains(IteratorAggregate $iterable, $element)
     {
-        return Iterators::contains(new IteratorIterator($iterable->getIterator()), $element);
+        return Iterators::contains(new IteratorIterator($iterable), $element);
     }
 
     /**
@@ -224,8 +223,8 @@ final class Iterables
     public static function equal(IteratorAggregate $iterable1, IteratorAggregate $iterable2)
     {
         return Iterators::equal(
-            new IteratorIterator($iterable1->getIterator()),
-            new IteratorIterator($iterable2->getIterator())
+            new IteratorIterator($iterable1),
+            new IteratorIterator($iterable2)
         );
     }
 }
