@@ -83,6 +83,9 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns a fluent iterable whose iterators traverse first the elements
+     * of this fluent iterable, followed by those of other.
+     *
      * @param IteratorAggregate $other
      * @return FluentIterable
      */
@@ -92,7 +95,7 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
-     * Only those objects will be visible when iterating over this object, which are accepted by the given predicate.
+     * Returns the elements from this fluent iterable that satisfy a predicate.
      *
      * @param callable $predicate
      * @return FluentIterable
@@ -103,6 +106,8 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns the elements from this fluent iterable that are instances of class className.
+     *
      * @param string $className
      * @return FluentIterable
      */
@@ -112,6 +117,8 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns true if any element in this fluent iterable satisfies the predicate.
+     *
      * @param callable $predicate
      * @return boolean
      */
@@ -121,6 +128,9 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns true if every element in this fluent iterable satisfies the predicate.
+     * If this fluent iterable is empty, true is returned.
+     *
      * @param callable $predicate
      * @return boolean
      */
@@ -130,7 +140,7 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
-     * All objects produced by this object will be converted by the given transformer.
+     * Returns a fluent iterable that applies transformer to each element of this fluent iterable.
      *
      * @param callable $transformer
      * @return FluentIterable
@@ -153,7 +163,9 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
-     * Only the first $limit item can be visible.
+     * Creates a fluent iterable with the first size elements of this fluent iterable.
+     * If this fluent iterable does not contain that many elements,
+     * the returned fluent iterable will have the same behavior as this fluent iterable.
      *
      * @param $limit
      * @return FluentIterable
@@ -164,6 +176,10 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns a view of this fluent iterable that skips its first numberToSkip elements.
+     * If this fluent iterable contains fewer than numberToSkip elements,
+     * the returned fluent iterable skips all of its elements.
+     *
      * @param $numberToSkip
      * @return FluentIterable
      */
@@ -173,6 +189,8 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns a string containing all of the elements of this fluent iterable joined with joiner.
+     *
      * @param Joiner $joiner
      * @return string
      */
@@ -182,6 +200,8 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns the element at the specified position in this fluent iterable.
+     *
      * @param $index
      * @return mixed
      * @throw OutOfBoundsException if $index is invalid
@@ -192,6 +212,8 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Determines whether this fluent iterable is empty.
+     *
      * @return boolean
      */
     public function isEmpty()
@@ -200,6 +222,8 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns true if this fluent iterable contains any object for which Objects::equal(element, object) is true.
+     *
      * @param $element
      * @return boolean
      */
@@ -209,6 +233,8 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Returns the number of elements in this fluent iterable.
+     *
      * @return int
      */
     public function size()
@@ -240,6 +266,8 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * Sorts the elements in the order specified by comparator.
+     *
      * @param Comparator $comparator
      * @return FluentIterable
      */

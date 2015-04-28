@@ -44,7 +44,7 @@ class IterablesTest extends PHPUnit_Framework_TestCase
     {
         $object = new ArrayObject([1, 2, null, 3, null]);
         $result = Iterables::filter($object, Predicates::notNull());
-        self::assertTrue(Iterables::equal(new ArrayObject([1, 2, 3]), $result));
+        self::assertTrue(Iterables::elementsEqual(new ArrayObject([1, 2, 3]), $result));
     }
 
     /**
@@ -88,7 +88,7 @@ class IterablesTest extends PHPUnit_Framework_TestCase
     {
         $object1 = new ArrayObject([1, 2]);
         $object2 = new ArrayObject([3, 4]);
-        self::assertTrue(Iterables::equal(Iterables::concat($object1, $object2), new ArrayObject([1, 2, 3, 4])));
+        self::assertTrue(Iterables::elementsEqual(Iterables::concat($object1, $object2), new ArrayObject([1, 2, 3, 4])));
     }
 
     /**
@@ -100,7 +100,7 @@ class IterablesTest extends PHPUnit_Framework_TestCase
         $object2 = new ArrayObject([3, 4]);
         $object3 = new ArrayObject([5, 6]);
         $iterable = Iterables::concatIterables(new ArrayObject([$object1, $object2, $object3]));
-        self::assertTrue(Iterables::equal($iterable, new ArrayObject([1, 2, 3, 4, 5, 6])));
+        self::assertTrue(Iterables::elementsEqual($iterable, new ArrayObject([1, 2, 3, 4, 5, 6])));
     }
 
     /**
@@ -112,7 +112,7 @@ class IterablesTest extends PHPUnit_Framework_TestCase
         $object2 = new ArrayIterator([3, 4]);
         $object3 = new ArrayIterator([5, 6]);
         $iterable = Iterables::concatIterables(new ArrayObject([$object1, $object2, $object3]));
-        self::assertTrue(Iterables::equal($iterable, new ArrayObject([1, 2, 3, 4, 5, 6])));
+        self::assertTrue(Iterables::elementsEqual($iterable, new ArrayObject([1, 2, 3, 4, 5, 6])));
     }
 }
 

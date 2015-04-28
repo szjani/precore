@@ -63,42 +63,52 @@ final class Iterables
     }
 
     /**
-     * @param IteratorAggregate $iterable
+     * Returns the elements of unfiltered that satisfy a predicate.
+     *
+     * @param IteratorAggregate $unfiltered
      * @param callable $predicate
      * @return IteratorAggregate
      */
-    public static function filter(IteratorAggregate $iterable, callable $predicate)
+    public static function filter(IteratorAggregate $unfiltered, callable $predicate)
     {
-        return new CallbackFilterIterable($iterable, $predicate);
+        return new CallbackFilterIterable($unfiltered, $predicate);
     }
 
     /**
-     * @param IteratorAggregate $iterable
+     * Returns all instances of class className in unfiltered.
+     *
+     * @param IteratorAggregate $unfiltered
      * @param string $className
      * @return IteratorAggregate
      */
-    public static function filterBy(IteratorAggregate $iterable, $className)
+    public static function filterBy(IteratorAggregate $unfiltered, $className)
     {
-        return self::from(Iterators::filterBy(new IteratorIterator($iterable), $className));
+        return self::from(Iterators::filterBy(new IteratorIterator($unfiltered), $className));
     }
 
     /**
-     * @param IteratorAggregate $iterable1
-     * @param IteratorAggregate $iterable2
+     * Combines two iterables into a single iterable.
+     * The returned iterable has an iterator that traverses the elements in a,
+     * followed by the elements in b. The source iterators are not polled until necessary.
+     *
+     * @param IteratorAggregate $a
+     * @param IteratorAggregate $b
      * @return IteratorAggregate
      */
-    public static function concat(IteratorAggregate $iterable1, IteratorAggregate $iterable2)
+    public static function concat(IteratorAggregate $a, IteratorAggregate $b)
     {
         return self::from(
             Iterators::concat(
-                new IteratorIterator($iterable1),
-                new IteratorIterator($iterable2)
+                new IteratorIterator($a),
+                new IteratorIterator($b)
             )
         );
     }
 
     /**
-     * Concatenates {@link Traversable} elements from the given {@link IteratorAggregate}.
+     * Combines multiple iterables into a single iterable.
+     * The returned iterable has an iterator that traverses the elements of each iterable in inputs.
+     * The input iterators are not polled until necessary.
      *
      * @param IteratorAggregate $iterables of Traversable objects
      * @return IteratorAggregate
@@ -119,6 +129,8 @@ final class Iterables
     }
 
     /**
+     * Returns true if any element in iterable satisfies the predicate.
+     *
      * @param IteratorAggregate $iterable
      * @param callable $predicate
      * @return boolean
@@ -129,6 +141,8 @@ final class Iterables
     }
 
     /**
+     * Returns true if every element in iterable satisfies the predicate. If iterable is empty, true is returned.
+     *
      * @param IteratorAggregate $iterable
      * @param callable $predicate
      * @return boolean
@@ -139,36 +153,49 @@ final class Iterables
     }
 
     /**
-     * @param IteratorAggregate $iterable
+     * Returns an iterable that applies function to each element of fromIterable.
+     *
+     * @param IteratorAggregate $fromIterable
      * @param callable $transformer
      * @return IteratorAggregate
      */
-    public static function transform(IteratorAggregate $iterable, callable $transformer)
+    public static function transform(IteratorAggregate $fromIterable, callable $transformer)
     {
-        return new TransformerIterable($iterable, $transformer);
+        return new TransformerIterable($fromIterable, $transformer);
     }
 
     /**
+     * Creates an iterable with the first limitSize elements of the given iterable.
+     * If the original iterable does not contain that many elements,
+     * the returned iterable will have the same behavior as the original iterable.
+     *
      * @param IteratorAggregate $iterable
-     * @param $limit
+     * @param $limitSize
      * @return IteratorAggregate
      */
-    public static function limit(IteratorAggregate $iterable, $limit)
+    public static function limit(IteratorAggregate $iterable, $limitSize)
     {
-        return new LimitIterable($iterable, $limit);
+        return new LimitIterable($iterable, $limitSize);
     }
 
     /**
+     * Returns the element at the specified position in an iterable.
+     *
      * @param IteratorAggregate $iterable
-     * @param $index
+     * @param $position
      * @return mixed
+     * @throws \OutOfBoundsException if position does not exist
      */
-    public static function get(IteratorAggregate $iterable, $index)
+    public static function get(IteratorAggregate $iterable, $position)
     {
-        return Iterators::get(new IteratorIterator($iterable), $index);
+        return Iterators::get(new IteratorIterator($iterable), $position);
     }
 
     /**
+     * Returns a view of iterable that skips its first numberToSkip elements.
+     * If iterable contains fewer than numberToSkip elements,
+     * the returned iterable skips all of its elements.
+     *
      * @param IteratorAggregate $iterable
      * @param $numberToSkip
      * @return IteratorAggregate
@@ -179,6 +206,8 @@ final class Iterables
     }
 
     /**
+     * Returns the number of elements in iterable.
+     *
      * @param IteratorAggregate $iterable
      * @return int
      */
@@ -197,6 +226,8 @@ final class Iterables
     }
 
     /**
+     * Returns true if iterable contains any object for which Objects::equal(element, object) is true.
+     *
      * @param IteratorAggregate $iterable
      * @param $element
      * @return boolean
@@ -207,6 +238,8 @@ final class Iterables
     }
 
     /**
+     * Determines if the given iterable contains no elements.
+     *
      * @param IteratorAggregate $iterable
      * @return boolean
      */
@@ -220,9 +253,9 @@ final class Iterables
      * @param IteratorAggregate $iterable2
      * @return bool
      */
-    public static function equal(IteratorAggregate $iterable1, IteratorAggregate $iterable2)
+    public static function elementsEqual(IteratorAggregate $iterable1, IteratorAggregate $iterable2)
     {
-        return Iterators::equal(
+        return Iterators::elementsEqual(
             new IteratorIterator($iterable1),
             new IteratorIterator($iterable2)
         );

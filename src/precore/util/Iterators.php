@@ -45,47 +45,58 @@ final class Iterators
     }
 
     /**
-     * Creates an iterator that returns only those elements given by $iterator that are allowed by $predicate.
+     * Returns the elements of unfiltered that satisfy a predicate.
      *
-     * @param Iterator $iterator
+     * @param Iterator $unfiltered
      * @param callable $predicate
      * @return Iterator
      */
-    public static function filter(Iterator $iterator, callable $predicate)
+    public static function filter(Iterator $unfiltered, callable $predicate)
     {
-        return new CallbackFilterIterator($iterator, $predicate);
+        return new CallbackFilterIterator($unfiltered, $predicate);
     }
 
     /**
-     * @param Iterator $iterator
+     * Returns all instances of class type in unfiltered.
+     * The returned iterator has elements whose class is type or a subclass of type.
+     *
+     * @param Iterator $unfiltered
      * @param string $className
      * @return Iterator
      */
-    public static function filterBy(Iterator $iterator, $className)
+    public static function filterBy(Iterator $unfiltered, $className)
     {
-        return self::filter($iterator, Predicates::instance($className));
+        return self::filter($unfiltered, Predicates::instance($className));
     }
 
     /**
-     * @param Iterator $iterator1
-     * @param Iterator $iterator2
+     * Combines two iterators into a single iterator. The returned iterator iterates across the elements in a,
+     * followed by the elements in b. The source iterators are not polled until necessary.
+     *
+     * @param Iterator $a
+     * @param Iterator $b
      * @return Iterator
      */
-    public static function concat(Iterator $iterator1, Iterator $iterator2)
+    public static function concat(Iterator $a, Iterator $b)
     {
-        return self::concatIterators(new ArrayIterator([$iterator1, $iterator2]));
+        return self::concatIterators(new ArrayIterator([$a, $b]));
     }
 
     /**
-     * @param Iterator $iterators
+     * Combines multiple iterators into a single iterator. The returned iterator iterates across
+     * the elements of each iterator in inputs. The input iterators are not polled until necessary.
+     *
+     * @param Iterator $inputs
      * @return Iterator
      */
-    public static function concatIterators(Iterator $iterators)
+    public static function concatIterators(Iterator $inputs)
     {
-        return new ConcatIterator($iterators);
+        return new ConcatIterator($inputs);
     }
 
     /**
+     * Returns true if one or more elements returned by iterator satisfy the given predicate.
+     *
      * @param Iterator $iterator
      * @param callable $predicate
      * @return boolean
@@ -96,6 +107,9 @@ final class Iterators
     }
 
     /**
+     * Returns true if every element returned by iterator satisfies the given predicate.
+     * If iterator is empty, true is returned.
+     *
      * @param Iterator $iterator
      * @param callable $predicate
      * @return boolean
@@ -111,6 +125,9 @@ final class Iterators
     }
 
     /**
+     * Returns the index in iterator of the first element that satisfies the provided predicate,
+     * or -1 if the Iterator has no such elements.
+     *
      * @param Iterator $iterator
      * @param callable $predicate
      * @return int
@@ -128,27 +145,31 @@ final class Iterators
     }
 
     /**
-     * Converts each element provided by $iterator with the given $transformer function.
+     * Returns an iterator that applies transformer to each element of fromIterator.
      *
-     * @param Iterator $iterator
+     * @param Iterator $fromIterator
      * @param callable $transformer
      * @return Iterator
      */
-    public static function transform(Iterator $iterator, callable $transformer)
+    public static function transform(Iterator $fromIterator, callable $transformer)
     {
-        return new TransformerIterator($iterator, $transformer);
+        return new TransformerIterator($fromIterator, $transformer);
     }
 
     /**
+     * Creates an iterator returning the first limitSize elements of the given iterator.
+     * If the original iterator does not contain that many elements,
+     * the returned iterator will have the same behavior as the original iterator.
+     *
      * @param Iterator $iterator
-     * @param int $limit
+     * @param int $limitSize
      * @return Iterator
      * @throws \InvalidArgumentException if $limit is negative
      */
-    public static function limit(Iterator $iterator, $limit)
+    public static function limit(Iterator $iterator, $limitSize)
     {
-        Preconditions::checkArgument(is_int($limit) && 0 <= $limit);
-        return new LimitIterator($iterator, 0, $limit);
+        Preconditions::checkArgument(is_int($limitSize) && 0 <= $limitSize);
+        return new LimitIterator($iterator, 0, $limitSize);
     }
 
     /**
@@ -162,19 +183,24 @@ final class Iterators
     }
 
     /**
+     * Advances iterator position + 1 times, returning the element at the positionth position.
+     *
      * @param Iterator $iterator
-     * @param $index
+     * @param $position
      * @return mixed
+     * @throws OutOfBoundsException if position does not exist
      */
-    public static function get(Iterator $iterator, $index)
+    public static function get(Iterator $iterator, $position)
     {
-        foreach (self::limit(self::skip($iterator, $index), 1) as $element) {
+        foreach (self::limit(self::skip($iterator, $position), 1) as $element) {
             return $element;
         }
-        throw new OutOfBoundsException("The requested index '{$index}' is invalid");
+        throw new OutOfBoundsException("The requested index '{$position}' is invalid");
     }
 
     /**
+     * Returns the number of elements in iterator.
+     *
      * @param Iterator $iterator
      * @return int
      */
@@ -192,6 +218,8 @@ final class Iterators
     }
 
     /**
+     * Returns true if iterator contains element.
+     *
      * @param Iterator $iterator
      * @param $element
      * @return boolean
@@ -224,7 +252,7 @@ final class Iterators
      * @param Iterator $iterator2
      * @return bool
      */
-    public static function equal(Iterator $iterator1, Iterator $iterator2)
+    public static function elementsEqual(Iterator $iterator1, Iterator $iterator2)
     {
         $multipleIterator = new MultipleIterator(MultipleIterator::MIT_NEED_ANY | MultipleIterator::MIT_KEYS_NUMERIC);
         $multipleIterator->attachIterator($iterator1);

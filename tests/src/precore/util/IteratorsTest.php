@@ -41,7 +41,7 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     {
         $iterator = new ArrayIterator([1, 2, null, 3, null]);
         $result = Iterators::filter($iterator, Predicates::notNull());
-        self::assertTrue(Iterators::equal($result, new ArrayIterator([1, 2, 3])));
+        self::assertTrue(Iterators::elementsEqual($result, new ArrayIterator([1, 2, 3])));
     }
 
     /**
@@ -51,7 +51,7 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     {
         $iterator = new ArrayIterator([1, 2, null, 3, null]);
         $result = Iterators::filter($iterator, Predicates::alwaysFalse());
-        self::assertTrue(Iterators::equal($result, new ArrayIterator()));
+        self::assertTrue(Iterators::elementsEqual($result, new ArrayIterator()));
     }
 
     /**
@@ -61,8 +61,8 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     {
         $iterator1 = new ArrayIterator([1, 2, null, 3, null]);
         $iterator2 = new ArrayIterator([1, 2, null, 3, null]);
-        self::assertTrue(Iterators::equal($iterator1, $iterator2));
-        self::assertFalse(Iterators::equal($iterator1, new ArrayIterator()));
+        self::assertTrue(Iterators::elementsEqual($iterator1, $iterator2));
+        self::assertFalse(Iterators::elementsEqual($iterator1, new ArrayIterator()));
     }
 
     /**
@@ -125,7 +125,7 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
         $it1 = new ArrayIterator([1, 2]);
         $it2 = new ArrayIterator([3, 4]);
         $result = Iterators::concatIterators(new ArrayIterator([$it1, $it2]));
-        self::assertTrue(Iterators::equal(new ArrayIterator([1, 2, 3, 4]), $result));
+        self::assertTrue(Iterators::elementsEqual(new ArrayIterator([1, 2, 3, 4]), $result));
     }
 
     /**
@@ -158,6 +158,6 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
         $it3 = new ArrayIterator([]);
         $it4 = new ArrayIterator([2]);
         $result = Iterators::concatIterators(new ArrayIterator([$it1, $it2, $it3, $it4]));
-        self::assertTrue(Iterators::equal(new ArrayIterator([1, 2]), $result));
+        self::assertTrue(Iterators::elementsEqual(new ArrayIterator([1, 2]), $result));
     }
 }
