@@ -45,6 +45,19 @@ final class Iterators
     }
 
     /**
+     * Returns an iterator for the given traversable.
+     *
+     * @param Traversable $traversable
+     * @return Iterator
+     */
+    public static function from(Traversable $traversable)
+    {
+        return $traversable instanceof Iterator
+            ? $traversable
+            : new IteratorIterator($traversable);
+    }
+
+    /**
      * Returns an iterator containing the elements of array in order.
      *
      * @param array $array

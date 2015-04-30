@@ -25,7 +25,6 @@ namespace precore\util;
 
 use Iterator;
 use IteratorAggregate;
-use IteratorIterator;
 use Traversable;
 
 /**
@@ -247,7 +246,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public function iterator()
     {
-        return new IteratorIterator($this->iterable);
+        return Iterators::from($this->iterable);
     }
 
     /**
