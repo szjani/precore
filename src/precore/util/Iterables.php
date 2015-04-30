@@ -59,7 +59,9 @@ final class Iterables
      */
     public static function from(Traversable $traversable)
     {
-        return new FixIterable($traversable);
+        return $traversable instanceof IteratorAggregate
+            ? $traversable
+            : new FixIterable($traversable);
     }
 
     /**

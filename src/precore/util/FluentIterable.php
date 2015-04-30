@@ -77,9 +77,7 @@ final class FluentIterable implements IteratorAggregate
      */
     public static function from(Traversable $traversable)
     {
-        return ($traversable instanceof IteratorAggregate)
-            ? new FluentIterable($traversable)
-            : new FluentIterable(Iterables::from($traversable));
+        return new FluentIterable(Iterables::from($traversable));
     }
 
     /**
