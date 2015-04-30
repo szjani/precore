@@ -106,6 +106,62 @@ final class Iterables
     }
 
     /**
+     * Returns the first element in iterable that satisfies the given predicate.
+     *
+     * @param IteratorAggregate $iterable
+     * @param callable $predicate
+     * @param null $defaultValue
+     * @return mixed
+     */
+    public static function find(IteratorAggregate $iterable, callable $predicate, $defaultValue = null)
+    {
+        return Iterators::find(new IteratorIterator($iterable), $predicate, $defaultValue);
+    }
+
+    /**
+     * Divides an iterable into unmodifiable sublists of the given size (the final iterable may be smaller).
+     *
+     * For example, partitioning an iterable containing [a, b, c, d, e] with a partition size
+     * of 3 yields [[a, b, c], [d, e]] -- an outer iterable containing two inner lists of three and two elements,
+     * all in the original order.
+     *
+     * @param IteratorAggregate $iterable
+     * @param int $size
+     * @return IteratorAggregate
+     */
+    public static function partition(IteratorAggregate $iterable, $size)
+    {
+        return FluentIterable::from(Iterators::partition(new IteratorIterator($iterable), $size))
+            ->transform(
+                function (Iterator $element) {
+                    return new FixIterable($element);
+                }
+            );
+    }
+
+    /**
+     * Divides an iterable into unmodifiable sublists of the given size,
+     * padding the final iterable with null values if necessary.
+     *
+     * For example, partitioning an iterable containing [a, b, c, d, e] with a partition size
+     * of 3 yields [[a, b, c], [d, e, null]] -- an outer iterable containing two inner lists of three elements each,
+     * all in the original order.
+     *
+     * @param IteratorAggregate $iterable
+     * @param int $size
+     * @return IteratorAggregate
+     */
+    public static function paddedPartition(IteratorAggregate $iterable, $size)
+    {
+        return FluentIterable::from(Iterators::paddedPartition(new IteratorIterator($iterable), $size))
+            ->transform(
+                function (Iterator $element) {
+                    return new FixIterable($element);
+                }
+            );
+    }
+
+    /**
      * Combines multiple iterables into a single iterable.
      * The returned iterable has an iterator that traverses the elements of each iterable in inputs.
      * The input iterators are not polled until necessary.

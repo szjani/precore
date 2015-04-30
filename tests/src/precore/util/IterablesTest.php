@@ -114,6 +114,38 @@ class IterablesTest extends PHPUnit_Framework_TestCase
         $iterable = Iterables::concatIterables(new ArrayObject([$object1, $object2, $object3]));
         self::assertTrue(Iterables::elementsEqual($iterable, new ArrayObject([1, 2, 3, 4, 5, 6])));
     }
+
+    /**
+     * @test
+     */
+    public function shouldFind()
+    {
+        self::assertEquals(1, Iterables::find(new ArrayObject([2, 1, 3]), Predicates::equalTo(1)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPartition()
+    {
+        $input = ['a', 'b', 'c', 'd', 'e'];
+        $result = Iterables::partition(Iterables::fromArray($input), 3);
+        self::assertEquals(2, Iterables::size($result));
+        self::assertTrue(Iterables::elementsEqual(Iterables::fromArray(['a', 'b', 'c']), Iterables::get($result, 0)));
+        self::assertTrue(Iterables::elementsEqual(Iterables::fromArray(['d', 'e']), Iterables::get($result, 1)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPaddedPartition()
+    {
+        $input = ['a', 'b', 'c', 'd', 'e'];
+        $result = Iterables::paddedPartition(Iterables::fromArray($input), 3);
+        self::assertEquals(2, Iterables::size($result));
+        self::assertTrue(Iterables::elementsEqual(Iterables::fromArray(['a', 'b', 'c']), Iterables::get($result, 0)));
+        self::assertTrue(Iterables::elementsEqual(Iterables::fromArray(['d', 'e', null]), Iterables::get($result, 1)));
+    }
 }
 
 class TraversableWrapper implements IteratorAggregate

@@ -29,7 +29,6 @@ use Countable;
 use Iterator;
 use IteratorIterator;
 use LimitIterator;
-use MultipleIterator;
 use OutOfBoundsException;
 use Traversable;
 
