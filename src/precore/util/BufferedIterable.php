@@ -143,21 +143,22 @@ final class BufferedIterable implements IteratorAggregate
     /**
      * Limits the number of chunk provider calls. The default value is 1.
      *
-     * @param $limit
+     * @param int $limit
      * @return BufferedIterable
      */
     public function providerCallLimit($limit)
     {
+        Preconditions::checkArgument(is_int($limit) && 0 < $limit, 'Limit must be a positive integer!');
         return new BufferedIterable($this->chunkProvider, $this->filter, $this->limit, $limit);
     }
 
     /**
      * Filters the result list with the given predicate.
      *
-     * @param $predicate
+     * @param callable $predicate
      * @return BufferedIterable
      */
-    public function filter($predicate)
+    public function filter(callable $predicate)
     {
         return new BufferedIterable($this->chunkProvider, $predicate, $this->limit, $this->providerCallLimit);
     }
