@@ -307,10 +307,7 @@ final class Iterables
      */
     public static function elementsEqual(IteratorAggregate $iterable1, IteratorAggregate $iterable2)
     {
-        return Iterators::elementsEqual(
-            Iterators::from($iterable1),
-            Iterators::from($iterable2)
-        );
+        return Iterators::elementsEqual(Iterators::from($iterable1), Iterators::from($iterable2));
     }
 }
 
