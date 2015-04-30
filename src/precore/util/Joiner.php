@@ -187,11 +187,7 @@ final class SkipNullJoiner extends Joiner
      */
     protected function modifyIterable(FluentIterable $iterable)
     {
-        return $iterable->filter(
-            function ($element) {
-                return $element != null;
-            }
-        );
+        return $iterable->filter(Predicates::notNull());
     }
 }
 
