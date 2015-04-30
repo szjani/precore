@@ -31,6 +31,7 @@ use IteratorIterator;
 use LimitIterator;
 use MultipleIterator;
 use OutOfBoundsException;
+use Traversable;
 
 /**
  * Helper class for {@link Iterator} objects.
@@ -42,6 +43,28 @@ final class Iterators
 {
     private function __construct()
     {
+    }
+
+    /**
+     * Returns an iterator containing the elements of array in order.
+     *
+     * @param array $array
+     * @return Iterator
+     */
+    public static function forArray(array $array)
+    {
+        return new ArrayIterator($array);
+    }
+
+    /**
+     * Returns an iterator containing only value.
+     *
+     * @param mixed $value
+     * @return Iterator
+     */
+    public static function singletonIterator($value)
+    {
+        return self::forArray([$value]);
     }
 
     /**
@@ -235,6 +258,81 @@ final class Iterators
     }
 
     /**
+     * Returns the number of elements in the specified iterator that equal the specified object.
+     *
+     * @param Iterator $iterator
+     * @param $element
+     * @return int
+     */
+    public static function frequency(Iterator $iterator, $element)
+    {
+        $frequency = 0;
+        foreach ($iterator as $item) {
+            if (Objects::equal($item, $element)) {
+                $frequency++;
+            }
+        }
+        return $frequency;
+    }
+
+    /**
+     * Divides an iterator into unmodifiable sublists of the given size (the final list may be smaller).
+     *
+     * For example, partitioning an iterator containing [a, b, c, d, e] with a partition size
+     * of 3 yields [[a, b, c], [d, e]] -- an outer iterator containing two inner lists of three and two elements,
+     * all in the original order.
+     *
+     * @param Iterator $iterator
+     * @param int $size
+     * @return Iterator
+     * @throws \InvalidArgumentException if $limit is non positive
+     */
+    public static function partition(Iterator $iterator, $size)
+    {
+        Preconditions::checkArgument(is_int($size) && 0 < $size);
+        return new PartitionIterator($iterator, $size);
+    }
+
+    /**
+     * Divides an iterator into unmodifiable sublists of the given size,
+     * padding the final iterator with null values if necessary.
+     *
+     * For example, partitioning an iterator containing [a, b, c, d, e] with a partition size
+     * of 3 yields [[a, b, c], [d, e, null]] -- an outer iterator containing two inner lists of three elements each,
+     * all in the original order.
+     *
+     * @param Iterator $iterator
+     * @param int $size
+     * @return Iterator
+     * @throws \InvalidArgumentException if $limit is non positive
+     */
+    public static function paddedPartition(Iterator $iterator, $size)
+    {
+        Preconditions::checkArgument(is_int($size) && 0 < $size);
+        return new PartitionIterator($iterator, $size, true);
+    }
+
+    /**
+     * Returns the first element in iterator that satisfies the given predicate.
+     *
+     * @param Iterator $iterator
+     * @param callable $predicate
+     * @param null $defaultValue
+     * @return mixed
+     */
+    public static function find(Iterator $iterator, callable $predicate, $defaultValue = null)
+    {
+        $result = $defaultValue;
+        foreach ($iterator as $element) {
+            if (Predicates::call($predicate, $element)) {
+                $result = $element;
+                break;
+            }
+        }
+        return $result;
+    }
+
+    /**
      * @param Iterator $iterator
      * @return boolean
      */
@@ -254,15 +352,16 @@ final class Iterators
      */
     public static function elementsEqual(Iterator $iterator1, Iterator $iterator2)
     {
-        $multipleIterator = new MultipleIterator(MultipleIterator::MIT_NEED_ANY | MultipleIterator::MIT_KEYS_NUMERIC);
-        $multipleIterator->attachIterator($iterator1);
-        $multipleIterator->attachIterator($iterator2);
-        foreach ($multipleIterator as $items) {
-            if (!Objects::equal($items[0], $items[1])) {
+        $iterator1->rewind();
+        $iterator2->rewind();
+        while ($iterator1->valid() && $iterator2->valid()) {
+            if (!Objects::equal($iterator1->current(), $iterator2->current())) {
                 return false;
             }
+            $iterator1->next();
+            $iterator2->next();
         }
-        return true;
+        return !$iterator1->valid() && !$iterator2->valid();
     }
 }
 
@@ -349,3 +448,65 @@ final class ConcatIterator extends IteratorIterator
     }
 }
 
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class PartitionIterator extends IteratorIterator
+{
+    private $size;
+    private $currentIterator;
+    /**
+     * @var bool
+     */
+    private $padded;
+
+    /**
+     * @param Traversable $iterator
+     * @param int $size
+     * @param bool $padded
+     */
+    public function __construct(Traversable $iterator, $size, $padded = false)
+    {
+        parent::__construct($iterator);
+        $this->size = $size;
+        $this->padded = $padded;
+    }
+
+    public function current()
+    {
+        return $this->currentIterator;
+    }
+
+    public function rewind()
+    {
+        parent::rewind();
+        $this->findNext();
+    }
+
+    public function next()
+    {
+        $this->findNext();
+    }
+
+    public function valid()
+    {
+        return $this->currentIterator !== null;
+    }
+
+    private function findNext()
+    {
+        $array = [];
+        for ($i = 0; $i < $this->size && $this->getInnerIterator()->valid(); $this->getInnerIterator()->next(), $i++) {
+            $array[] = $this->getInnerIterator()->current();
+        }
+        if ($this->padded) {
+            $array = array_pad($array, $this->size, null);
+        }
+        $this->currentIterator = 0 < $i
+            ? new ArrayIterator($array)
+            : null;
+    }
+}

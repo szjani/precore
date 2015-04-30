@@ -24,6 +24,7 @@
 namespace precore\util;
 
 use ArrayIterator;
+use EmptyIterator;
 use PHPUnit_Framework_TestCase;
 
 /**
@@ -61,8 +62,10 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     {
         $iterator1 = new ArrayIterator([1, 2, null, 3, null]);
         $iterator2 = new ArrayIterator([1, 2, null, 3, null]);
+        $iterator3 = new ArrayIterator([1, 2, null, 3]);
         self::assertTrue(Iterators::elementsEqual($iterator1, $iterator2));
         self::assertFalse(Iterators::elementsEqual($iterator1, new ArrayIterator()));
+        self::assertFalse(Iterators::elementsEqual($iterator1, $iterator3));
     }
 
     /**
@@ -159,5 +162,111 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
         $it4 = new ArrayIterator([2]);
         $result = Iterators::concatIterators(new ArrayIterator([$it1, $it2, $it3, $it4]));
         self::assertTrue(Iterators::elementsEqual(new ArrayIterator([1, 2]), $result));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnFrequency()
+    {
+        self::assertEquals(0, Iterators::frequency(new ArrayIterator([1]), 2));
+        self::assertEquals(2, Iterators::frequency(new ArrayIterator([1, 2, null, 2, 3, 4]), 2));
+        self::assertEquals(0, Iterators::frequency(new ArrayIterator([]), 1));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPartitionEmptyIterator()
+    {
+        $iterator = Iterators::partition(new EmptyIterator(), 1);
+        self::assertTrue(Iterators::isEmpty($iterator));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPartitionToOneChunk()
+    {
+        $input = new ArrayIterator(['a']);
+        $iterator = Iterators::partition($input, 1);
+        self::assertEquals(1, Iterators::size($iterator));
+        self::assertTrue(Iterators::elementsEqual($input, Iterators::get($iterator, 0)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPartitionToTwoChunks()
+    {
+        $input = new ArrayIterator(['a', 'b', 'c', 'd']);
+        $iterator = Iterators::partition($input, 2);
+        self::assertEquals(2, Iterators::size($iterator));
+        self::assertTrue(Iterators::elementsEqual(new ArrayIterator(['a', 'b']), Iterators::get($iterator, 0)));
+        self::assertTrue(Iterators::elementsEqual(new ArrayIterator(['c', 'd']), Iterators::get($iterator, 1)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPartitionWithSmallerLastChunk()
+    {
+        $input = new ArrayIterator(['a', 'b', 'c']);
+        $iterator = Iterators::partition($input, 2);
+        self::assertEquals(2, Iterators::size($iterator));
+        self::assertTrue(Iterators::elementsEqual(Iterators::forArray(['a', 'b']), Iterators::get($iterator, 0)));
+        self::assertTrue(Iterators::elementsEqual(Iterators::singletonIterator('c'), Iterators::get($iterator, 1)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPaddedPartitionToOneChunk()
+    {
+        $input = new ArrayIterator(['a']);
+        $iterator = Iterators::paddedPartition($input, 1);
+        self::assertEquals(1, Iterators::size($iterator));
+        self::assertTrue(Iterators::elementsEqual($input, Iterators::get($iterator, 0)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPaddedPartitionToTwoChunks()
+    {
+        $input = new ArrayIterator(['a', 'b', 'c', 'd']);
+        $iterator = Iterators::paddedPartition($input, 2);
+        self::assertEquals(2, Iterators::size($iterator));
+        self::assertTrue(Iterators::elementsEqual(new ArrayIterator(['a', 'b']), Iterators::get($iterator, 0)));
+        self::assertTrue(Iterators::elementsEqual(new ArrayIterator(['c', 'd']), Iterators::get($iterator, 1)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldPaddedPartitionWithNullFilledLastChunk()
+    {
+        $input = new ArrayIterator(['a', 'b', 'c']);
+        $iterator = Iterators::paddedPartition($input, 2);
+        self::assertEquals(2, Iterators::size($iterator));
+        self::assertTrue(Iterators::elementsEqual(new ArrayIterator(['a', 'b']), Iterators::get($iterator, 0)));
+        self::assertTrue(Iterators::elementsEqual(new ArrayIterator(['c', null]), Iterators::get($iterator, 1)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotFindAny()
+    {
+        self::assertNull(Iterators::find(new EmptyIterator(), Predicates::alwaysTrue()));
+        self::assertEquals('no', Iterators::find(Iterators::forArray([1, 2]), Predicates::equalTo(3), 'no'));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldFind()
+    {
+        self::assertEquals(1, Iterators::find(Iterators::forArray([2, 1, 3]), Predicates::equalTo(1)));
     }
 }
