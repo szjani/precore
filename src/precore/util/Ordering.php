@@ -92,7 +92,7 @@ final class Ordering implements Comparator
      */
     public function reverse()
     {
-        return Ordering::from(Collections::reverseOrder($this->comparator));
+        return Ordering::from(Collections::reverseOrder($this));
     }
 
     /**
@@ -108,7 +108,7 @@ final class Ordering implements Comparator
                     ? -1
                     : ($object2 === null
                         ? 1
-                        : $this->comparator->compare($object1, $object2));
+                        : $this->compare($object1, $object2));
             }
         ));
     }
@@ -127,7 +127,7 @@ final class Ordering implements Comparator
                     ? 1
                     : ($object2 === null
                         ? -1
-                        : $this->comparator->compare($object1, $object2));
+                        : $this->compare($object1, $object2));
             }
         ));
     }
@@ -143,7 +143,7 @@ final class Ordering implements Comparator
     {
         return Ordering::from(Collections::comparatorFrom(
             function ($object1, $object2) use ($function) {
-                return $this->comparator->compare(
+                return $this->compare(
                     call_user_func($function, $object1),
                     call_user_func($function, $object2)
                 );
@@ -162,7 +162,7 @@ final class Ordering implements Comparator
     {
         return Ordering::from(Collections::comparatorFrom(
             function ($object1, $object2) use ($secondaryComparator) {
-                $res = $this->comparator->compare($object1, $object2);
+                $res = $this->compare($object1, $object2);
                 return $res !== 0 ? $res : $secondaryComparator->compare($object1, $object2);
             }
         ));
