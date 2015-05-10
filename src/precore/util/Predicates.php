@@ -24,7 +24,6 @@
 namespace precore\util;
 
 use ArrayObject;
-use IteratorIterator;
 use Traversable;
 
 /**
@@ -187,7 +186,7 @@ final class Predicates
     public static function in(Traversable $traversable)
     {
         return function ($element) use ($traversable) {
-            return Iterators::contains(new IteratorIterator($traversable), $element);
+            return Iterators::contains(Iterators::from($traversable), $element);
         };
     }
 
