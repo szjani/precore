@@ -78,11 +78,7 @@ final class Ordering implements Comparator
      */
     public static function usingToString()
     {
-        return Ordering::from(StringComparator::$BINARY)->onResultOf(
-            function ($element) {
-                return (string) $element;
-            }
-        );
+        return Ordering::from(StringComparator::$BINARY)->onResultOf(Functions::toStringFunction());
     }
 
     /**
