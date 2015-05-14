@@ -61,7 +61,7 @@ interface ObjectInterface
     public function hashCode();
 
     /**
-     * @param object $object
+     * @param ObjectInterface $object
      * @return boolean
      */
     public function equals(ObjectInterface $object = null);
