@@ -85,7 +85,7 @@ class FileLock extends Object implements Lock
     {
         if (!$this->isLocked()) {
             $msg = "File '{$this->file->getPathname()}' is not locked!";
-            $this->getLogger()->error($msg);
+            self::getLogger()->error($msg);
             throw new LockException($msg);
         }
         flock($this->fileResource, LOCK_UN);
