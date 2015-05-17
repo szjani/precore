@@ -34,6 +34,8 @@ use Traversable;
  */
 final class Ordering implements Comparator
 {
+    private static $NATURAL;
+
     /**
      * @var Comparator
      */
@@ -46,6 +48,11 @@ final class Ordering implements Comparator
     private function __construct(Comparator $comparator)
     {
         $this->comparator = $comparator;
+    }
+
+    public static function init()
+    {
+        self::$NATURAL = Ordering::from(ComparableComparator::instance());
     }
 
     /**
@@ -67,7 +74,7 @@ final class Ordering implements Comparator
      */
     public static function natural()
     {
-        return Ordering::from(ComparableComparator::instance());
+        return self::$NATURAL;
     }
 
     /**
@@ -201,3 +208,4 @@ final class Ordering implements Comparator
         return $this->comparator->compare($object1, $object2);
     }
 }
+Ordering::init();
