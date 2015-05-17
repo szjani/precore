@@ -227,10 +227,12 @@ final class Iterators
      */
     public static function get(Iterator $iterator, $position)
     {
-        foreach (self::limit(self::skip($iterator, $position), 1) as $element) {
-            return $element;
+        $singleton = self::limit(self::skip($iterator, $position), 1);
+        $singleton->rewind();
+        if (!$singleton->valid()) {
+            throw new OutOfBoundsException("The requested index '{$position}' is invalid");
         }
-        throw new OutOfBoundsException("The requested index '{$position}' is invalid");
+        return $singleton->current();
     }
 
     /**
