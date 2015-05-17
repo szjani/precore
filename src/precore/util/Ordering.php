@@ -35,6 +35,7 @@ use Traversable;
 final class Ordering implements Comparator
 {
     private static $NATURAL;
+    private static $TO_STRING;
 
     /**
      * @var Comparator
@@ -53,6 +54,7 @@ final class Ordering implements Comparator
     public static function init()
     {
         self::$NATURAL = Ordering::from(ComparableComparator::instance());
+        self::$TO_STRING = Ordering::from(StringComparator::$BINARY)->onResultOf(Functions::toStringFunction());
     }
 
     /**
@@ -85,7 +87,7 @@ final class Ordering implements Comparator
      */
     public static function usingToString()
     {
-        return Ordering::from(StringComparator::$BINARY)->onResultOf(Functions::toStringFunction());
+        return self::$TO_STRING;
     }
 
     /**

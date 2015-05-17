@@ -31,8 +31,21 @@ namespace precore\util;
  */
 final class Functions
 {
+    private static $IDENTITY;
+    private static $TO_STRING;
+
     private function __construct()
     {
+    }
+
+    public static function init()
+    {
+        self::$IDENTITY = function ($input) {
+            return $input;
+        };
+        self::$TO_STRING = function ($input) {
+            return (string) $input;
+        };
     }
 
     /**
@@ -55,9 +68,7 @@ final class Functions
      */
     public static function identity()
     {
-        return function ($input) {
-            return $input;
-        };
+        return self::$IDENTITY;
     }
 
     /**
@@ -67,9 +78,7 @@ final class Functions
      */
     public static function toStringFunction()
     {
-        return function ($input) {
-            return (string) $input;
-        };
+        return self::$TO_STRING;
     }
 
     /**
@@ -123,3 +132,4 @@ final class Functions
         };
     }
 }
+Functions::init();
