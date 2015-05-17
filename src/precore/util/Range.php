@@ -68,9 +68,17 @@ final class Range extends Object
         return $lower->describeAsLowerBound() . '..' . $upper->describeAsUpperBound();
     }
 
-    private static function comparatorOrNatural(Comparator $comparator = null)
+    private static function comparatorOrNatural($endpoint, Comparator $comparator = null)
     {
-        return $comparator !== null ? $comparator : Ordering::natural();
+        $result = Ordering::natural();
+        if ($comparator !== null) {
+            $result = $comparator;
+        } elseif (is_string($endpoint)) {
+            $result = Ordering::usingToString();
+        } elseif (is_numeric($endpoint)) {
+            $result = Numbers::naturalOrdering();
+        }
+        return $result;
     }
 
     public static function init()
@@ -86,7 +94,7 @@ final class Range extends Object
      */
     public static function open($lower, $upper, Comparator $comparator = null)
     {
-        $comparator = self::comparatorOrNatural($comparator);
+        $comparator = self::comparatorOrNatural($lower, $comparator);
         return new Range(Cut::aboveValue($lower, $comparator), Cut::belowValue($upper, $comparator));
     }
 
@@ -98,7 +106,7 @@ final class Range extends Object
      */
     public static function closed($lower, $upper, Comparator $comparator = null)
     {
-        $comparator = self::comparatorOrNatural($comparator);
+        $comparator = self::comparatorOrNatural($lower, $comparator);
         return new Range(Cut::belowValue($lower, $comparator), Cut::aboveValue($upper, $comparator));
     }
 
@@ -110,7 +118,7 @@ final class Range extends Object
      */
     public static function openClosed($lower, $upper, Comparator $comparator = null)
     {
-        $comparator = self::comparatorOrNatural($comparator);
+        $comparator = self::comparatorOrNatural($lower, $comparator);
         return new Range(Cut::aboveValue($lower, $comparator), Cut::aboveValue($upper, $comparator));
     }
 
@@ -122,7 +130,7 @@ final class Range extends Object
      */
     public static function closedOpen($lower, $upper, Comparator $comparator = null)
     {
-        $comparator = self::comparatorOrNatural($comparator);
+        $comparator = self::comparatorOrNatural($lower, $comparator);
         return new Range(Cut::belowValue($lower, $comparator), Cut::belowValue($upper, $comparator));
     }
 
@@ -141,7 +149,7 @@ final class Range extends Object
      */
     public static function greaterThan($endpoint, Comparator $comparator = null)
     {
-        $comparator = self::comparatorOrNatural($comparator);
+        $comparator = self::comparatorOrNatural($endpoint, $comparator);
         return new Range(Cut::aboveValue($endpoint, $comparator), Cut::aboveAll());
     }
 
@@ -152,7 +160,7 @@ final class Range extends Object
      */
     public static function lessThan($endpoint, Comparator $comparator = null)
     {
-        $comparator = self::comparatorOrNatural($comparator);
+        $comparator = self::comparatorOrNatural($endpoint, $comparator);
         return new Range(Cut::belowAll(), Cut::belowValue($endpoint, $comparator));
     }
 
@@ -163,7 +171,7 @@ final class Range extends Object
      */
     public static function atLeast($endpoint, Comparator $comparator = null)
     {
-        $comparator = self::comparatorOrNatural($comparator);
+        $comparator = self::comparatorOrNatural($endpoint, $comparator);
         return new Range(Cut::belowValue($endpoint, $comparator), Cut::aboveAll());
     }
 
@@ -174,7 +182,7 @@ final class Range extends Object
      */
     public static function atMost($endpoint, Comparator $comparator = null)
     {
-        $comparator = self::comparatorOrNatural($comparator);
+        $comparator = self::comparatorOrNatural($endpoint, $comparator);
         return new Range(Cut::belowAll(), Cut::aboveValue($endpoint, $comparator));
     }
 

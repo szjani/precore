@@ -124,6 +124,24 @@ class RangeTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldUseNaturalStringOrdering()
+    {
+        self::assertFalse(Range::open('b', 'e')->contains('b'));
+        self::assertTrue(Range::open('b', 'e')->contains('c'));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldUseNaturalNumericOrdering()
+    {
+        self::assertTrue(Range::closed(0, 5)->isConnected(Range::closed(3, 9)));
+        self::assertFalse(Range::open(4.1, 5)->isConnected(Range::open(5, 10)));
+    }
+
+    /**
+     * @test
+     */
     public function shouldCheckContainsAll()
     {
         $bc = Iterators::forArray(['b', 'c']);
