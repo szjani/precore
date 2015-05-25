@@ -145,8 +145,10 @@ class RangeTest extends PHPUnit_Framework_TestCase
     public function shouldCheckContainsAll()
     {
         $bc = Iterators::forArray(['b', 'c']);
-        self::assertTrue(Range::closed('b', 'e', Ordering::usingToString())->containsAll($bc));
         self::assertFalse(Range::open('b', 'e', Ordering::usingToString())->containsAll($bc));
+        $bc->rewind();
+        self::assertTrue(Range::closed('b', 'e', Ordering::usingToString())->containsAll($bc));
+        $bc->rewind();
         self::assertTrue(Range::closed('a', 'd', Ordering::usingToString())->containsAll($bc));
     }
 

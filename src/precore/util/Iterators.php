@@ -24,11 +24,10 @@
 namespace precore\util;
 
 use ArrayIterator;
-use CallbackFilterIterator;
-use Countable;
+use EmptyIterator;
 use Iterator;
-use IteratorIterator;
-use LimitIterator;
+use IteratorAggregate;
+use OuterIterator;
 use OutOfBoundsException;
 use Traversable;
 
@@ -52,9 +51,10 @@ final class Iterators
      */
     public static function from(Traversable $traversable)
     {
+        Preconditions::checkArgument($traversable instanceof Iterator || $traversable instanceof IteratorAggregate);
         return $traversable instanceof Iterator
             ? $traversable
-            : new IteratorIterator($traversable);
+            : Iterators::from($traversable->getIterator());
     }
 
     /**
@@ -88,7 +88,7 @@ final class Iterators
      */
     public static function filter(Iterator $unfiltered, callable $predicate)
     {
-        return new CallbackFilterIterator($unfiltered, $predicate);
+        return new FilterIterator($unfiltered, $predicate);
     }
 
     /**
@@ -151,10 +151,11 @@ final class Iterators
      */
     public static function all(Iterator $iterator, callable $predicate)
     {
-        foreach ($iterator as $element) {
-            if (!Predicates::call($predicate, $element)) {
+        while ($iterator->valid()) {
+            if (!Predicates::call($predicate, $iterator->current())) {
                 return false;
             }
+            $iterator->next();
         }
         return true;
     }
@@ -170,11 +171,12 @@ final class Iterators
     public static function indexOf(Iterator $iterator, callable $predicate)
     {
         $i = 0;
-        foreach ($iterator as $element) {
-            if (Predicates::call($predicate, $element)) {
+        while ($iterator->valid()) {
+            if (Predicates::call($predicate, $iterator->current())) {
                 return $i;
             }
             $i++;
+            $iterator->next();
         }
         return -1;
     }
@@ -204,21 +206,25 @@ final class Iterators
     public static function limit(Iterator $iterator, $limitSize)
     {
         Preconditions::checkArgument(is_int($limitSize) && 0 <= $limitSize);
-        return new LimitIterator($iterator, 0, $limitSize);
+        return new NoRewindNecessaryLimitIterator($iterator, $limitSize);
     }
 
     /**
      * @param Iterator $iterator
      * @param $numberToSkip
-     * @return Iterator
+     * @return integer
      */
     public static function skip(Iterator $iterator, $numberToSkip)
     {
-        return new LimitIterator($iterator, $numberToSkip);
+        Preconditions::checkArgument(is_int($numberToSkip) && 0 <= $numberToSkip);
+        for ($i = 0; $i < $numberToSkip && $iterator->valid(); $i++) {
+            $iterator->next();
+        }
+        return $i;
     }
 
     /**
-     * Advances iterator position + 1 times, returning the element at the positionth position.
+     * Advances iterator position times, returning the element at the positionth position.
      *
      * @param Iterator $iterator
      * @param $position
@@ -227,12 +233,11 @@ final class Iterators
      */
     public static function get(Iterator $iterator, $position)
     {
-        $singleton = self::limit(self::skip($iterator, $position), 1);
-        $singleton->rewind();
-        if (!$singleton->valid()) {
+        Iterators::skip($iterator, $position);
+        if (!$iterator->valid()) {
             throw new OutOfBoundsException("The requested index '{$position}' is invalid");
         }
-        return $singleton->current();
+        return $iterator->current();
     }
 
     /**
@@ -244,12 +249,9 @@ final class Iterators
     public static function size(Iterator $iterator)
     {
         $result = 0;
-        if ($iterator instanceof Countable) {
-            $result = $iterator->count();
-        } else {
-            foreach ($iterator as $item) {
-                $result++;
-            }
+        while ($iterator->valid()) {
+            $result++;
+            $iterator->next();
         }
         return $result;
     }
@@ -263,10 +265,11 @@ final class Iterators
      */
     public static function contains(Iterator $iterator, $element)
     {
-        foreach ($iterator as $item) {
-            if (Objects::equal($item, $element)) {
+        while ($iterator->valid()) {
+            if (Objects::equal($iterator->current(), $element)) {
                 return true;
             }
+            $iterator->next();
         }
         return false;
     }
@@ -281,10 +284,11 @@ final class Iterators
     public static function frequency(Iterator $iterator, $element)
     {
         $frequency = 0;
-        foreach ($iterator as $item) {
-            if (Objects::equal($item, $element)) {
+        while ($iterator->valid()) {
+            if (Objects::equal($iterator->current(), $element)) {
                 $frequency++;
             }
+            $iterator->next();
         }
         return $frequency;
     }
@@ -337,11 +341,13 @@ final class Iterators
     public static function find(Iterator $iterator, callable $predicate, $defaultValue = null)
     {
         $result = $defaultValue;
-        foreach ($iterator as $element) {
-            if (Predicates::call($predicate, $element)) {
-                $result = $element;
+        while ($iterator->valid()) {
+            $current = $iterator->current();
+            if (Predicates::call($predicate, $current)) {
+                $result = $current;
                 break;
             }
+            $iterator->next();
         }
         return $result;
     }
@@ -352,8 +358,37 @@ final class Iterators
      */
     public static function isEmpty(Iterator $iterator)
     {
-        $iterator->rewind();
         return !$iterator->valid();
+    }
+
+    /**
+     * @param Iterator $iterator
+     * @param null $defaultValue
+     * @return mixed|null
+     */
+    public static function getNext(Iterator $iterator, $defaultValue = null)
+    {
+        $result = $defaultValue;
+        if ($iterator->valid()) {
+            $result = $iterator->current();
+            $iterator->next();
+        }
+        return $result;
+    }
+
+    /**
+     * @param Iterator $iterator
+     * @param null $defaultValue
+     * @return mixed|null
+     */
+    public static function getLast(Iterator $iterator, $defaultValue = null)
+    {
+        $last = $defaultValue;
+        while ($iterator->valid()) {
+            $last = $iterator->current();
+            $iterator->next();
+        }
+        return $last;
     }
 
     /**
@@ -366,8 +401,6 @@ final class Iterators
      */
     public static function elementsEqual(Iterator $iterator1, Iterator $iterator2)
     {
-        $iterator1->rewind();
-        $iterator2->rewind();
         while ($iterator1->valid() && $iterator2->valid()) {
             if (!Objects::equal($iterator1->current(), $iterator2->current())) {
                 return false;
@@ -385,7 +418,124 @@ final class Iterators
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class TransformerIterator extends IteratorIterator
+class NoRewindNecessaryIterator implements OuterIterator
+{
+    /**
+     * @var Iterator
+     */
+    private $iterator;
+
+    /**
+     * FilterIterator constructor.
+     * @param Iterator $iterator
+     */
+    public function __construct(Iterator $iterator)
+    {
+        $this->iterator = $iterator;
+    }
+
+    public function valid()
+    {
+        return $this->iterator->valid();
+    }
+
+    public function current()
+    {
+        return $this->iterator->current();
+    }
+
+    public function next()
+    {
+        $this->iterator->next();
+    }
+
+    public function key()
+    {
+        return $this->iterator->key();
+    }
+
+    public function rewind()
+    {
+        $this->iterator->rewind();
+    }
+
+    public function getInnerIterator()
+    {
+        return $this->iterator;
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class FilterIterator extends NoRewindNecessaryIterator
+{
+    /**
+     * @var callable
+     */
+    private $filter;
+    private $key = 0;
+
+    /**
+     * FilterIterator constructor.
+     * @param Iterator $iterator
+     * @param callable $filter
+     */
+    public function __construct(Iterator $iterator, callable $filter)
+    {
+        parent::__construct($iterator);
+        $this->filter = $filter;
+    }
+
+    public function rewind()
+    {
+        parent::rewind();
+        $this->key = 0;
+    }
+
+    public function key()
+    {
+        return $this->key;
+    }
+
+    public function current()
+    {
+        $this->findNext();
+        return parent::current();
+    }
+
+    public function next()
+    {
+        parent::next();
+        $this->findNext();
+        $this->key++;
+    }
+
+    public function valid()
+    {
+        $this->findNext();
+        return parent::valid();
+    }
+
+
+    private function findNext()
+    {
+        while (parent::valid() && !Predicates::call($this->filter, parent::current())) {
+            parent::next();
+        }
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class TransformerIterator extends NoRewindNecessaryIterator
 {
     /**
      * @var callable
@@ -414,50 +564,62 @@ final class TransformerIterator extends IteratorIterator
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class ConcatIterator extends IteratorIterator
+final class ConcatIterator extends NoRewindNecessaryIterator
 {
-    public function current()
-    {
-        return $this->getInnerIterator()->current()->current();
-    }
+    /**
+     * @var Iterator
+     */
+    private $current;
+    private $key = 0;
 
-    public function valid()
+    public function __construct(Iterator $iterator)
     {
-        return $this->getInnerIterator()->valid() && $this->getInnerIterator()->current()->valid();
-    }
-
-    public function next()
-    {
-        $iterator = $this->getInnerIterator();
-        while (true) {
-            if ($iterator->valid()) {
-                $iterator->current()->next();
-                if ($iterator->current()->valid()) {
-                    break;
-                } else {
-                    $iterator->next();
-                    if ($iterator->valid()) {
-                        $iterator->current()->rewind();
-                        if ($iterator->current()->valid()) {
-                            break;
-                        }
-                    }
-                }
-            } else {
-                break;
-            }
-        }
+        parent::__construct($iterator);
+        $this->current = new EmptyIterator();
     }
 
     public function rewind()
     {
-        $iterator = $this->getInnerIterator();
-        $iterator->rewind();
-        if ($iterator->current() !== null) {
-            $iterator->current()->rewind();
+        parent::rewind();
+        $this->current = new EmptyIterator();
+        $this->key = 0;
+    }
+
+    public function current()
+    {
+        if (!$this->current->valid()) {
+            $this->findNextIterator();
         }
-        if (!$this->valid()) {
-            $this->next();
+        return $this->current->current();
+    }
+
+    public function valid()
+    {
+        if (!$this->current->valid()) {
+            $this->findNextIterator();
+        }
+        return $this->current->valid();
+    }
+
+    public function next()
+    {
+        $this->current->next();
+        if (!$this->current->valid()) {
+            $this->findNextIterator();
+        }
+        $this->key++;
+    }
+
+    public function key()
+    {
+        return $this->key;
+    }
+
+    private function findNextIterator()
+    {
+        while (!$this->current->valid() && parent::valid()) {
+            $this->current = parent::current();
+            parent::next();
         }
     }
 }
@@ -468,21 +630,67 @@ final class ConcatIterator extends IteratorIterator
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class PartitionIterator extends IteratorIterator
+final class NoRewindNecessaryLimitIterator extends NoRewindNecessaryIterator
+{
+    /**
+     * @var int
+     */
+    private $limit;
+
+    private $count = 0;
+
+    public function __construct(Iterator $iterator, $limit)
+    {
+        parent::__construct($iterator);
+        $this->limit = $limit;
+    }
+
+    public function rewind()
+    {
+        parent::rewind();
+        $this->count = 0;
+    }
+
+    public function valid()
+    {
+        return $this->count < $this->limit && parent::valid();
+    }
+
+    public function next()
+    {
+        parent::next();
+        $this->count++;
+    }
+}
+
+/**
+ * It is not intended to be used in your code.
+ *
+ * @package precore\util
+ * @author Janos Szurovecz <szjani@szjani.hu>
+ */
+final class PartitionIterator extends NoRewindNecessaryIterator
 {
     private $size;
+
+    /**
+     * @var Iterator
+     */
     private $currentIterator;
+
     /**
      * @var bool
      */
     private $padded;
 
+    private $key = 0;
+
     /**
-     * @param Traversable $iterator
+     * @param Iterator $iterator
      * @param int $size
      * @param bool $padded
      */
-    public function __construct(Traversable $iterator, $size, $padded = false)
+    public function __construct(Iterator $iterator, $size, $padded = false)
     {
         parent::__construct($iterator);
         $this->size = $size;
@@ -491,22 +699,28 @@ final class PartitionIterator extends IteratorIterator
 
     public function current()
     {
+        if ($this->currentIterator === null) {
+            $this->findNext();
+        }
         return $this->currentIterator;
-    }
-
-    public function rewind()
-    {
-        parent::rewind();
-        $this->findNext();
     }
 
     public function next()
     {
         $this->findNext();
+        $this->key++;
+    }
+
+    public function key()
+    {
+        return $this->key;
     }
 
     public function valid()
     {
+        if ($this->currentIterator === null) {
+            $this->findNext();
+        }
         return $this->currentIterator !== null;
     }
 
@@ -522,5 +736,6 @@ final class PartitionIterator extends IteratorIterator
         $this->currentIterator = 0 < $i
             ? new ArrayIterator($array)
             : null;
+        return $this->currentIterator;
     }
 }

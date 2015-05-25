@@ -25,6 +25,7 @@ namespace precore\util;
 
 use ArrayIterator;
 use ArrayObject;
+use Iterator;
 use IteratorAggregate;
 use PHPUnit_Framework_TestCase;
 use Traversable;
@@ -129,8 +130,12 @@ class IterablesTest extends PHPUnit_Framework_TestCase
     public function shouldPartition()
     {
         $input = ['a', 'b', 'c', 'd', 'e'];
-        $result = Iterables::partition(Iterables::fromArray($input), 3);
+        $iterable = Iterables::fromArray($input);
+        $result = Iterables::partition($iterable, 3);
         self::assertEquals(2, Iterables::size($result));
+
+        $iterable = Iterables::fromArray($input);
+        $result = Iterables::partition($iterable, 3);
         self::assertTrue(Iterables::elementsEqual(Iterables::fromArray(['a', 'b', 'c']), Iterables::get($result, 0)));
         self::assertTrue(Iterables::elementsEqual(Iterables::fromArray(['d', 'e']), Iterables::get($result, 1)));
     }
@@ -143,8 +148,19 @@ class IterablesTest extends PHPUnit_Framework_TestCase
         $input = ['a', 'b', 'c', 'd', 'e'];
         $result = Iterables::paddedPartition(Iterables::fromArray($input), 3);
         self::assertEquals(2, Iterables::size($result));
+
+        $result = Iterables::paddedPartition(Iterables::fromArray($input), 3);
         self::assertTrue(Iterables::elementsEqual(Iterables::fromArray(['a', 'b', 'c']), Iterables::get($result, 0)));
         self::assertTrue(Iterables::elementsEqual(Iterables::fromArray(['d', 'e', null]), Iterables::get($result, 1)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldSkip()
+    {
+        $iterable = new ArrayObject([1, 2]);
+        self::assertEquals([2], iterator_to_array(Iterables::skip($iterable, 1)));
     }
 }
 

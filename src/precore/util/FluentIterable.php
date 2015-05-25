@@ -276,6 +276,15 @@ final class FluentIterable implements IteratorAggregate
     }
 
     /**
+     * @param $size
+     * @return FluentIterable
+     */
+    public function partition($size)
+    {
+        return FluentIterable::from(Iterables::partition($this, $size));
+    }
+
+    /**
      * Converts this object to an array. This means it will iterate over this object.
      * It should be used only if it is reasonable.
      *

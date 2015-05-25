@@ -44,10 +44,8 @@ class ExceptionsTest extends PHPUnit_Framework_TestCase
         $e2 = new \InvalidArgumentException('message2', 2, $e1);
         $e3 = new \Exception('message3', 3, $e2);
         self::assertEquals(new ArrayObject([$e3, $e2, $e1]), Exceptions::getCausalChain($e3));
-        self::assertSame(
-            $e2,
-            Iterables::get(Iterables::filterBy(Exceptions::getCausalChain($e3), '\InvalidArgumentException'), 0)
-        );
+        $iae = Iterables::filterBy(Exceptions::getCausalChain($e3), '\InvalidArgumentException');
+        self::assertSame($e2, Iterables::get($iae, 0));
     }
 
     /**
