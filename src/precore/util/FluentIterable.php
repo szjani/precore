@@ -25,6 +25,7 @@ namespace precore\util;
 
 use Iterator;
 use IteratorAggregate;
+use precore\lang\Object;
 use Traversable;
 
 /**
@@ -45,7 +46,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class FluentIterable implements IteratorAggregate
+final class FluentIterable extends Object implements IteratorAggregate
 {
     /**
      * @var IteratorAggregate
@@ -307,8 +308,8 @@ final class FluentIterable implements IteratorAggregate
         return $this->iterator();
     }
 
-    public function __toString()
+    public function toString()
     {
-        return '[' . Joiner::on(', ')->useForNull('null')->join($this) . ']';
+        return Iterables::toString($this);
     }
 }
