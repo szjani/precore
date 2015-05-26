@@ -49,6 +49,16 @@ class JoinerTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldNotRewindIterator()
+    {
+        $it = new ArrayIterator([1, 2, 3]);
+        $it->next();
+        self::assertEquals('2, 3', Joiner::on(', ')->join($it));
+    }
+
+    /**
+     * @test
+     */
     public function shouldReturnTwoElements()
     {
         $element1 = 'element1';

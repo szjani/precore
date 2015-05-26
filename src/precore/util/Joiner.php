@@ -112,13 +112,24 @@ abstract class Joiner extends Object
             $parts = new ArrayIterator($parts);
         }
         Preconditions::checkArgument($parts instanceof Traversable, 'parts must be an array or a Traversable');
-        $iterable = $this->modifyIterable(FluentIterable::from($parts))
+        $iterator = $this->modifyIterable(FluentIterable::from($parts))
             ->transform(
                 function ($element) {
                     return ToStringHelper::valueToString($element);
                 }
-            );
-        return implode($this->separator, $iterable->toArray());
+            )
+            ->iterator();
+        $res = '';
+        do {
+            $res .= $iterator->current();
+            $iterator->next();
+            if ($iterator->valid()) {
+                $res .= $this->separator;
+            } else {
+                break;
+            }
+        } while (true);
+        return $res;
     }
 
     public function toString()
