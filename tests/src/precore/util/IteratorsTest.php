@@ -431,4 +431,14 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
         $iterator->next();
         self::assertEquals(3, Iterators::size($iterator));
     }
+
+    /**
+     * @test
+     */
+    public function shouldReturnToString()
+    {
+        $it = new ArrayIterator([1, 2, 3]);
+        $it->next();
+        self::assertEquals('[2, 3]', Iterators::toString($it));
+    }
 }

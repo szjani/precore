@@ -23,6 +23,8 @@
 
 namespace precore\util;
 
+use ArrayIterator;
+use ArrayObject;
 use PHPUnit_Framework_TestCase;
 use precore\lang\Object;
 use precore\lang\ObjectInterface;
@@ -112,6 +114,27 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
             ->expects(self::never())
             ->method('equals');
         self::assertTrue(Objects::equal($obj, $obj));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCreateStringForIterator()
+    {
+        $it = new ArrayIterator([1, 2, null, 3]);
+        $it->next();
+        $helper = Objects::toStringHelper('x')->add('it', $it);
+        self::assertStringEndsWith('x{it=[2, null, 3]}', $helper->toString());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldCreateStringForIterable()
+    {
+        $iterable = new ArrayObject(['1, 2']);
+        $helper = Objects::toStringHelper('x')->add('iterable', $iterable);
+        self::assertEquals('x{iterable=[1, 2]}', $helper->toString());
     }
 }
 

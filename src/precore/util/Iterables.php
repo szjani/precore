@@ -302,6 +302,15 @@ final class Iterables
     {
         return Iterators::elementsEqual(Iterators::from($iterable1), Iterators::from($iterable2));
     }
+
+    /**
+     * @param IteratorAggregate $iterable
+     * @return string
+     */
+    public static function toString(IteratorAggregate $iterable)
+    {
+        return Iterators::toString(Iterators::from($iterable));
+    }
 }
 
 /**

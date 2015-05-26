@@ -410,6 +410,15 @@ final class Iterators
         }
         return !$iterator1->valid() && !$iterator2->valid();
     }
+
+    /**
+     * @param Iterator $iterator
+     * @return string
+     */
+    public static function toString(Iterator $iterator)
+    {
+        return '[' . Collections::standardJoiner()->join($iterator) . ']';
+    }
 }
 
 /**

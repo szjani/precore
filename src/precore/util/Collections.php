@@ -35,8 +35,26 @@ use SplHeap;
  */
 abstract class Collections
 {
+    /**
+     * @var Joiner
+     */
+    private static $STANDARD_JOINER;
+
     private function __construct()
     {
+    }
+
+    public static function init()
+    {
+        self::$STANDARD_JOINER = Joiner::on(', ')->useForNull('null');
+    }
+
+    /**
+     * @return Joiner
+     */
+    public static function standardJoiner()
+    {
+        return self::$STANDARD_JOINER;
     }
 
     /**
@@ -251,3 +269,4 @@ final class CallableBasedComparator implements Comparator
         return call_user_func($this->callable, $object1, $object2);
     }
 }
+Collections::init();

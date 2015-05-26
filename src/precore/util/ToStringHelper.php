@@ -25,6 +25,8 @@ namespace precore\util;
 
 use DateTime;
 use ErrorException;
+use Iterator;
+use IteratorAggregate;
 use precore\lang\Object;
 
 /**
@@ -66,6 +68,10 @@ class ToStringHelper extends Object
                 $parts[] = $key . '=' . self::valueToString($valueItem);
             }
             $stringValue = sprintf('[%s]', implode(', ', $parts));
+        } elseif ($value instanceof Iterator) {
+            $stringValue = Iterators::toString($value);
+        } elseif ($value instanceof IteratorAggregate) {
+            $stringValue = Iterables::toString($value);
         } else {
             try {
                 $stringValue = (string) $value;
