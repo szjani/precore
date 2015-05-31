@@ -396,11 +396,11 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     public function shouldSkip()
     {
         $it = new ArrayIterator([1, 2]);
-        self::assertEquals(1, Iterators::skip($it, 1));
+        self::assertEquals(1, Iterators::advance($it, 1));
         self::assertEquals(2, $it->current());
 
         $it2 = new EmptyIterator();
-        self::assertEquals(0, Iterators::skip($it2, 3));
+        self::assertEquals(0, Iterators::advance($it2, 3));
     }
 
     /**

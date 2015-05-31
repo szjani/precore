@@ -491,7 +491,7 @@ final class SkipIterator extends \IteratorIterator
     public function rewind()
     {
         parent::rewind();
-        Iterators::skip($this, $this->skip);
+        Iterators::advance($this, $this->skip);
         $this->key = 0;
     }
 

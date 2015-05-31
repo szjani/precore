@@ -214,7 +214,7 @@ final class Iterators
      * @param $numberToSkip
      * @return integer
      */
-    public static function skip(Iterator $iterator, $numberToSkip)
+    public static function advance(Iterator $iterator, $numberToSkip)
     {
         Preconditions::checkArgument(is_int($numberToSkip) && 0 <= $numberToSkip);
         for ($i = 0; $i < $numberToSkip && $iterator->valid(); $i++) {
@@ -233,7 +233,7 @@ final class Iterators
      */
     public static function get(Iterator $iterator, $position)
     {
-        Iterators::skip($iterator, $position);
+        Iterators::advance($iterator, $position);
         if (!$iterator->valid()) {
             throw new OutOfBoundsException("The requested index '{$position}' is invalid");
         }
