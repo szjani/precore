@@ -37,16 +37,6 @@ abstract class Arrays
     }
 
     /**
-     * @deprecated Use sort method instead.
-     * @param array $list
-     * @param Comparator $comparator
-     */
-    public static function sortWith(array &$list, Comparator $comparator)
-    {
-        self::sort($list, $comparator);
-    }
-
-    /**
      * Sorts the specified array according to the order induced by the specified comparator.
      * All elements in the array must be mutually comparable using the specified comparator
      * (that is, c.compare(e1, e2) must not throw a ClassCastException for any elements e1 and e2 in the array).

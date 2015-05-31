@@ -47,7 +47,7 @@ class ArraysTest extends PHPUnit_Framework_TestCase
     public function shouldSortWith()
     {
         $list = ['b', 'a'];
-        Arrays::sortWith($list, StringComparator::$BINARY);
+        Arrays::sort($list, StringComparator::$BINARY);
         self::assertSame('a', $list[0]);
         self::assertSame('b', $list[1]);
     }
