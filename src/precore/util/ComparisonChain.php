@@ -54,10 +54,6 @@ abstract class ComparisonChain
         return self::$active;
     }
 
-    protected function __construct()
-    {
-    }
-
     /**
      * @param $left
      * @param $right
@@ -98,7 +94,7 @@ final class ActiveComparisonChain extends ComparisonChain
     private $less;
     private $greater;
 
-    protected function __construct(ComparisonChain $less, ComparisonChain $greater)
+    public function __construct(ComparisonChain $less, ComparisonChain $greater)
     {
         $this->less = $less;
         $this->greater = $greater;
@@ -164,7 +160,7 @@ final class InactiveComparisonChain extends ComparisonChain
 {
     private $result;
 
-    protected function __construct($result)
+    public function __construct($result)
     {
         $this->result = (int) $result;
     }
