@@ -51,6 +51,8 @@ final class Iterables
     }
 
     /**
+     * Creates an {@link IteratorAggregate} from traversable, regardless of its type.
+     *
      * @param Traversable $traversable
      * @return IteratorAggregate
      */
@@ -101,7 +103,8 @@ final class Iterables
     }
 
     /**
-     * Returns the first element in iterable that satisfies the given predicate.
+     * Returns the first element in iterable that satisfies the given predicate. If there is no such an element,
+     * it returns $defaultValue.
      *
      * @param IteratorAggregate $iterable
      * @param callable $predicate
@@ -294,6 +297,9 @@ final class Iterables
     }
 
     /**
+     * Checks whether the elements provided by the given iterables are equal correspondingly.
+     * It uses {@link Objects::equal()} for equality check.
+     *
      * @param IteratorAggregate $iterable1
      * @param IteratorAggregate $iterable2
      * @return bool
@@ -304,6 +310,8 @@ final class Iterables
     }
 
     /**
+     * Returns a string representation of iterable, with the format [e1, e2, ..., en].
+     *
      * @param IteratorAggregate $iterable
      * @return string
      */

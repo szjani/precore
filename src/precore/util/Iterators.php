@@ -257,7 +257,7 @@ final class Iterators
     }
 
     /**
-     * Returns true if iterator contains element.
+     * Returns true if iterator contains element. The check based on {@link Objects::equal()}.
      *
      * @param Iterator $iterator
      * @param $element
@@ -276,6 +276,7 @@ final class Iterators
 
     /**
      * Returns the number of elements in the specified iterator that equal the specified object.
+     * The check based on {@link Objects::equal()}.
      *
      * @param Iterator $iterator
      * @param $element
@@ -331,7 +332,8 @@ final class Iterators
     }
 
     /**
-     * Returns the first element in iterator that satisfies the given predicate.
+     * Returns the first element in iterator that satisfies the given predicate. If there is no such an element,
+     * it returns $defaultValue.
      *
      * @param Iterator $iterator
      * @param callable $predicate
@@ -362,6 +364,9 @@ final class Iterators
     }
 
     /**
+     * Returns the current element of the iterator if it's valid and calls {@link Iterator::next} on it.
+     * If the iterator is not valid, it returns $defaultValue.
+     *
      * @param Iterator $iterator
      * @param null $defaultValue
      * @return mixed|null
@@ -377,6 +382,8 @@ final class Iterators
     }
 
     /**
+     * Returns the last element provided by $iterator. If the iterator is not valid, returns $defaultValue.
+     *
      * @param Iterator $iterator
      * @param null $defaultValue
      * @return mixed|null
@@ -412,6 +419,8 @@ final class Iterators
     }
 
     /**
+     * Returns a string representation of iterator, with the format [e1, e2, ..., en].
+     *
      * @param Iterator $iterator
      * @return string
      */
