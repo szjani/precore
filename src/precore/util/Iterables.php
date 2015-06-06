@@ -61,7 +61,11 @@ final class Iterables
         Preconditions::checkArgument($traversable instanceof Iterator || $traversable instanceof IteratorAggregate);
         return $traversable instanceof IteratorAggregate
             ? $traversable
-            : new FixIterable($traversable);
+            : new CallableIterable(
+                function () use ($traversable) {
+                    return $traversable;
+                }
+            );
     }
 
     /**
@@ -73,7 +77,11 @@ final class Iterables
      */
     public static function filter(IteratorAggregate $unfiltered, callable $predicate)
     {
-        return new CallbackFilterIterable($unfiltered, $predicate);
+        return new CallableIterable(
+            function () use ($unfiltered, $predicate) {
+                return Iterators::filter(Iterators::from($unfiltered->getIterator()), $predicate);
+            }
+        );
     }
 
     /**
@@ -132,7 +140,11 @@ final class Iterables
         return FluentIterable::from(Iterators::partition(Iterators::from($iterable), $size))
             ->transform(
                 function (Iterator $element) {
-                    return new FixIterable($element);
+                    return new CallableIterable(
+                        function () use ($element) {
+                            return $element;
+                        }
+                    );
                 }
             );
     }
@@ -154,7 +166,11 @@ final class Iterables
         return FluentIterable::from(Iterators::paddedPartition(Iterators::from($iterable), $size))
             ->transform(
                 function (Iterator $element) {
-                    return new FixIterable($element);
+                    return new CallableIterable(
+                        function () use ($element) {
+                            return $element;
+                        }
+                    );
                 }
             );
     }
@@ -215,7 +231,11 @@ final class Iterables
      */
     public static function transform(IteratorAggregate $fromIterable, callable $transformer)
     {
-        return new TransformerIterable($fromIterable, $transformer);
+        return new CallableIterable(
+            function () use ($fromIterable, $transformer) {
+                return Iterators::transform(Iterators::from($fromIterable), $transformer);
+            }
+        );
     }
 
     /**
@@ -229,7 +249,11 @@ final class Iterables
      */
     public static function limit(IteratorAggregate $iterable, $limitSize)
     {
-        return new LimitIterable($iterable, $limitSize);
+        return new CallableIterable(
+            function () use ($iterable, $limitSize) {
+                return Iterators::limit(Iterators::from($iterable->getIterator()), $limitSize);
+            }
+        );
     }
 
     /**
@@ -256,7 +280,13 @@ final class Iterables
      */
     public static function skip(IteratorAggregate $iterable, $numberToSkip)
     {
-        return new SkipIterable($iterable, $numberToSkip);
+        return new CallableIterable(
+            function () use ($iterable, $numberToSkip) {
+                $iterator = Iterators::from($iterable);
+                Iterators::advance($iterator, $numberToSkip);
+                return $iterator;
+            }
+        );
     }
 
     /**
@@ -327,153 +357,21 @@ final class Iterables
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class FixIterable implements IteratorAggregate
-{
-    /**
-     * @var Iterator
-     */
-    private $iterator;
-
-    /**
-     * @param Iterator $iterator
-     */
-    public function __construct(Iterator $iterator)
-    {
-        $this->iterator = $iterator;
-    }
-
-    public function getIterator()
-    {
-        return $this->iterator;
-    }
-}
-
-/**
- * It is not intended to be used in your code.
- *
- * @package precore\util
- * @author Janos Szurovecz <szjani@szjani.hu>
- */
-final class TransformerIterable implements IteratorAggregate
+final class CallableIterable implements IteratorAggregate
 {
     private $callable;
-    private $iterable;
 
     /**
-     * @param IteratorAggregate $iterable
+     * CallableIterable constructor.
      * @param callable $callable
      */
-    public function __construct(IteratorAggregate $iterable, callable $callable)
+    public function __construct(callable $callable)
     {
         $this->callable = $callable;
-        $this->iterable = $iterable;
     }
 
     public function getIterator()
     {
-        return Iterators::transform(Iterators::from($this->iterable), $this->callable);
-    }
-}
-
-/**
- * It is not intended to be used in your code.
- *
- * @package precore\util
- * @author Janos Szurovecz <szjani@szjani.hu>
- */
-final class LimitIterable implements IteratorAggregate
-{
-    private $limit;
-
-    /**
-     * @var IteratorAggregate
-     */
-    private $iterable;
-
-    /**
-     * LimitIterable constructor.
-     * @param IteratorAggregate $iterable
-     * @param $limit
-     */
-    public function __construct(IteratorAggregate $iterable, $limit)
-    {
-        $this->limit = $limit;
-        $this->iterable = $iterable;
-    }
-
-    public function getIterator()
-    {
-        return Iterators::limit(Iterators::from($this->iterable->getIterator()), $this->limit);
-    }
-}
-
-/**
- * It is not intended to be used in your code.
- *
- * @package precore\util
- * @author Janos Szurovecz <szjani@szjani.hu>
- */
-final class SkipIterable implements IteratorAggregate
-{
-    private $skip;
-
-    /**
-     * @var IteratorAggregate
-     */
-    private $iterable;
-
-    /**
-     * LimitIterable constructor.
-     * @param IteratorAggregate $iterable
-     * @param $skip
-     */
-    public function __construct(IteratorAggregate $iterable, $skip)
-    {
-        $this->skip = $skip;
-        $this->iterable = $iterable;
-    }
-
-    public function getIterator()
-    {
-        $iterator = Iterators::from($this->iterable);
-        Iterators::advance($iterator, $this->skip);
-        return $iterator;
-    }
-}
-
-/**
- * It is not intended to be used in your code.
- *
- * @package precore\util
- * @author Janos Szurovecz <szjani@szjani.hu>
- */
-final class CallbackFilterIterable implements IteratorAggregate
-{
-    /**
-     * @var IteratorAggregate
-     */
-    private $iterable;
-
-    /**
-     * @var callable
-     */
-    private $predicate;
-
-    /**
-     * @param IteratorAggregate $iterable
-     * @param callable $predicate
-     */
-    public function __construct(IteratorAggregate $iterable, callable $predicate)
-    {
-        $this->iterable = $iterable;
-        $this->predicate = $predicate;
-    }
-
-    /**
-     * @return CallbackFilterIterator
-     */
-    public function getIterator()
-    {
-        return Iterators::filter(Iterators::from($this->iterable->getIterator()), $this->predicate);
+        return call_user_func($this->callable);
     }
 }
