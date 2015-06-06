@@ -435,7 +435,9 @@ final class SkipIterable implements IteratorAggregate
 
     public function getIterator()
     {
-        return new SkipIterator($this->iterable, $this->skip);
+        $iterator = Iterators::from($this->iterable);
+        Iterators::advance($iterator, $this->skip);
+        return $iterator;
     }
 }
 
@@ -473,44 +475,5 @@ final class CallbackFilterIterable implements IteratorAggregate
     public function getIterator()
     {
         return Iterators::filter(Iterators::from($this->iterable->getIterator()), $this->predicate);
-    }
-}
-
-/**
- * It is not intended to be used in your code.
- *
- * @package precore\util
- * @author Janos Szurovecz <szjani@szjani.hu>
- */
-final class SkipIterator extends \IteratorIterator
-{
-    /**
-     * @var
-     */
-    private $skip;
-    private $key = 0;
-
-    public function __construct(Traversable $iterator, $skip)
-    {
-        parent::__construct($iterator);
-        $this->skip = $skip;
-    }
-
-    public function rewind()
-    {
-        parent::rewind();
-        Iterators::advance($this, $this->skip);
-        $this->key = 0;
-    }
-
-    public function next()
-    {
-        parent::next();
-        $this->key++;
-    }
-
-    public function key()
-    {
-        return $this->key;
     }
 }

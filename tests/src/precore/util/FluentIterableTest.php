@@ -40,7 +40,6 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
     {
         $fluentIterable = FluentIterable::of([1, null, 2, 3])->filter(Predicates::notNull());
         self::assertEquals([1, 2, 3], $fluentIterable->toArray());
-        self::assertEquals([1, 2, 3], $fluentIterable->toArray());
     }
 
     /**
@@ -110,9 +109,8 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
      */
     public function shouldSkipItems()
     {
-        $fluentIterable = FluentIterable::of([1, 2, 3]);
-        self::assertEquals([2, 3], $fluentIterable->skip(1)->toArray());
-        self::assertEquals([], $fluentIterable->skip(10)->toArray());
+        self::assertEquals([2, 3], FluentIterable::of([1, 2, 3])->skip(1)->toArray());
+        self::assertEquals([], FluentIterable::of([1, 2, 3])->skip(10)->toArray());
     }
 
     /**

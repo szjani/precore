@@ -160,7 +160,7 @@ class IterablesTest extends PHPUnit_Framework_TestCase
     public function shouldSkip()
     {
         $iterable = new ArrayObject([1, 2]);
-        self::assertEquals([2], iterator_to_array(Iterables::skip($iterable, 1)));
+        self::assertEquals(2, Iterables::get(Iterables::skip($iterable, 1), 0));
     }
 
     /**

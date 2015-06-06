@@ -293,7 +293,13 @@ final class FluentIterable extends Object implements IteratorAggregate
      */
     public function toArray()
     {
-        return iterator_to_array($this, false);
+        $res = [];
+        $iterator = $this->iterator();
+        while ($iterator->valid()) {
+            $res[] = $iterator->current();
+            $iterator->next();
+        }
+        return $res;
     }
 
     /**
