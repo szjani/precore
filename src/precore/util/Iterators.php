@@ -297,12 +297,11 @@ final class Iterators
     public static function frequency(Iterator $iterator, $element)
     {
         $frequency = 0;
-        while ($iterator->valid()) {
-            if (Objects::equal($iterator->current(), $element)) {
+        Iterators::each($iterator, function ($item) use (&$frequency, $element) {
+            if (Objects::equal($element, $item)) {
                 $frequency++;
             }
-            $iterator->next();
-        }
+        });
         return $frequency;
     }
 
@@ -403,10 +402,9 @@ final class Iterators
     public static function getLast(Iterator $iterator, $defaultValue = null)
     {
         $last = $defaultValue;
-        while ($iterator->valid()) {
-            $last = $iterator->current();
-            $iterator->next();
-        }
+        Iterators::each($iterator, function ($element) use (&$last) {
+            $last = $element;
+        });
         return $last;
     }
 
