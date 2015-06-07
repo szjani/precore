@@ -115,27 +115,6 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
             ->method('equals');
         self::assertTrue(Objects::equal($obj, $obj));
     }
-
-    /**
-     * @test
-     */
-    public function shouldCreateStringForIterator()
-    {
-        $it = new ArrayIterator([1, 2, null, 3]);
-        $it->next();
-        $helper = Objects::toStringHelper('x')->add('it', $it);
-        self::assertStringEndsWith('x{it=[2, null, 3]}', $helper->toString());
-    }
-
-    /**
-     * @test
-     */
-    public function shouldCreateStringForIterable()
-    {
-        $iterable = new ArrayObject(['1, 2']);
-        $helper = Objects::toStringHelper('x')->add('iterable', $iterable);
-        self::assertEquals('x{iterable=[1, 2]}', $helper->toString());
-    }
 }
 
 class String extends Object

@@ -138,4 +138,21 @@ class ToStringHelperTest extends PHPUnit_Framework_TestCase
             ->toString();
         self::assertEquals(sprintf('%s{x=null, 3, [notNull=1, null=null]}', __CLASS__), $string);
     }
+
+    /**
+     * @test
+     */
+    public function shouldCallToStringOnIteratorIfPossible()
+    {
+        $obj = new ToStringOverriddenIterator(new \EmptyIterator());
+        self::assertEquals('okay', ToStringHelper::valueToString($obj));
+    }
+}
+
+class ToStringOverriddenIterator extends \IteratorIterator
+{
+    public function __toString()
+    {
+        return 'okay';
+    }
 }

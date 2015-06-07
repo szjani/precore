@@ -68,10 +68,6 @@ class ToStringHelper extends Object
                 $parts[] = $key . '=' . self::valueToString($valueItem);
             }
             $stringValue = sprintf('[%s]', implode(', ', $parts));
-        } elseif ($value instanceof Iterator) {
-            $stringValue = Iterators::toString($value);
-        } elseif ($value instanceof IteratorAggregate) {
-            $stringValue = Iterables::toString($value);
         } else {
             try {
                 $stringValue = (string) $value;
