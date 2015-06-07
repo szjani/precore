@@ -120,15 +120,13 @@ abstract class Joiner extends Object
             )
             ->iterator();
         $res = '';
-        do {
+        while ($iterator->valid()) {
             $res .= $iterator->current();
             $iterator->next();
             if ($iterator->valid()) {
                 $res .= $this->separator;
-            } else {
-                break;
             }
-        } while (true);
+        }
         return $res;
     }
 

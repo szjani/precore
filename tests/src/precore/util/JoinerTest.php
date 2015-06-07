@@ -173,4 +173,12 @@ class JoinerTest extends PHPUnit_Framework_TestCase
         self::assertTrue($joiner1->equals($joiner2));
         self::assertFalse($joiner1->equals(Joiner::on(',')->useForNull('other')));
     }
+
+    /**
+     * @test
+     */
+    public function shouldHandleEmptyIterator()
+    {
+        self::assertEquals('', Joiner::on(',')->join(new \EmptyIterator()));
+    }
 }
