@@ -258,9 +258,7 @@ final class FluentIterable extends Object implements IteratorAggregate
      */
     public function each(callable $function)
     {
-        foreach ($this as $element) {
-            call_user_func($function, $element);
-        }
+        Iterators::each($this->iterator(), $function);
     }
 
     /**
@@ -294,11 +292,9 @@ final class FluentIterable extends Object implements IteratorAggregate
     public function toArray()
     {
         $res = [];
-        $iterator = $this->iterator();
-        while ($iterator->valid()) {
-            $res[] = $iterator->current();
-            $iterator->next();
-        }
+        Iterators::each($this->iterator(), function ($element) use (&$res) {
+            $res[] = $element;
+        });
         return $res;
     }
 

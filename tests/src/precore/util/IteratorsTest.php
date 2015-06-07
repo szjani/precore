@@ -441,4 +441,17 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
         $it->next();
         self::assertEquals('[2, 3]', Iterators::toString($it));
     }
+
+    /**
+     * @test
+     */
+    public function shouldCallEachElements()
+    {
+        $it = new ArrayIterator([1, 2, 3]);
+        $res = [];
+        Iterators::each($it, function ($element) use (&$res) {
+            $res[] = $element;
+        });
+        self::assertEquals([1, 2, 3], $res);
+    }
 }

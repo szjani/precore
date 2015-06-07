@@ -249,11 +249,23 @@ final class Iterators
     public static function size(Iterator $iterator)
     {
         $result = 0;
-        while ($iterator->valid()) {
+        Iterators::each($iterator, function () use (&$result) {
             $result++;
+        });
+        return $result;
+    }
+
+    /**
+     * @param Iterator $iterator
+     * @param callable $function
+     * @return void
+     */
+    public static function each(Iterator $iterator, callable $function)
+    {
+        while ($iterator->valid()) {
+            call_user_func($function, $iterator->current());
             $iterator->next();
         }
-        return $result;
     }
 
     /**
