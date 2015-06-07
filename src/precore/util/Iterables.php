@@ -23,7 +23,6 @@
 
 namespace precore\util;
 
-use CallbackFilterIterator;
 use Countable;
 use Iterator;
 use IteratorAggregate;
