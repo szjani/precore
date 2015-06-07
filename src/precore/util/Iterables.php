@@ -92,7 +92,7 @@ final class Iterables
      */
     public static function filterBy(IteratorAggregate $unfiltered, $className)
     {
-        return self::from(Iterators::filterBy(Iterators::from($unfiltered), $className));
+        return self::from(Iterators::filterBy(Iterators::from($unfiltered->getIterator()), $className));
     }
 
     /**
@@ -106,7 +106,7 @@ final class Iterables
      */
     public static function concat(IteratorAggregate $a, IteratorAggregate $b)
     {
-        return self::from(Iterators::concat(Iterators::from($a), Iterators::from($b)));
+        return self::from(Iterators::concat(Iterators::from($a->getIterator()), Iterators::from($b->getIterator())));
     }
 
     /**
@@ -120,7 +120,7 @@ final class Iterables
      */
     public static function find(IteratorAggregate $iterable, callable $predicate, $defaultValue = null)
     {
-        return Iterators::find(Iterators::from($iterable), $predicate, $defaultValue);
+        return Iterators::find(Iterators::from($iterable->getIterator()), $predicate, $defaultValue);
     }
 
     /**
@@ -136,7 +136,7 @@ final class Iterables
      */
     public static function partition(IteratorAggregate $iterable, $size)
     {
-        return FluentIterable::from(Iterators::partition(Iterators::from($iterable), $size))
+        return FluentIterable::from(Iterators::partition(Iterators::from($iterable->getIterator()), $size))
             ->transform(
                 function (Iterator $element) {
                     return new CallableIterable(
@@ -162,7 +162,7 @@ final class Iterables
      */
     public static function paddedPartition(IteratorAggregate $iterable, $size)
     {
-        return FluentIterable::from(Iterators::paddedPartition(Iterators::from($iterable), $size))
+        return FluentIterable::from(Iterators::paddedPartition(Iterators::from($iterable->getIterator()), $size))
             ->transform(
                 function (Iterator $element) {
                     return new CallableIterable(
@@ -206,7 +206,7 @@ final class Iterables
      */
     public static function any(IteratorAggregate $iterable, callable $predicate)
     {
-        return Iterators::any(Iterators::from($iterable), $predicate);
+        return Iterators::any(Iterators::from($iterable->getIterator()), $predicate);
     }
 
     /**
@@ -218,7 +218,7 @@ final class Iterables
      */
     public static function all(IteratorAggregate $iterable, callable $predicate)
     {
-        return Iterators::all(Iterators::from($iterable), $predicate);
+        return Iterators::all(Iterators::from($iterable->getIterator()), $predicate);
     }
 
     /**
@@ -232,7 +232,7 @@ final class Iterables
     {
         return new CallableIterable(
             function () use ($fromIterable, $transformer) {
-                return Iterators::transform(Iterators::from($fromIterable), $transformer);
+                return Iterators::transform(Iterators::from($fromIterable->getIterator()), $transformer);
             }
         );
     }
@@ -265,7 +265,7 @@ final class Iterables
      */
     public static function get(IteratorAggregate $iterable, $position)
     {
-        return Iterators::get(Iterators::from($iterable), $position);
+        return Iterators::get(Iterators::from($iterable->getIterator()), $position);
     }
 
     /**
@@ -281,7 +281,7 @@ final class Iterables
     {
         return new CallableIterable(
             function () use ($iterable, $numberToSkip) {
-                $iterator = Iterators::from($iterable);
+                $iterator = Iterators::from($iterable->getIterator());
                 Iterators::advance($iterator, $numberToSkip);
                 return $iterator;
             }
@@ -311,7 +311,7 @@ final class Iterables
      */
     public static function contains(IteratorAggregate $iterable, $element)
     {
-        return Iterators::contains(Iterators::from($iterable), $element);
+        return Iterators::contains(Iterators::from($iterable->getIterator()), $element);
     }
 
     /**
@@ -322,7 +322,7 @@ final class Iterables
      */
     public static function isEmpty(IteratorAggregate $iterable)
     {
-        return Iterators::isEmpty(Iterators::from($iterable));
+        return Iterators::isEmpty(Iterators::from($iterable->getIterator()));
     }
 
     /**
@@ -335,7 +335,10 @@ final class Iterables
      */
     public static function elementsEqual(IteratorAggregate $iterable1, IteratorAggregate $iterable2)
     {
-        return Iterators::elementsEqual(Iterators::from($iterable1), Iterators::from($iterable2));
+        return Iterators::elementsEqual(
+            Iterators::from($iterable1->getIterator()),
+            Iterators::from($iterable2->getIterator())
+        );
     }
 
     /**
@@ -346,7 +349,7 @@ final class Iterables
      */
     public static function toString(IteratorAggregate $iterable)
     {
-        return Iterators::toString(Iterators::from($iterable));
+        return Iterators::toString(Iterators::from($iterable->getIterator()));
     }
 }
 
