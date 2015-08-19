@@ -23,6 +23,7 @@
 
 namespace precore\util;
 
+use Countable;
 use Iterator;
 use IteratorAggregate;
 use precore\lang\Object;
@@ -46,7 +47,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class FluentIterable extends Object implements IteratorAggregate
+final class FluentIterable extends Object implements IteratorAggregate, Countable
 {
     /**
      * @var IteratorAggregate
@@ -149,15 +150,34 @@ final class FluentIterable extends Object implements IteratorAggregate
     }
 
     /**
+     * Returns a fluent iterable that applies mapper to each element of this fluent iterable.
+     *
+     * @param callable $mapper
+     * @return FluentIterable
+     */
+    public function map(callable $mapper)
+    {
+        return $this->transform($mapper);
+    }
+
+    /**
+     * @see flatMap
+     */
+    public function transformAndConcat(callable $transformer)
+    {
+        return self::from(Iterables::concatIterables($this->transform($transformer)));
+    }
+
+    /**
      * Applies function to each element of this fluent iterable and returns a fluent iterable
      * with the concatenated combination of results. Transformer returns a Traversable of results.
      *
      * @param callable $transformer
      * @return FluentIterable
      */
-    public function transformAndConcat(callable $transformer)
+    public function flatMap(callable $transformer)
     {
-        return self::from(Iterables::concatIterables($this->transform($transformer)));
+        return $this->transformAndConcat($transformer);
     }
 
     /**
@@ -237,7 +257,7 @@ final class FluentIterable extends Object implements IteratorAggregate
      */
     public function size()
     {
-        return Iterables::size($this);
+        return Iterators::size($this->iterator());
     }
 
     /**
@@ -308,6 +328,20 @@ final class FluentIterable extends Object implements IteratorAggregate
     public function getIterator()
     {
         return $this->iterator();
+    }
+
+    /**
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Count elements of an object
+     * @link http://php.net/manual/en/countable.count.php
+     * @return int The custom count as an integer.
+     * </p>
+     * <p>
+     * The return value is cast to an integer.
+     */
+    public function count()
+    {
+        return $this->size();
     }
 
     public function toString()

@@ -258,4 +258,131 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
             ->toArray();
         self::assertEquals([2, 3, 4, 6], $result);
     }
+
+    /**
+     * @test
+     */
+    public function shouldCount()
+    {
+        self::assertEquals(0, FluentIterable::from(Collections::emptyIterator())->count());
+        self::assertEquals(2, FluentIterable::of([0, 3])->count());
+    }
+
+    public function testHello()
+    {
+        $computer = new Computer();
+        $soundCard = new SoundCard();
+        $usb = new Usb();
+        $usb->setVersion(3);
+        $soundCard->setUsb($usb);
+        $computer->setSoundCard($soundCard);
+
+        self::assertEquals(3, Computer::soundCardUsbVersion($computer));
+        self::assertEquals(1, Computer::soundCardUsbVersion(null));
+
+        $versions = [];
+        /* @var $c Computer */
+        foreach ([$computer, new Computer()] as $c) {
+            $version = 1;
+            $soundCard = $c->getSoundCard();
+            if ($soundCard->isPresent()) {
+                $usb = $soundCard->get()->getUsb();
+                /* @var $usb Optional */
+                if ($usb->isPresent()) {
+                    $version = $usb->get()->getVersion();
+                }
+            }
+            $versions[] = $version;
+        }
+        self::assertEquals([3, 1], $versions);
+
+        $versions = FluentIterable::of([$computer, new Computer()])
+            ->map(function (Computer $computer) {return $computer->getSoundCard();})
+            ->map(function (Optional $soundCard) {
+                return $soundCard
+                    ->flatMap(function (SoundCard $soundCard) {return $soundCard->getUsb();})
+                    ->map(function (Usb $usb) {return $usb->getVersion();})
+                    ->orElse(1);
+            })
+            ->toArray();
+        self::assertEquals([3, 1], $versions);
+    }
+}
+
+class Computer
+{
+    private $soundCard;
+
+    public static function soundCardUsbVersion(Computer $computer = null)
+    {
+        return Optional::ofNullable($computer)
+            ->flatMap(function (Computer $computer) {
+                return $computer->getSoundCard();
+            })
+            ->flatMap(function (SoundCard $soundCard) {
+                return $soundCard->getUsb();
+            })
+            ->map(function (Usb $usb) {
+                return $usb->getVersion();
+            })
+            ->orElse(1);
+    }
+
+    /**
+     * @return Optional
+     */
+    public function getSoundCard()
+    {
+        return Optional::ofNullable($this->soundCard);
+    }
+
+    /**
+     * @param SoundCard $soundCard
+     */
+    public function setSoundCard(SoundCard $soundCard = null)
+    {
+        $this->soundCard = $soundCard;
+    }
+}
+
+class SoundCard
+{
+    private $usb;
+
+    /**
+     * @return Optional
+     */
+    public function getUsb()
+    {
+        return Optional::ofNullable($this->usb);
+    }
+
+    /**
+     * @param Usb $usb
+     */
+    public function setUsb(Usb $usb = null)
+    {
+        $this->usb = $usb;
+    }
+}
+
+class Usb
+{
+    private $version;
+
+    /**
+     * @return int
+     */
+    public function getVersion()
+    {
+        return $this->version;
+    }
+
+    /**
+     * @param int $version
+     */
+    public function setVersion($version)
+    {
+        $this->version = (int) $version;
+    }
 }
