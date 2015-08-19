@@ -39,7 +39,7 @@ use IteratorAggregate;
  * <p>
  * The data loading will be stopped in the following cases:
  * <ul>
- *   <li>The {@link ChunkProvider} returns empty data</li>
+ *   <li>The {@link ChunkProvider} returns {@link Optional::absent()}</li>
  *   <li>A limit is defined and reached</li>
  *   <li>The chunk provider call limit reached</li>
  * </ul>
@@ -49,7 +49,7 @@ use IteratorAggregate;
  *
  * <pre>
  *   $userProvider = function ($offset) {
- *       return $userRepository->get($offset, 10);
+ *       return Optional::ofNullable($userRepository->get($offset, 10));
  *   }
  *   $adminFilter = function ($user) {
  *       return $user->isAdmin();
@@ -266,7 +266,7 @@ final class BufferedIterator implements Iterator
 
     private function callNext()
     {
-        $chunk = $this->chunkProvider->getChunk($this->offset);
+        $chunk = $this->chunkProvider->getChunk($this->offset)->orElse(Collections::emptyIterator());
         $filteredChunk = FluentIterable::from($chunk)
             ->filter($this->filter)
             ->limit($this->remaining)

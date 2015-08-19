@@ -20,7 +20,7 @@ class BufferedIterableTest extends PHPUnit_Framework_TestCase
     {
         $bufferedIterable = BufferedIterable::withChunkFunction(
             function () {
-                return new ArrayIterator([]);
+                return Optional::absent();
             }
         );
         self::assertTrue(Iterables::isEmpty($bufferedIterable));
@@ -36,11 +36,11 @@ class BufferedIterableTest extends PHPUnit_Framework_TestCase
             function ($offset) use (&$offsets) {
                 $offsets[] = $offset;
                 if ($offset == 0) {
-                    return new ArrayIterator([1, 2]);
+                    return Optional::of(new ArrayIterator([1, 2]));
                 } elseif ($offset == 2) {
-                    return new ArrayIterator([3, 4]);
+                    return Optional::of(new ArrayIterator([3, 4]));
                 }  else {
-                    return new ArrayIterator([]);
+                    return Optional::absent();
                 }
             }
         )->providerCallLimit(PHP_INT_MAX);
@@ -58,11 +58,11 @@ class BufferedIterableTest extends PHPUnit_Framework_TestCase
         $bufferedIterable = BufferedIterable::withChunkFunction(
             function () use (&$i) {
                 if (5 < $i) {
-                    return new ArrayIterator([]);
+                    return Optional::absent();
                 }
                 $res = new ArrayIterator([$i, $i + 1]);
                 $i += 2;
-                return $res;
+                return Optional::of($res);
             }
         )->filter(
             function ($number) {
@@ -84,11 +84,11 @@ class BufferedIterableTest extends PHPUnit_Framework_TestCase
             function () use (&$i, &$called) {
                 $called++;
                 if (5 < $i) {
-                    return new ArrayIterator([]);
+                    return Optional::absent();
                 }
                 $res = new ArrayIterator([$i, $i + 1]);
                 $i += 2;
-                return $res;
+                return Optional::of($res);
             }
         )
             ->providerCallLimit(PHP_INT_MAX)
@@ -109,7 +109,7 @@ class BufferedIterableTest extends PHPUnit_Framework_TestCase
     {
         $bufferedIterable = BufferedIterable::withChunkFunction(
             function () {
-                return new ArrayIterator([1, 2]);
+                return Optional::of(new ArrayIterator([1, 2]));
             }
         )->providerCallLimit(2);
         $result = FluentIterable::from($bufferedIterable)->toArray();

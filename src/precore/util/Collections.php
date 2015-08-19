@@ -24,6 +24,7 @@
 namespace precore\util;
 
 use ArrayObject;
+use EmptyIterator;
 use precore\lang\ClassCastException;
 use SplHeap;
 
@@ -155,6 +156,14 @@ abstract class Collections
             $comparator = ComparableComparator::instance();
         }
         return new ComparatorBasedHeap($comparator);
+    }
+
+    /**
+     * @return \Iterator
+     */
+    public static function emptyIterator()
+    {
+        return new EmptyIterator();
     }
 }
 

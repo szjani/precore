@@ -36,7 +36,7 @@ interface ChunkProvider
      * Returns the data chunk.
      *
      * @param $offset
-     * @return \Iterator
+     * @return Optional of an \Iterator
      */
     public function getChunk($offset);
 }
