@@ -2,6 +2,7 @@
 
 namespace precore\util;
 
+use DateTime;
 use PHPUnit_Framework_TestCase;
 use precore\util\concurrent\TimeUnit;
 
@@ -262,5 +263,15 @@ class RangeTest extends PHPUnit_Framework_TestCase
 
         $res5 = Range::closed(1, 10, $cmp);
         self::assertTrue(Range::closed(1, 5, $cmp)->span(Range::closed(6, 10, $cmp))->equals($res5));
+    }
+
+    public function testDateTimeOrdering()
+    {
+        $range = Range::closed(new DateTime('@3'), new DateTime('@5'));
+        self::assertTrue($range->contains(new DateTime('@4')));
+        self::assertTrue($range->contains(new DateTime('@3')));
+        self::assertTrue($range->contains(new DateTime('@5')));
+        self::assertFalse($range->contains(new DateTime('@2')));
+        self::assertFalse($range->contains(new DateTime('@6')));
     }
 }

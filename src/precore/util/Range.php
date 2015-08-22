@@ -77,6 +77,10 @@ final class Range extends Object
             $result = Ordering::usingToString();
         } elseif (is_numeric($endpoint)) {
             $result = Numbers::naturalOrdering();
+        } elseif (is_bool($endpoint)) {
+            $result = Booleans::naturalOrdering();
+        } elseif ($endpoint instanceof \DateTime) {
+            $result = DateTimes::naturalOrdering();
         }
         return $result;
     }
@@ -472,7 +476,7 @@ final class BelowValue extends Cut
 
     public function toString()
     {
-        return $this->endpoint();
+        return ToStringHelper::valueToString($this->endpoint());
     }
 
     /**
@@ -564,7 +568,7 @@ final class AboveValue extends Cut
 
     public function toString()
     {
-        return $this->endpoint();
+        return ToStringHelper::valueToString($this->endpoint());
     }
 
     /**
