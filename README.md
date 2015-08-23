@@ -1,14 +1,14 @@
 precore
 =======
 [![Latest Stable Version](https://poser.pugx.org/precore/precore/v/stable.png)](https://packagist.org/packages/precore/precore)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/szjani/precore/badges/quality-score.png?b=1.10)](https://scrutinizer-ci.com/g/szjani/precore/?branch=1.10)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/szjani/precore/badges/quality-score.png?b=1.11)](https://scrutinizer-ci.com/g/szjani/precore/?branch=1.11)
 [![SensioLabsInsight](https://insight.sensiolabs.com/projects/f0097752-37c5-44a2-96e8-3304ca687f67/mini.png)](https://insight.sensiolabs.com/projects/f0097752-37c5-44a2-96e8-3304ca687f67)
 [![Gitter chat](https://badges.gitter.im/szjani/precore.png)](https://gitter.im/szjani/precore)
 
-|master|1.10|
+|master|2.0|
 |------|---|
-|[![Build Status](https://travis-ci.org/szjani/precore.png?branch=master)](https://travis-ci.org/szjani/precore)|[![Build Status](https://travis-ci.org/szjani/precore.png?branch=1.10)](https://travis-ci.org/szjani/precore)|
-|[![Coverage Status](https://coveralls.io/repos/szjani/precore/badge.png?branch=master)](https://coveralls.io/r/szjani/precore?branch=master)|[![Coverage Status](https://coveralls.io/repos/szjani/precore/badge.png?branch=1.10)](https://coveralls.io/r/szjani/precore?branch=1.10)|
+|[![Build Status](https://travis-ci.org/szjani/precore.png?branch=master)](https://travis-ci.org/szjani/precore)|[![Build Status](https://travis-ci.org/szjani/precore.png?branch=2.0)](https://travis-ci.org/szjani/precore)|
+|[![Coverage Status](https://coveralls.io/repos/szjani/precore/badge.png?branch=master)](https://coveralls.io/r/szjani/precore?branch=master)|[![Coverage Status](https://coveralls.io/repos/szjani/precore/badge.png?branch=2.0)](https://coveralls.io/r/szjani/precore?branch=2.0)|
 
 Precore is a common library which based on ideas coming from the Java world.
 
