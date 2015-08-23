@@ -21,6 +21,8 @@ Precore is a common library which based on ideas coming from the Java world.
 7. [Profiler](https://github.com/szjani/precore#7-profiler)
 8. [Collections](https://github.com/szjani/precore#8-collections)
 9. [String utilities](https://github.com/szjani/precore#9-string-utilities)
+10. [Optional](https://github.com/szjani/precore#10-optional)
+11. [Range](https://github.com/szjani/precore#11-range)
 
 For more information, click on the items. If you need even more information, check the phpdoc.
 
@@ -470,3 +472,53 @@ $result = Splitter::fixedLength(3)->split('1234567');
 ```
 
 The result will be the following: `'123', '456', '7'`
+
+10. Optional
+------------
+
+A container object which may or may not contain a non-null value. If a value is present, `isPresent()` will return true and `get()` will return the value.
+Additional methods that depend on the presence or absence of a contained value are provided, such as `orElse()` (return a default value if value not present) and `ifPresent()` (execute a block of code if the value is present).
+
+```php
+function randOrNull() {
+    return mt_rand(0, 1) === 0 ? mt_rand(0, 100) : null;
+}
+
+$printOut = function ($value) {
+    echo $value . PHP_EOL;
+};
+
+$range = Range::closed(20, 30);
+for ($i = 0; $i < 100; $i++) {
+    Optional::ofNullable(randOrNull())
+        ->filter($range)
+        ->ifPresent($printOut);
+}
+```
+This code generates 100 random numbers or null values and all values will be printed out if that is a number and within the given range (20 <= x <= 30).
+We do not need to do null checks, rather we can use fluent interfaces.
+
+11. Range
+---------
+
+A range is an interval, defined by two endpoints. Ranges may "extend to infinity" -- for example, the range "x > 3" contains arbitrarily large values -- or may be finitely constrained, for example "2 <= x < 5".
+
+The endpoints and the values passed to query methods must be able to be compared. This comparison can be explicitly set, but `Range` supports
+natural ordering on the following types:
+
+ - strings (strcmp)
+ - numbers
+ - DateTime
+ - boolean
+ 
+It also supports objects that implement `Comparable` interface, like the `Enum`.
+
+Range objects can be created via static factory methods. The following range is open on both sides, only 'c' and 'd' chars are within the range.
+
+```php
+$range = Range::open('b', 'e');
+assertFalse($range->contains('b'));
+assertTrue($range->contains('c'));
+```
+
+There are query methods like `isConnected()` or `encloses()`, but ranges can be composed by `intersection()` or `span()`. `Range` is immutable.
