@@ -23,6 +23,7 @@
 
 namespace precore\util;
 
+use precore\lang\IllegalStateException;
 use precore\lang\Object;
 use precore\util\concurrent\TimeUnit;
 use RuntimeException;
@@ -135,6 +136,7 @@ final class Stopwatch extends Object
      * Starts the stopwatch.
      *
      * @return $this
+     * @throws IllegalStateException if this Stopwatch is already running
      */
     public function start()
     {
@@ -150,6 +152,7 @@ final class Stopwatch extends Object
      *
      * @throw IllegalStateException if it is already stopped
      * @return $this
+     * @throws IllegalStateException if this Stopwatch is already stopped
      */
     public function stop()
     {

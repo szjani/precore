@@ -211,6 +211,7 @@ final class Range extends Object
     /**
      * @param $value
      * @return bool
+     * @throws NullPointerException if $value is null
      */
     public function contains($value)
     {

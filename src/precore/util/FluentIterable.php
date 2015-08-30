@@ -161,6 +161,11 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
     }
 
     /**
+     * Applies function to each element of this fluent iterable and returns a fluent iterable
+     * with the concatenated combination of results. Transformer returns a Traversable of results.
+     *
+     * @param callable $transformer
+     * @return FluentIterable
      * @see flatMap
      */
     public function transformAndConcat(callable $transformer)

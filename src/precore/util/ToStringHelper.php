@@ -25,8 +25,6 @@ namespace precore\util;
 
 use DateTime;
 use ErrorException;
-use Iterator;
-use IteratorAggregate;
 use precore\lang\Object;
 
 /**
@@ -84,6 +82,7 @@ class ToStringHelper extends Object
      *
      * @param string $param
      * @return ToStringHelper $this
+     * @throws \InvalidArgumentException if the number of parameters is not 1 or 2
      */
     public function add($param)
     {

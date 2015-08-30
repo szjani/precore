@@ -192,6 +192,7 @@ final class Ordering implements Comparator
      *
      * @param Traversable $traversable
      * @return mixed
+     * @throws \OutOfBoundsException if $traversable is empty
      */
     public function max(Traversable $traversable)
     {

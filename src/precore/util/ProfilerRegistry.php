@@ -54,6 +54,7 @@ final class ProfilerRegistry
     /**
      * @param $name
      * @return Profiler
+     * @throws \OutOfBoundsException if there is no registered profiler with $name
      */
     public function get($name)
     {

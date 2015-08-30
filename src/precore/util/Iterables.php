@@ -133,6 +133,7 @@ final class Iterables
      * @param IteratorAggregate $iterable
      * @param int $size
      * @return IteratorAggregate
+     * @throws \InvalidArgumentException if $size is non positive
      */
     public static function partition(IteratorAggregate $iterable, $size)
     {
@@ -159,6 +160,7 @@ final class Iterables
      * @param IteratorAggregate $iterable
      * @param int $size
      * @return IteratorAggregate
+     * @throws \InvalidArgumentException if $size is non positive
      */
     public static function paddedPartition(IteratorAggregate $iterable, $size)
     {
@@ -245,6 +247,7 @@ final class Iterables
      * @param IteratorAggregate $iterable
      * @param $limitSize
      * @return IteratorAggregate
+     * @throws \InvalidArgumentException if $limitSize is negative
      */
     public static function limit(IteratorAggregate $iterable, $limitSize)
     {

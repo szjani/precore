@@ -230,7 +230,7 @@ final class Absent extends Optional
     public function orElseThrow(callable $exceptionSupplier = null)
     {
         $exception = call_user_func(Preconditions::checkNotNull($exceptionSupplier));
-        Preconditions::checkState($exception instanceof \Exception, '$exceptonSupplier must create an Exception');
+        Preconditions::checkState($exception instanceof \Exception, '$exceptionSupplier must create an Exception');
         throw $exception;
     }
 }

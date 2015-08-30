@@ -213,6 +213,7 @@ final class Iterators
      * @param Iterator $iterator
      * @param $numberToSkip
      * @return integer
+     * @throws \InvalidArgumentException if $numberToSkip is < 0
      */
     public static function advance(Iterator $iterator, $numberToSkip)
     {

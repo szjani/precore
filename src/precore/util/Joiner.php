@@ -51,7 +51,8 @@ abstract class Joiner extends Object
     private $separator;
 
     /**
-     * @param $separator
+     * @param string $separator
+     * @throws \InvalidArgumentException if separator is not a string
      */
     protected function __construct($separator)
     {
@@ -64,6 +65,7 @@ abstract class Joiner extends Object
      *
      * @param string $separator
      * @return Joiner
+     * @throws \InvalidArgumentException if separator is not a string
      */
     public static function on($separator)
     {
@@ -105,6 +107,7 @@ abstract class Joiner extends Object
      *
      * @param array|Traversable $parts
      * @return string
+     * @throws \InvalidArgumentException if $parts is not an array or a Traversable
      */
     final public function join($parts)
     {

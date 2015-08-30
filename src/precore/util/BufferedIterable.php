@@ -145,6 +145,7 @@ final class BufferedIterable implements IteratorAggregate
      *
      * @param int $limit
      * @return BufferedIterable
+     * @throws \InvalidArgumentException if $limit is <= 0
      */
     public function providerCallLimit($limit)
     {

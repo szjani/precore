@@ -29,7 +29,7 @@ use precore\lang\RunException;
 use precore\lang\Runnable;
 
 /**
- * Usefull for cron jobs. The wrapped Runnable object
+ * Useful for cron jobs. The wrapped Runnable object
  * cannot be executed more than once at the same time
  * (if you use the same lock).
  *
@@ -65,21 +65,21 @@ class LockedRunnableWrapper extends Object implements Runnable
      */
     public function run()
     {
-        $throwedException = null;
+        $thrownException = null;
         try {
             $this->lock->lock();
             try {
                 $this->runnable->run();
             } catch (Exception $e) {
                 self::getLogger()->error($e);
-                $throwedException = $e;
+                $thrownException = $e;
             }
             $this->lock->unLock();
         } catch (LockException $e) {
             throw new RunException('Lock error during running.', null, $e);
         }
-        if ($throwedException !== null) {
-            throw new RunException('Error during execution wrapped Runnable object.', null, $throwedException);
+        if ($thrownException !== null) {
+            throw new RunException('Error during execution wrapped Runnable object.', null, $thrownException);
         }
     }
 }

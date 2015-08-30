@@ -24,6 +24,7 @@
 namespace precore\util;
 
 use Closure;
+use precore\lang\ClassCastException;
 use precore\lang\Comparable;
 
 /**
@@ -105,6 +106,7 @@ final class ActiveComparisonChain extends ComparisonChain
      * @param $right
      * @param Comparator $comparator
      * @return ComparisonChain
+     * @throws ClassCastException if the arguments' types prevent them from being compared by this comparator
      */
     public function withComparator($left, $right, Comparator $comparator)
     {

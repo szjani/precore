@@ -104,8 +104,8 @@ abstract class Splitter extends Object
 
     protected function __construct($trimResult, $omitEmptyStrings)
     {
-        $this->trimResults = $trimResult;
-        $this->omitEmptyStrings = $omitEmptyStrings;
+        $this->trimResults = (boolean) $trimResult;
+        $this->omitEmptyStrings = (boolean) $omitEmptyStrings;
     }
 
     /**
@@ -159,6 +159,7 @@ abstract class Splitter extends Object
     /**
      * @param string $input
      * @return Traversable
+     * @throws \InvalidArgumentException if $input is not a string
      */
     public final function split($input)
     {
@@ -220,6 +221,7 @@ final class SimpleSplitter extends Splitter
      * @param $trimResult
      * @param $omitEmptyStrings
      * @param boolean $eager
+     * @throws \InvalidArgumentException if $delimiter is not a string
      */
     public function __construct($delimiter, $trimResult, $omitEmptyStrings, $eager = false)
     {
@@ -291,6 +293,7 @@ final class PatternSplitter extends Splitter
      * @param string $pattern
      * @param $trimResult
      * @param $omitEmptyStrings
+     * @throws \InvalidArgumentException if $pattern is not a string
      */
     public function __construct($pattern, $trimResult, $omitEmptyStrings)
     {
@@ -349,6 +352,7 @@ final class FixedLengthSplitter extends Splitter
      * @param int $length
      * @param $trimResult
      * @param $omitEmptyStrings
+     * @throws \InvalidArgumentException if $length is not a positive integer
      */
     public function __construct($length, $trimResult, $omitEmptyStrings)
     {
