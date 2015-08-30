@@ -222,7 +222,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      *
      * @param $index
      * @return mixed
-     * @throw OutOfBoundsException if $index is invalid
+     * @throws \OutOfBoundsException if $index is invalid
      */
     public function get($index)
     {
