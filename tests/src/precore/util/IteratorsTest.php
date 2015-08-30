@@ -369,6 +369,23 @@ class IteratorsTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldTryFind()
+    {
+        $result = Iterators::tryFind(Iterators::forArray([2, 1, 3]), Predicates::equalTo(1));
+        self::assertTrue(Optional::of(1)->equals($result));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldTryFindReturnAbsent()
+    {
+        self::assertSame(Optional::absent(), Iterators::tryFind(Iterators::forArray([1, 2]), Predicates::equalTo(3)));
+    }
+
+    /**
+     * @test
+     */
     public function shouldReturnLast()
     {
         self::assertEquals(2, Iterators::getLast(Iterators::forArray([1, 2])));

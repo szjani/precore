@@ -125,6 +125,34 @@ class FluentIterableTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldReturnFirstElement()
+    {
+        self::assertTrue(Optional::of(1)->equals(FluentIterable::of([1, 2])->first()));
+        self::assertSame(Optional::absent(), FluentIterable::of([])->first());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnFirstMatch()
+    {
+        self::assertTrue(Optional::of(2)->equals(FluentIterable::of([1, 2, 3])->firstMatch(Predicates::equalTo(2))));
+        self::assertSame(Optional::absent(), FluentIterable::of([1, 2])->firstMatch(Predicates::equalTo(3)));
+        self::assertSame(Optional::absent(), FluentIterable::of([])->firstMatch(Predicates::equalTo(3)));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldReturnLast()
+    {
+        self::assertTrue(Optional::of(2)->equals(FluentIterable::of([1, 2])->last()));
+        self::assertSame(Optional::absent(), FluentIterable::of([])->last());
+    }
+
+    /**
+     * @test
+     */
     public function shouldReturnIndex()
     {
         $iterable = FluentIterable::of([1, 2]);

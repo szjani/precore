@@ -26,6 +26,7 @@ namespace precore\util;
 use Countable;
 use Iterator;
 use IteratorAggregate;
+use OutOfBoundsException;
 use precore\lang\Object;
 use Traversable;
 
@@ -223,11 +224,45 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
     }
 
     /**
+     * Returns an Optional containing the first element in this fluent iterable.
+     *
+     * @return Optional
+     */
+    public function first()
+    {
+        try {
+            return Optional::ofNullable(self::get(0));
+        } catch (OutOfBoundsException $e) {
+            return Optional::absent();
+        }
+    }
+
+    /**
+     * Returns an Optional containing the first element in this fluent iterable
+     * that satisfies the given predicate, if such an element exists.
+     *
+     * @param callable $predicate
+     * @return Optional
+     */
+    public function firstMatch(callable $predicate)
+    {
+        return $this->filter($predicate)->first();
+    }
+
+    /**
+     * @return Optional
+     */
+    public function last()
+    {
+        return Optional::ofNullable(Iterators::getLast($this->iterator()));
+    }
+
+    /**
      * Returns the element at the specified position in this fluent iterable.
      *
      * @param $index
      * @return mixed
-     * @throws \OutOfBoundsException if $index is invalid
+     * @throws OutOfBoundsException if $index is invalid
      */
     public function get($index)
     {

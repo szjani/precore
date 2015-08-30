@@ -367,6 +367,19 @@ final class Iterators
     }
 
     /**
+     * Returns an Optional containing the first element in iterator that satisfies the given predicate,
+     * if such an element exists. If no such element is found, an empty Optional will be returned from this method.
+     *
+     * @param Iterator $iterator
+     * @param callable $predicate
+     * @return Optional
+     */
+    public static function tryFind(Iterator $iterator, callable $predicate)
+    {
+        return Optional::ofNullable(self::find($iterator, $predicate));
+    }
+
+    /**
      * @param Iterator $iterator
      * @return boolean
      */

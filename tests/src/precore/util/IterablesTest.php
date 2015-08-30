@@ -127,6 +127,24 @@ class IterablesTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function shouldTryFind()
+    {
+        $result = Iterables::tryFind(new ArrayObject([2, 1, 3]), Predicates::equalTo(1));
+        self::assertTrue(Optional::of(1)->equals($result));
+    }
+
+    /**
+     * @test
+     */
+    public function shouldTryFindReturnAbsent()
+    {
+        self::assertSame(Optional::absent(), Iterables::tryFind(new ArrayObject([1, 2]), Predicates::equalTo(3)));
+        self::assertSame(Optional::absent(), Iterables::tryFind(new ArrayObject([null]), Predicates::isNull()));
+    }
+
+    /**
+     * @test
+     */
     public function shouldPartition()
     {
         $input = ['a', 'b', 'c', 'd', 'e'];

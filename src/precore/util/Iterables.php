@@ -26,6 +26,7 @@ namespace precore\util;
 use Countable;
 use Iterator;
 use IteratorAggregate;
+use precore\lang\NullPointerException;
 use Traversable;
 
 /**
@@ -121,6 +122,17 @@ final class Iterables
     public static function find(IteratorAggregate $iterable, callable $predicate, $defaultValue = null)
     {
         return Iterators::find(Iterators::from($iterable->getIterator()), $predicate, $defaultValue);
+    }
+
+    /**
+     * @param IteratorAggregate $iterable
+     * @param callable $predicate
+     * @return Optional
+     * @throws NullPointerException if
+     */
+    public static function tryFind(IteratorAggregate $iterable, callable $predicate)
+    {
+        return Iterators::tryFind(Iterators::from($iterable->getIterator()), $predicate);
     }
 
     /**
