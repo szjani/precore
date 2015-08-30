@@ -32,7 +32,20 @@ use precore\lang\ObjectInterface;
 use Traversable;
 
 /**
- * Class Range
+ * A range is an interval, defined by two endpoints.
+ * Ranges may "extend to infinity" -- for example, the range "x > 3" contains arbitrarily large values
+ * -- or may be finitely constrained, for example "2 <= x < 5".
+ *
+ * <p>The endpoints and the values passed to query methods must be able to be compared.
+ * This comparison can be explicitly set, but Range supports natural ordering on the following types:
+ * <ul>
+ *   <li>strings (strcmp)</li>
+ *   <li>numbers</li>
+ *   <li>DateTime</li>
+ *   <li>boolean</li>
+ * </ul>
+ * It also supports objects that implement Comparable interface, like the Enum.
+ * </p>
  *
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
