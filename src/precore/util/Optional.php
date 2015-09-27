@@ -141,8 +141,9 @@ abstract class Optional extends Object
      *
      * @param callable $predicate
      * @return Optional
+     * @throws NullPointerException if Present and predicate is null
      */
-    public abstract function filter(callable $predicate);
+    public abstract function filter(callable $predicate = null);
 
     /**
      * If a value is present, apply the provided mapping function to it,
@@ -152,8 +153,9 @@ abstract class Optional extends Object
      * @see Optional::transformer
      * @param callable $mapper
      * @return Optional
+     * @throws NullPointerException if Present and mapper is null
      */
-    public abstract function map(callable $mapper);
+    public abstract function map(callable $mapper = null);
 
     /**
      * If a value is present, apply the provided Optional-bearing mapping function to it, return that result,
@@ -161,8 +163,9 @@ abstract class Optional extends Object
      *
      * @param callable $mapper
      * @return Optional
+     * @throws NullPointerException if Present and mapper is null
      */
-    public abstract function flatMap(callable $mapper);
+    public abstract function flatMap(callable $mapper = null);
 }
 
 /**
@@ -198,7 +201,7 @@ final class Absent extends Optional
         return $object instanceof Absent;
     }
 
-    public function filter(callable $predicate)
+    public function filter(callable $predicate = null)
     {
         return $this;
     }
@@ -217,12 +220,12 @@ final class Absent extends Optional
         return $this->getClassName();
     }
 
-    public function flatMap(callable $mapper)
+    public function flatMap(callable $mapper = null)
     {
         return $this;
     }
 
-    public function map(callable $mapper)
+    public function map(callable $mapper = null)
     {
         return $this;
     }
@@ -276,9 +279,9 @@ final class Present extends Optional
             && Objects::equal($this->instance, $object->instance);
     }
 
-    public function filter(callable $predicate)
+    public function filter(callable $predicate = null)
     {
-        return Predicates::call($predicate, $this->instance)
+        return Predicates::call(Preconditions::checkNotNull($predicate), $this->instance)
             ? $this
             : Optional::absent();
     }
@@ -298,16 +301,16 @@ final class Present extends Optional
         return Objects::toStringHelper($this)->add($this->instance)->toString();
     }
 
-    public function flatMap(callable $mapper)
+    public function flatMap(callable $mapper = null)
     {
-        $result = call_user_func($mapper, $this->instance);
+        $result = call_user_func(Preconditions::checkNotNull($mapper), $this->instance);
         Preconditions::checkState($result instanceof Optional, "result of the mapper must be an Optional");
         return $result;
     }
 
-    public function map(callable $mapper)
+    public function map(callable $mapper = null)
     {
-        return Optional::ofNullable(call_user_func($mapper, $this->instance));
+        return Optional::ofNullable(call_user_func(Preconditions::checkNotNull($mapper), $this->instance));
     }
 
     public function orElseThrow(callable $exceptionSupplier = null)
