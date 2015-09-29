@@ -24,6 +24,7 @@
 namespace precore\util;
 
 use ArrayObject;
+use precore\lang\ObjectClass;
 use Traversable;
 
 /**
@@ -109,7 +110,7 @@ final class Predicates
      */
     public static function call(callable $predicate, $element)
     {
-        return (boolean) call_user_func($predicate, $element);
+        return (boolean) Functions::call($predicate, $element);
     }
 
     /**
@@ -224,7 +225,18 @@ final class Predicates
     public static function compose(callable $predicate, callable $function)
     {
         return function ($element) use ($predicate, $function) {
-            return Predicates::call($predicate, call_user_func($function, $element));
+            return Predicates::call($predicate, Functions::call($function, $element));
+        };
+    }
+
+    /**
+     * @param string $class
+     * @return callable
+     */
+    public static function assignableFrom($class)
+    {
+        return function ($inputClass) use ($class) {
+            return ObjectClass::forName($inputClass)->isAssignableFrom(ObjectClass::forName($class));
         };
     }
 }

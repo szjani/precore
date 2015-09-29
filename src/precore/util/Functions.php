@@ -93,7 +93,7 @@ final class Functions
     public static function compose(callable $g, callable $f)
     {
         return function ($input) use ($g, $f) {
-            return call_user_func($g, call_user_func($f, $input));
+            return Functions::call($g, Functions::call($f, $input));
         };
     }
 
@@ -130,6 +130,18 @@ final class Functions
                 ? $map[$index]
                 : $default;
         };
+    }
+
+    /**
+     * @param callable $function
+     * @param $params
+     * @return mixed
+     */
+    public static function call(callable $function, $params = null)
+    {
+        $args = func_get_args();
+        array_shift($args);
+        return call_user_func_array($function, $args);
     }
 }
 Functions::init();

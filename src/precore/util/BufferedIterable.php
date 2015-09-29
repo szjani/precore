@@ -307,6 +307,6 @@ final class FunctionalChunkProvider implements ChunkProvider
      */
     public function getChunk($offset)
     {
-        return call_user_func($this->function, $offset);
+        return Functions::call($this->function, $offset);
     }
 }

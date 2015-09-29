@@ -264,7 +264,7 @@ final class Iterators
     public static function each(Iterator $iterator, callable $function)
     {
         while ($iterator->valid()) {
-            call_user_func($function, $iterator->current());
+            Functions::call($function, $iterator->current());
             $iterator->next();
         }
     }
@@ -596,7 +596,7 @@ final class TransformerIterator extends NoRewindNecessaryIterator
 
     public function current()
     {
-        return call_user_func($this->transformer, parent::current());
+        return Functions::call($this->transformer, parent::current());
     }
 }
 

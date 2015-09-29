@@ -121,7 +121,7 @@ final class ActiveComparisonChain extends ComparisonChain
      */
     public function withClosure($left, $right, Closure $closure)
     {
-        return $this->classify(call_user_func($closure, $left, $right));
+        return $this->classify(Functions::call($closure, $left, $right));
     }
 
     /**

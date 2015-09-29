@@ -275,7 +275,7 @@ final class CallableBasedComparator implements Comparator
      */
     public function compare($object1, $object2)
     {
-        return call_user_func($this->callable, $object1, $object2);
+        return Functions::call($this->callable, $object1, $object2);
     }
 }
 Collections::init();

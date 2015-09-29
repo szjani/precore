@@ -149,8 +149,8 @@ final class Ordering implements Comparator
         return Ordering::from(Collections::comparatorFrom(
             function ($object1, $object2) use ($function) {
                 return $this->compare(
-                    call_user_func($function, $object1),
-                    call_user_func($function, $object2)
+                    Functions::call($function, $object1),
+                    Functions::call($function, $object2)
                 );
             }
         ));

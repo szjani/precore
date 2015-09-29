@@ -84,7 +84,7 @@ final class StringComparator extends Enum implements Comparator
      */
     public function compare($object1, $object2)
     {
-        return call_user_func($this->function, $object1, $object2);
+        return Functions::call($this->function, $object1, $object2);
     }
 }
 StringComparator::init();

@@ -208,7 +208,7 @@ final class Absent extends Optional
 
     public function orElseGet(callable $supplier = null)
     {
-        return call_user_func(Preconditions::checkNotNull($supplier));
+        return Functions::call(Preconditions::checkNotNull($supplier));
     }
 
     public function ifPresent(callable $consumer = null)
@@ -232,7 +232,7 @@ final class Absent extends Optional
 
     public function orElseThrow(callable $exceptionSupplier = null)
     {
-        $exception = call_user_func(Preconditions::checkNotNull($exceptionSupplier));
+        $exception = Functions::call(Preconditions::checkNotNull($exceptionSupplier));
         Preconditions::checkState($exception instanceof \Exception, '$exceptionSupplier must create an Exception');
         throw $exception;
     }
@@ -293,7 +293,7 @@ final class Present extends Optional
 
     public function ifPresent(callable $consumer = null)
     {
-        call_user_func(Preconditions::checkNotNull($consumer), $this->instance);
+        Functions::call(Preconditions::checkNotNull($consumer), $this->instance);
     }
 
     public function toString()
@@ -303,14 +303,14 @@ final class Present extends Optional
 
     public function flatMap(callable $mapper = null)
     {
-        $result = call_user_func(Preconditions::checkNotNull($mapper), $this->instance);
+        $result = Functions::call(Preconditions::checkNotNull($mapper), $this->instance);
         Preconditions::checkState($result instanceof Optional, "result of the mapper must be an Optional");
         return $result;
     }
 
     public function map(callable $mapper = null)
     {
-        return Optional::ofNullable(call_user_func(Preconditions::checkNotNull($mapper), $this->instance));
+        return Optional::ofNullable(Functions::call(Preconditions::checkNotNull($mapper), $this->instance));
     }
 
     public function orElseThrow(callable $exceptionSupplier = null)

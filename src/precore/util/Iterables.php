@@ -389,6 +389,6 @@ final class CallableIterable implements IteratorAggregate
 
     public function getIterator()
     {
-        return call_user_func($this->callable);
+        return Functions::call($this->callable);
     }
 }
