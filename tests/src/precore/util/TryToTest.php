@@ -2,18 +2,17 @@
 
 namespace precore\util;
 
-use Exception;
 use PHPUnit_Framework_TestCase;
 use precore\lang\IllegalStateException;
 use precore\lang\NullPointerException;
 
 /**
- * Class TryingTest
+ * Class TryToTest
  *
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class TryingTest extends PHPUnit_Framework_TestCase
+class TryToTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @test
@@ -21,8 +20,8 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldThrowExceptionIfNotDefined()
     {
-        Trying::catchExceptions(['\precore\lang\NullPointerException'])
-            ->tryThis($this->throwIseFunction());
+        TryTo::catchExceptions([NullPointerException::class])
+            ->run($this->throwIseFunction());
     }
 
     /**
@@ -32,8 +31,8 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldGetThrowOriginalExceptionIfFailure()
     {
-        Trying::catchExceptions(['\precore\lang\IllegalStateException'])
-            ->tryThis(function () {
+        TryTo::catchExceptions()
+            ->run(function () {
                 throw new IllegalStateException("message");
             })
             ->get();
@@ -45,8 +44,8 @@ class TryingTest extends PHPUnit_Framework_TestCase
     public function shouldReturnValueIfNoException()
     {
         $expected = 'value';
-        $result = Trying::catchExceptions([])
-            ->tryThis(Functions::constant($expected))
+        $result = TryTo::catchExceptions()
+            ->run(Functions::constant($expected))
             ->get();
         self::assertEquals($expected, $result);
     }
@@ -57,9 +56,9 @@ class TryingTest extends PHPUnit_Framework_TestCase
     public function shouldCallOnFail()
     {
         $called = false;
-        $trying = Trying::catchExceptions(['\precore\lang\IllegalStateException'])
-            ->tryThis($this->throwIseFunction())
-            ->onFail('\Exception', function (IllegalStateException $e) use (&$called) {
+        $trying = TryTo::catchExceptions()
+            ->run($this->throwIseFunction())
+            ->onFail(IllegalStateException::class, function (IllegalStateException $e) use (&$called) {
                 $called = true;
             });
         self::assertTrue($called);
@@ -74,12 +73,12 @@ class TryingTest extends PHPUnit_Framework_TestCase
     {
         $iseThrown = false;
         $npeThrown = false;
-        Trying::catchExceptions(['\precore\lang\IllegalStateException', '\precore\lang\NullPointerException'])
-            ->tryThis($this->throwNpeFunction())
-            ->onFail('\precore\lang\IllegalStateException', function (IllegalStateException $e) use (&$iseThrown) {
+        TryTo::catchExceptions()
+            ->run($this->throwNpeFunction())
+            ->onFail(IllegalStateException::class, function (IllegalStateException $e) use (&$iseThrown) {
                 $iseThrown = true;
             })
-            ->onFail('\precore\lang\NullPointerException', function (NullPointerException $e) use (&$npeThrown) {
+            ->onFail(NullPointerException::class, function (NullPointerException $e) use (&$npeThrown) {
                 $npeThrown = true;
             });
         self::assertTrue($npeThrown);
@@ -87,12 +86,12 @@ class TryingTest extends PHPUnit_Framework_TestCase
 
         $iseThrown = false;
         $npeThrown = false;
-        Trying::catchExceptions(['\precore\lang\IllegalStateException', '\precore\lang\NullPointerException'])
-            ->tryThis($this->throwIseFunction())
-            ->onFail('\precore\lang\NullPointerException', function (NullPointerException $e) use (&$npeThrown) {
+        TryTo::catchExceptions()
+            ->run($this->throwIseFunction())
+            ->onFail(NullPointerException::class, function (NullPointerException $e) use (&$npeThrown) {
                 $npeThrown = true;
             })
-            ->onFail('\precore\lang\IllegalStateException', function (IllegalStateException $e) use (&$iseThrown) {
+            ->onFail(IllegalStateException::class, function (IllegalStateException $e) use (&$iseThrown) {
                 $iseThrown = true;
             });
         self::assertTrue($iseThrown);
@@ -104,7 +103,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldFailConvertedToAbsent()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])->toOptional();
+        $res = TryTo::run($this->throwNpeFunction())->toOptional();
         self::assertFalse($res->isPresent());
     }
 
@@ -113,7 +112,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldSuccessConvertedToOptional()
     {
-        $res = Trying::runWithCatch(Functions::constant(1))->toOptional();
+        $res = TryTo::run(Functions::constant(1))->toOptional();
         self::assertTrue($res->isPresent());
         self::assertEquals(1, $res->get());
     }
@@ -123,10 +122,9 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldToFailedOptionalReturnPresentIfFailure()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])
-            ->toFailedOptional();
+        $res = TryTo::run($this->throwNpeFunction())->toFailedOptional();
         self::assertTrue($res->isPresent());
-        self::assertInstanceOf('\precore\lang\NullPointerException', $res->get());
+        self::assertInstanceOf(NullPointerException::class, $res->get());
     }
 
     /**
@@ -134,8 +132,17 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldToFailedOptionalReturnAbsentIfSuccess()
     {
-        $res = Trying::runWithCatch(Functions::constant(1))->toFailedOptional();
+        $res = TryTo::run(Functions::constant(1))->toFailedOptional();
         self::assertFalse($res->isPresent());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldNotThrowExceptionIfHandledExceptionListIsEmpty()
+    {
+        $trying = TryTo::run($this->throwNpeFunction());
+        self::assertTrue($trying->isFailure());
     }
 
     /**
@@ -143,7 +150,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldReturnAbsentIfFailureIsFiltered()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])
+        $res = TryTo::run($this->throwNpeFunction())
             ->filter(Predicates::isNull());
         self::assertFalse($res->isPresent());
     }
@@ -153,7 +160,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldReturnOptionalWithFilteredSuccess()
     {
-        $trying = Trying::runWithCatch(Functions::constant(1));
+        $trying = TryTo::run(Functions::constant(1));
         self::assertTrue($trying->filter(Predicates::notNull())->isPresent());
         self::assertFalse($trying->filter(Predicates::isNull())->isPresent());
     }
@@ -163,7 +170,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldMapReturnFailure()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])
+        $res = TryTo::run($this->throwNpeFunction())
             ->map(Functions::constant(1));
         self::assertTrue($res->isFailure());
     }
@@ -173,7 +180,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldMapSuccess()
     {
-        $res = Trying::runWithCatch(Functions::constant(1))->map(Functions::forMap([1 => 2]));
+        $res = TryTo::run(Functions::constant(1))->map(Functions::forMap([1 => 2]));
         self::assertTrue($res->isSuccess());
         self::assertEquals(2, $res->get());
     }
@@ -183,7 +190,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldOrElseReturnParamIfFailure()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])->orElse(1);
+        $res = TryTo::run($this->throwNpeFunction())->orElse(1);
         self::assertEquals(1, $res);
     }
 
@@ -192,7 +199,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldOrElseReturnValueIfSuccess()
     {
-        $res = Trying::runWithCatch(Functions::constant(1))->orElse(2);
+        $res = TryTo::run(Functions::constant(1))->orElse(2);
         self::assertEquals(1, $res);
     }
 
@@ -201,7 +208,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldNotCallRecoverIfSuccess()
     {
-        $res = Trying::runWithCatch(Functions::constant(1))->recover(null);
+        $res = TryTo::run(Functions::constant(1))->recover(null);
         self::assertTrue($res->isSuccess());
         self::assertEquals(1, $res->get());
     }
@@ -211,7 +218,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldCallRecoverIfFailure()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])
+        $res = TryTo::run($this->throwNpeFunction())
             ->recover(function (NullPointerException $e) {
                 return 1;
             });
@@ -224,7 +231,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldNotCallOrElseGetSupplierIfSuccess()
     {
-        $res = Trying::runWithCatch(Functions::constant(1))->orElseGet(null);
+        $res = TryTo::run(Functions::constant(1))->orElseGet(null);
         self::assertEquals(1, $res);
     }
 
@@ -233,7 +240,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldCallOrElseGetSupplierIfFailure()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])
+        $res = TryTo::run($this->throwNpeFunction())
             ->orElseGet(Functions::constant(1));
         self::assertEquals(1, $res);
     }
@@ -243,7 +250,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldNotCallFlatMapSupplierIfFailure()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])
+        $res = TryTo::run($this->throwNpeFunction())
             ->flatMap(Functions::constant(Success::of(1)));
         self::assertTrue($res->isFailure());
     }
@@ -253,7 +260,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldCallFlatMapSupplierIfSuccess()
     {
-        $res = Trying::runWithCatch(Functions::constant(1))->flatMap(Functions::forMap([1 => Success::of(2)]));
+        $res = TryTo::run(Functions::constant(1))->flatMap(Functions::forMap([1 => Success::of(2)]));
         self::assertTrue($res->equals(Success::of(2)));
     }
 
@@ -262,9 +269,9 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldRecoverForException()
     {
-        $res = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException'])
-            ->recoverFor('\precore\lang\IllegalStateException', Functions::constant('npe'))
-            ->recoverFor('\precore\lang\NullPointerException', function (NullPointerException $e) {
+        $res = TryTo::run($this->throwNpeFunction())
+            ->recoverFor(IllegalStateException::class, Functions::constant('ise'))
+            ->recoverFor(NullPointerException::class, function (NullPointerException $e) {
                 return 'npe';
             });
         self::assertTrue($res->isSuccess());
@@ -278,8 +285,8 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldThrowException()
     {
-        Trying::catchExceptions(['\precore\lang\IllegalStateException'])
-            ->tryThis(function () {
+        TryTo::catchExceptions()
+            ->run(function () {
                 throw new IllegalStateException("message");
             })
             ->throwException();
@@ -290,7 +297,7 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldFlattenReturnFailureItself()
     {
-        $trying = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException']);
+        $trying = TryTo::run($this->throwNpeFunction());
         self::assertSame($trying, $trying->flatten());
     }
 
@@ -299,8 +306,8 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldFlattenReturnLowestTry()
     {
-        $failure = Trying::runWithCatch($this->throwNpeFunction(), ['\precore\lang\NullPointerException']);
-        $trying = Trying::runWithCatch(Functions::constant($failure));
+        $failure = TryTo::run($this->throwNpeFunction());
+        $trying = TryTo::run(Functions::constant($failure));
         self::assertSame($failure, $trying->flatten());
     }
 
@@ -309,9 +316,26 @@ class TryingTest extends PHPUnit_Framework_TestCase
      */
     public function shouldNotThrowException()
     {
-        $trying = Trying::runWithCatch(Functions::constant(1));
+        $trying = TryTo::run(Functions::constant(1));
         $trying->throwException();
         self::assertTrue($trying->isSuccess());
+    }
+
+    /**
+     * @test
+     */
+    public function shouldRunFinally()
+    {
+        $finallyCalled = false;
+        $trying = TryTo::catchExceptions()
+            ->whenRun($this->throwNpeFunction())
+            ->andFinally(
+                function () use (&$finallyCalled) {
+                    $finallyCalled = true;
+                }
+            );
+        self::assertTrue($trying->isFailure());
+        self::assertTrue($finallyCalled);
     }
 
     /**

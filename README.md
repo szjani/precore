@@ -23,6 +23,7 @@ Precore is a common library which based on ideas coming from the Java world.
 9. [String utilities](https://github.com/szjani/precore#9-string-utilities)
 10. [Optional](https://github.com/szjani/precore#10-optional)
 11. [Range](https://github.com/szjani/precore#11-range)
+12. [TryTo](https://github.com/szjani/precore#12-tryto)
 
 For more information, click on the items. If you need even more information, check the phpdoc.
 
@@ -522,3 +523,50 @@ assertTrue($range->contains('c'));
 ```
 
 There are query methods like `isConnected()` or `encloses()`, but ranges can be composed by `intersection()` or `span()`. `Range` is immutable.
+
+12. TryTo
+---------
+
+`TryTo` can be used to handle errors in a functional way.
+
+```php
+$result = TryTo::run(function () use ($a, $b) {
+    Preconditions::checkArgument($b !== 0);
+    return $a / $b;
+});
+```
+
+This examples shows how a possible error can be gracefully handled. If `$b` is 0, $result will be a `Failure` object which holds
+the thrown `InvalidArgumentException`. Otherwise it is a `Success` and contains the calculated value.
+
+It is also possible the handle only a predefined set of exception types.
+
+```php
+$result = TryTo::catchExceptions([InvalidArgumentException::class])
+    ->run(function () use ($a, $b) {
+        Preconditions::checkArgument($b !== 0);
+        return Preconditions::checkNotNull($a) / Preconditions::checkNotNull($b);
+    });
+```
+
+Although the `InvalidArgumentException` is handled just like before, if one of the given parameters is null the thrown
+`NullPointerException` will not be caught by `TryTo`.
+
+We can also pass recovery functions and/or run a function in case of failure:
+
+```php
+$result = TryTo::catchExceptions()
+    ->run(function () use ($a, $b) {
+        Preconditions::checkArgument($b !== 0);
+        return Preconditions::checkNotNull($a) / Preconditions::checkNotNull($b);
+    })
+    ->onFail(NullPointerException::class, function (NullPointerException $e) {
+        self::getLogger()->error('Null parameter has been passed', [], $e);
+    })
+    ->recoverFor(InvalidArgumentException::class, function() {
+        return PHP_INT_MAX;
+    });
+```
+
+If the divisor is 0, the `$result` is `Success` and contains `PHP_INT_MAX`. Otherwise `$result` is a `Success` and holds
+the calculated value or `Failure` due to a null parameter.

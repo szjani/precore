@@ -29,33 +29,41 @@ use precore\lang\Object;
 use precore\lang\ObjectInterface;
 
 /**
- * Class Trying
+ * Class TryTo
  *
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Trying extends Object
+abstract class TryTo extends Object
 {
     /**
-     * @param Exception[] $exceptions
-     * @return Init
+     * Builder method for a try-catch-finally definition.
+     *
+     * @param Exception[] $exceptions should be caught, all exceptions will be handled if empty
+     * @return TryCatch
      */
     public static function catchExceptions(array $exceptions = [])
     {
-        return new Init($exceptions);
+        return new TryCatch($exceptions);
     }
 
     /**
-     * @param callable $runnable
-     * @param array $exceptions
-     * @return Trying
-     * @throws Exception the thrown exception if it is not handled by this Trying
+     * Executes the given function within a try block, catches all exception types given and runs the finally block.
+     *
+     * @param callable $tryBlock
+     * @param Exception[] $exceptions should be caught, all exceptions will be handled if empty
+     * @param callable $finallyBlock
+     * @return TryTo
+     * @throws Exception the thrown exception if it is not handled by this TryTo
      */
-    public static function runWithCatch(callable $runnable, array $exceptions = [])
+    public static function run(callable $tryBlock, array $exceptions = [], callable $finallyBlock = null)
     {
         try {
-            return Success::of(Functions::call($runnable));
+            return Success::of(Functions::call($tryBlock));
         } catch (Exception $e) {
+            if (count($exceptions) === 0) {
+                return Failure::of($e);
+            }
             $error = FluentIterable::of($exceptions)
                 ->filter(Predicates::assignableFrom(get_class($e)))
                 ->first();
@@ -63,13 +71,17 @@ abstract class Trying extends Object
                 return Failure::of($e);
             }
             throw $e;
+        } finally {
+            if ($finallyBlock !== null) {
+                Functions::call($finallyBlock);
+            }
         }
     }
 
     /**
      * @param string $exceptionClass
      * @param callable|null $consumer
-     * @return Trying
+     * @return TryTo
      */
     public abstract function onFail($exceptionClass = '\Exception', callable $consumer = null);
 
@@ -77,7 +89,7 @@ abstract class Trying extends Object
      * Map success value. Do nothing if Failure (return this).
      *
      * @param callable|null $mapper
-     * @return Trying
+     * @return TryTo
      */
     public abstract function map(callable $mapper = null);
 
@@ -157,7 +169,7 @@ abstract class Trying extends Object
      *
      * @param string $exceptionClass
      * @param callable|null $recoverFunction
-     * @return Trying
+     * @return TryTo
      */
     public abstract function recoverFor($exceptionClass = '\Exception', callable $recoverFunction = null);
 
@@ -166,7 +178,7 @@ abstract class Trying extends Object
      * otherwise return a Failure.
      *
      * @param callable|null $mapper
-     * @return Trying
+     * @return TryTo
      * @throws NullPointerException if Success and mapper is null
      */
     public abstract function flatMap(callable $mapper = null);
@@ -180,14 +192,14 @@ abstract class Trying extends Object
     public abstract function throwException();
 
     /**
-     * Flatten a nested Trying Structure.
+     * Flatten a nested TryTo Structure.
      *
-     * @return Trying
+     * @return TryTo
      */
     public abstract function flatten();
 }
 
-final class Success extends Trying
+final class Success extends TryTo
 {
     private $value;
 
@@ -256,7 +268,7 @@ final class Success extends Trying
     public function flatMap(callable $mapper = null)
     {
         $result = Functions::call(Preconditions::checkNotNull($mapper), $this->value);
-        Preconditions::checkState($result instanceof Trying, "result of the mapper must be a Trying");
+        Preconditions::checkState($result instanceof TryTo, "result of the mapper must be a TryTo");
         return $result;
     }
 
@@ -281,7 +293,7 @@ final class Success extends Trying
 
     public function flatten()
     {
-        return $this->value instanceof Trying
+        return $this->value instanceof TryTo
             ? $this->value->flatten()
             : $this;
     }
@@ -292,7 +304,7 @@ final class Success extends Trying
     }
 }
 
-final class Failure extends Trying
+final class Failure extends TryTo
 {
     private $exception;
 
@@ -405,11 +417,77 @@ final class Init
 
     /**
      * @param callable $supplier The function you would like to run in try
-     * @return Trying
-     * @throws Exception the thrown exception if it is not handled by this Trying
+     * @return TryTo
+     * @throws Exception the thrown exception if it is not handled by this TryTo
      */
-    public function tryThis(callable $supplier)
+    public function run(callable $supplier)
     {
-        return Trying::runWithCatch($supplier, $this->exceptions);
+        return TryTo::run($supplier, $this->exceptions);
+    }
+
+    /**
+     * @return TryCatch
+     */
+    public function init()
+    {
+        return new TryCatch($this->exceptions);
+    }
+}
+
+final class TryCatch
+{
+    private $exceptions;
+
+    public function __construct(array $exceptions)
+    {
+        $this->exceptions = $exceptions;
+    }
+
+    /**
+     * Runs the given function within a try block.
+     *
+     * @param callable $tryBlock The function you would like to run in try
+     * @return TryTo
+     * @throws Exception the thrown exception if it is not handled by this TryTo
+     */
+    public function run(callable $tryBlock)
+    {
+        return TryTo::run($tryBlock, $this->exceptions);
+    }
+
+    /**
+     * Builder method, the given function will be executed within a try block.
+     *
+     * @param callable $tryBlock
+     * @return AndFinally
+     */
+    public function whenRun(callable $tryBlock)
+    {
+        return new AndFinally($this->exceptions, $tryBlock);
+    }
+}
+
+final class AndFinally
+{
+    private $exceptions;
+    private $tryBlock;
+
+    public function __construct(array $exceptions, callable $tryBlock)
+    {
+        $this->exceptions = $exceptions;
+        $this->tryBlock = $tryBlock;
+    }
+
+    /**
+     * Executes the try block provided before and
+     * the given function is executed within a finally block.
+     *
+     * @param callable $finallyBlock
+     * @return TryTo
+     * @throws Exception the thrown exception if it is not handled by this TryTo
+     */
+    public function andFinally(callable $finallyBlock)
+    {
+        return TryTo::run($this->tryBlock, $this->exceptions, $finallyBlock);
     }
 }
