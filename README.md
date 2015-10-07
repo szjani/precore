@@ -536,7 +536,7 @@ $result = TryTo::run(function () use ($a, $b) {
 });
 ```
 
-This examples shows how a possible error can be gracefully handled. If `$b` is 0, $result will be a `Failure` object which holds
+This example shows how a possible error can be gracefully handled. If `$b` is 0, `$result` will be a `Failure` object which holds
 the thrown `InvalidArgumentException`. Otherwise it is a `Success` and contains the calculated value.
 
 It is also possible the handle only a predefined set of exception types.
