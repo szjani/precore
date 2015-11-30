@@ -23,42 +23,27 @@
 
 namespace precore\util;
 
+use PHPUnit_Framework_TestCase;
+
 /**
- * Utility class for numbers.
+ * Class NumbersTest
  *
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Numbers
+class NumbersTest extends PHPUnit_Framework_TestCase
 {
-    private static $NATURAL;
-
-    private function __construct()
-    {
-    }
-
-    public static function init()
-    {
-        self::$NATURAL = Ordering::from(Collections::comparatorFrom([__CLASS__, 'compare']));
-    }
-
     /**
-     * @param $a
-     * @param $b
-     * @return int
+     * @test
      */
-    public static function compare($a, $b)
+    public function shouldHandleFloats()
     {
-        $result = $a - $b;
-        return $result < 0 ? -1 : ($result === 0 ? 0 : 1);
-    }
+        $array = [1.1, 1.2];
+        Arrays::sort($array, Numbers::naturalOrdering());
+        self::assertSame([1.1, 1.2], $array);
 
-    /**
-     * @return Ordering
-     */
-    public static function naturalOrdering()
-    {
-        return self::$NATURAL;
+        $array = [1.2, 1.1];
+        Arrays::sort($array, Numbers::naturalOrdering());
+        self::assertSame([1.1, 1.2], $array);
     }
 }
-Numbers::init();
