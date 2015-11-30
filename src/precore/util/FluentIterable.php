@@ -231,7 +231,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
     public function first()
     {
         try {
-            return Optional::ofNullable(self::get(0));
+            return Optional::ofNullable($this->get(0));
         } catch (OutOfBoundsException $e) {
             return Optional::absent();
         }
