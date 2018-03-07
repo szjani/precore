@@ -23,13 +23,13 @@
 
 namespace precore\util\concurrent;
 
-use precore\lang\Object;
+use precore\lang\Obj;
 use SplFileInfo;
 
 /**
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class FileLock extends Object implements Lock
+class FileLock extends Obj implements Lock
 {
     /**
      * @var SplFileInfo

@@ -25,7 +25,7 @@ namespace precore\util;
 
 use DateTime;
 use ErrorException;
-use precore\lang\Object;
+use precore\lang\Obj;
 
 /**
  * Can be used in ObjectInterface implementations for overriding toString() method.
@@ -34,7 +34,7 @@ use precore\lang\Object;
  *
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class ToStringHelper extends Object
+class ToStringHelper extends Obj
 {
     private $className;
 

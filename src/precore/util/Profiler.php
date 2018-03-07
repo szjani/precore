@@ -23,7 +23,7 @@
 
 namespace precore\util;
 
-use precore\lang\Object;
+use precore\lang\Obj;
 
 /**
  * <p> Helps collection execution times in a programmatic way.
@@ -40,7 +40,7 @@ use precore\lang\Object;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Profiler extends Object
+final class Profiler extends Obj
 {
     const ENTRY_FORMAT = "%-13s%30s%10s.";
     const ENTRY_PREFIX = ' |-- ';

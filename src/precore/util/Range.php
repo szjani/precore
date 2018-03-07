@@ -27,7 +27,7 @@ use BadMethodCallException;
 use precore\lang\ClassCastException;
 use precore\lang\Comparable;
 use precore\lang\NullPointerException;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\ObjectInterface;
 use Traversable;
 
@@ -50,7 +50,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Range extends Object
+final class Range extends Obj
 {
     private static $ALL;
 
@@ -316,7 +316,7 @@ final class Range extends Object
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Cut extends Object implements Comparable
+abstract class Cut extends Obj implements Comparable
 {
     private $endpoint;
 

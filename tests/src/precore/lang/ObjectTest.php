@@ -31,13 +31,13 @@ use PHPUnit_Framework_TestCase;
 class ObjectTest extends PHPUnit_Framework_TestCase
 {
     /**
-     * @var SampleObject
+     * @var SampleObj
      */
     private $obj;
 
     public function setUp()
     {
-        $this->obj = new SampleObject();
+        $this->obj = new SampleObj();
     }
 
     public function testGetClassName()
@@ -47,7 +47,7 @@ class ObjectTest extends PHPUnit_Framework_TestCase
 
     public function testClassName()
     {
-        self::assertSame(__NAMESPACE__ . '\SampleObject', SampleObject::className());
+        self::assertSame(__NAMESPACE__ . '\SampleObject', SampleObj::className());
     }
 
     public function testHashCode()
@@ -68,35 +68,35 @@ class ObjectTest extends PHPUnit_Framework_TestCase
     public function testEquals()
     {
         self::assertFalse($this->obj->equals(null));
-        $obj2 = new SampleObject();
+        $obj2 = new SampleObj();
         self::assertFalse($this->obj->equals($obj2));
     }
 
     public function testObjectClass()
     {
-        self::assertEquals(SampleObject2::className(), SampleObject2::objectClass()->getName());
-        self::assertEquals(SampleObject::className(), SampleObject::objectClass()->getName());
-        self::assertSame(SampleObject::objectClass(), SampleObject::objectClass());
+        self::assertEquals(SampleObj2::className(), SampleObj2::objectClass()->getName());
+        self::assertEquals(SampleObj::className(), SampleObj::objectClass()->getName());
+        self::assertSame(SampleObj::objectClass(), SampleObj::objectClass());
     }
 
     public function testGetObjectClass()
     {
-        $object = new SampleObject();
-        self::assertEquals(SampleObject::objectClass()->getName(), $object->getObjectClass()->getName());
+        $object = new SampleObj();
+        self::assertEquals(SampleObj::objectClass()->getName(), $object->getObjectClass()->getName());
     }
 
     public function testGetLogger()
     {
-        self::assertInstanceOf('\lf4php\Logger', SampleObject::getLogger());
+        self::assertInstanceOf('\lf4php\Logger', SampleObj::getLogger());
     }
 }
 
-class SampleObject extends Object
+class SampleObj extends Obj
 {
     private $id;
 }
 
-class SampleObject2 extends Object
+class SampleObj2 extends Obj
 {
     private $id2;
 }

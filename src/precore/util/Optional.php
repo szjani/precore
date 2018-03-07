@@ -25,7 +25,7 @@ namespace precore\util;
 
 use precore\lang\IllegalStateException;
 use precore\lang\NullPointerException;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\ObjectInterface;
 
 /**
@@ -36,7 +36,7 @@ use precore\lang\ObjectInterface;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Optional extends Object
+abstract class Optional extends Obj
 {
     private static $ABSENT;
 

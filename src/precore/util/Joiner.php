@@ -25,7 +25,7 @@ namespace precore\util;
 
 use ArrayIterator;
 use BadMethodCallException;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\ObjectInterface;
 use Traversable;
 
@@ -46,7 +46,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Joiner extends Object
+abstract class Joiner extends Obj
 {
     private $separator;
 

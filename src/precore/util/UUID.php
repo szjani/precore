@@ -24,7 +24,7 @@
 namespace precore\util;
 
 use InvalidArgumentException;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\ObjectInterface;
 use Serializable;
 
@@ -33,7 +33,7 @@ use Serializable;
  *
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class UUID extends Object implements Serializable
+final class UUID extends Obj implements Serializable
 {
     const FULL_PATTERN = '/^\{?[0-9a-f]{8}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{4}\-?[0-9a-f]{12}\}?$/i';
 

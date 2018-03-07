@@ -24,7 +24,7 @@
 namespace precore\util\concurrent;
 
 use Exception;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\RunException;
 use precore\lang\Runnable;
 
@@ -35,7 +35,7 @@ use precore\lang\Runnable;
  *
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class LockedRunnableWrapper extends Object implements Runnable
+class LockedRunnableWrapper extends Obj implements Runnable
 {
     /**
      * @var Lock
