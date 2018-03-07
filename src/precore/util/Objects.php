@@ -23,7 +23,7 @@
 
 namespace precore\util;
 
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\ObjectInterface;
 use ReflectionClass;
 
@@ -34,7 +34,7 @@ use ReflectionClass;
  *
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Objects extends Object
+final class Objects extends Obj
 {
     private function __construct()
     {

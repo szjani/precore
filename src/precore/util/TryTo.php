@@ -25,7 +25,7 @@ namespace precore\util;
 
 use Exception;
 use precore\lang\NullPointerException;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\ObjectInterface;
 
 /**
@@ -34,7 +34,7 @@ use precore\lang\ObjectInterface;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class TryTo extends Object
+abstract class TryTo extends Obj
 {
     /**
      * Builder method for a try-catch-finally definition.

@@ -26,7 +26,7 @@ namespace precore\util;
 use ArrayIterator;
 use ArrayObject;
 use PHPUnit_Framework_TestCase;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\ObjectInterface;
 
 class ObjectsTest extends PHPUnit_Framework_TestCase
@@ -117,7 +117,7 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class String extends Object
+class String extends Obj
 {
     private $data;
 

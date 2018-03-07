@@ -26,6 +26,6 @@ namespace precore\lang;
 /**
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class Psr0Class extends Object
+class Psr0Class extends Obj
 {
 }

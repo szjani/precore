@@ -23,7 +23,7 @@
 
 namespace precore\util;
 
-use precore\lang\Object;
+use precore\lang\Obj;
 
 /**
  * Class ToStringHelperItem
@@ -31,7 +31,7 @@ use precore\lang\Object;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class ToStringHelperItem extends Object
+final class ToStringHelperItem extends Obj
 {
     private $key;
     private $value;

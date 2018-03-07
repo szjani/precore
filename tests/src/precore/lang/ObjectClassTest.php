@@ -90,13 +90,13 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
      */
     public function shouldCastNullToEverything()
     {
-        $res = Object::objectClass()->cast(null);
+        $res = Obj::objectClass()->cast(null);
         self::assertNull($res);
     }
 
     public function testCast()
     {
-        $objectClass = new ObjectClass(Object::className());
+        $objectClass = new ObjectClass(Obj::className());
         $object = new Psr0Class();
         self::assertSame($object, $objectClass->cast($object));
     }
@@ -106,7 +106,7 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
      */
     public function testCastException()
     {
-        $objectClass = new ObjectClass(Object::className());
+        $objectClass = new ObjectClass(Obj::className());
         $objectClass->cast($this);
     }
 
@@ -118,15 +118,15 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
 
     public function testForName()
     {
-        $class1 = ObjectClass::forName(Object::className());
-        $class2 = Object::objectClass();
+        $class1 = ObjectClass::forName(Obj::className());
+        $class2 = Obj::objectClass();
         self::assertSame($class2, $class1);
     }
 
     public function testSlash()
     {
-        $class1 = ObjectClass::forName('\precore\lang\Object');
-        $class2 = ObjectClass::forName('precore\lang\Object');
+        $class1 = ObjectClass::forName('\precore\lang\Obj');
+        $class2 = ObjectClass::forName('precore\lang\Obj');
         self::assertSame($class1, $class2);
     }
 
@@ -139,7 +139,7 @@ class ObjectClassTest extends PHPUnit_Framework_TestCase
         self::assertTrue($thisClass->isAssignableFrom($thisClass));
         self::assertFalse($thisClass->isAssignableFrom($parentClass));
         $interfaceClass = ObjectClass::forName('\precore\lang\ObjectInterface');
-        self::assertTrue($interfaceClass->isAssignableFrom(ObjectClass::forName('\precore\lang\Object')));
+        self::assertTrue($interfaceClass->isAssignableFrom(ObjectClass::forName('\precore\lang\Obj')));
         self::assertTrue($interfaceClass->isAssignableFrom($interfaceClass));
     }
 }

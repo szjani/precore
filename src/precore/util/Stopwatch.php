@@ -24,7 +24,7 @@
 namespace precore\util;
 
 use precore\lang\IllegalStateException;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\util\concurrent\TimeUnit;
 use RuntimeException;
 
@@ -68,7 +68,7 @@ use RuntimeException;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Stopwatch extends Object
+final class Stopwatch extends Obj
 {
     /**
      * @var Ticker

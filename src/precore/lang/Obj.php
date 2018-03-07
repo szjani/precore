@@ -29,7 +29,7 @@ use lf4php\LoggerFactory;
 /**
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Object implements ObjectInterface
+abstract class Obj implements ObjectInterface
 {
     /**
      * @return ObjectClass

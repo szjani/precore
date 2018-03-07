@@ -27,7 +27,7 @@ use Countable;
 use Iterator;
 use IteratorAggregate;
 use OutOfBoundsException;
-use precore\lang\Object;
+use precore\lang\Obj;
 use Traversable;
 
 /**
@@ -48,7 +48,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class FluentIterable extends Object implements IteratorAggregate, Countable
+final class FluentIterable extends Obj implements IteratorAggregate, Countable
 {
     /**
      * @var IteratorAggregate

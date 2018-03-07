@@ -25,7 +25,7 @@ namespace precore\util;
 
 use ArrayIterator;
 use Iterator;
-use precore\lang\Object;
+use precore\lang\Obj;
 use precore\lang\ObjectInterface;
 use RuntimeException;
 use Traversable;
@@ -68,7 +68,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Splitter extends Object
+abstract class Splitter extends Obj
 {
     const UTF_8 = 'UTF-8';
 
