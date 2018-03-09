@@ -60,18 +60,17 @@ class ToStringHelper extends BaseObject
      * Can be called with 1 or 2 parameters. In the first case only the value,
      * otherwise a key/value pair is passed.
      *
-     * @param mixed $param
+     * @param mixed[] $param
      * @return ToStringHelper $this
      * @throws \InvalidArgumentException if the number of parameters is not 1 or 2
      */
-    public function add($param) : ToStringHelper
+    public function add(...$param) : ToStringHelper
     {
-        $args = func_get_args();
-        $count = count($args);
+        $count = count($param);
         Preconditions::checkArgument($count == 1 || $count == 2);
         $this->values[] = $count == 2
-            ? new ToStringHelperItem($args[0], $args[1])
-            : new ToStringHelperItem(null, $args[0]);
+            ? new ToStringHelperItem($param[0], $param[1])
+            : new ToStringHelperItem(null, $param[0]);
         return $this;
     }
 

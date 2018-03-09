@@ -96,12 +96,11 @@ final class Predicates
     /**
      * Returns true if and only if all given predicates return true.
      *
-     * @param callable[] ...$predicates
+     * @param callable[] $predicates
      * @return callable
      */
     public static function ands(callable ...$predicates) : callable
     {
-        $predicates = func_get_args();
         return function ($element) use ($predicates) {
             foreach ($predicates as $predicate) {
                 if (!self::call($predicate, $element)) {
@@ -115,12 +114,11 @@ final class Predicates
     /**
      * Returns true if at least one of the given predicates return true.
      *
-     * @param callable $predicates
+     * @param callable[] $predicates
      * @return callable
      */
-    public static function ors(callable $predicates) : callable
+    public static function ors(callable ...$predicates) : callable
     {
-        $predicates = func_get_args();
         return function ($element) use ($predicates) {
             foreach ($predicates as $predicate) {
                 if (self::call($predicate, $element)) {
