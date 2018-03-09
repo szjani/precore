@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2014 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -55,7 +35,7 @@ final class Preconditions
      * @param string... $param
      * @throws InvalidArgumentException
      */
-    public static function checkArgument($expression, $errorMessage = null, $params = null)
+    public static function checkArgument(bool $expression, ?string $errorMessage = null, $params = null) : void
     {
         if (!$expression) {
             throw new InvalidArgumentException(self::format($errorMessage, func_get_args()));
@@ -68,7 +48,7 @@ final class Preconditions
      * @param string... $param
      * @throws IllegalStateException
      */
-    public static function checkState($expression, $errorMessage = null, $params = null)
+    public static function checkState(bool $expression, ?string $errorMessage = null, $params = null) : void
     {
         if (!$expression) {
             throw new IllegalStateException(self::format($errorMessage, func_get_args()));
@@ -82,7 +62,7 @@ final class Preconditions
      * @throws NullPointerException
      * @return mixed the $object itself if not null
      */
-    public static function checkNotNull($object, $errorMessage = null, $params = null)
+    public static function checkNotNull($object, ?string $errorMessage = null, $params = null)
     {
         if ($object === null) {
             throw new NullPointerException(self::format($errorMessage, func_get_args()));
@@ -92,13 +72,13 @@ final class Preconditions
 
     /**
      * @param array $array
-     * @param string $key
+     * @param mixed $key
      * @param string $errorMessage
      * @param string... $params
      * @return mixed the element with the given index
      * @throws OutOfBoundsException
      */
-    public static function checkElementExists(array $array, $key, $errorMessage = null, $params = null)
+    public static function checkElementExists(array $array, $key, string $errorMessage = null, $params = null)
     {
         if (!array_key_exists($key, $array)) {
             throw new OutOfBoundsException(self::format($errorMessage, func_get_args(), 3));

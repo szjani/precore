@@ -22,12 +22,12 @@ class IncrementedTicker extends Ticker
      *
      * @return float
      */
-    public function read()
+    public function read() : float
     {
         return $this->counter++;
     }
 
-    public function counter()
+    public function counter() : int
     {
         return $this->counter;
     }

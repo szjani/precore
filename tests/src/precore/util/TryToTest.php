@@ -1,8 +1,9 @@
 <?php
+declare(strict_types=1);
 
 namespace precore\util;
 
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use precore\lang\IllegalStateException;
 use precore\lang\NullPointerException;
 
@@ -12,7 +13,7 @@ use precore\lang\NullPointerException;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class TryToTest extends PHPUnit_Framework_TestCase
+class TryToTest extends TestCase
 {
     /**
      * @test

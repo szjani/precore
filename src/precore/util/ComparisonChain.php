@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2014 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -44,7 +24,7 @@ abstract class ComparisonChain
     /**
      * @return ComparisonChain
      */
-    public static function start()
+    public static function start() : ComparisonChain
     {
         if (self::$active === null) {
             self::$active = new ActiveComparisonChain(
@@ -61,7 +41,7 @@ abstract class ComparisonChain
      * @param Comparator $comparator
      * @return ComparisonChain
      */
-    abstract public function withComparator($left, $right, Comparator $comparator);
+    abstract public function withComparator($left, $right, Comparator $comparator) : ComparisonChain;
 
     /**
      * @param $left
@@ -69,19 +49,19 @@ abstract class ComparisonChain
      * @param Closure $closure
      * @return ComparisonChain
      */
-    abstract public function withClosure($left, $right, Closure $closure);
+    abstract public function withClosure($left, $right, Closure $closure) : ComparisonChain;
 
     /**
      * @param Comparable $left
      * @param Comparable $right
      * @return ComparisonChain
      */
-    abstract public function compare(Comparable $left, Comparable $right);
+    abstract public function compare(Comparable $left, Comparable $right) : ComparisonChain;
 
     /**
      * @return int
      */
-    abstract public function result();
+    abstract public function result() : int;
 }
 
 /**
@@ -108,7 +88,7 @@ final class ActiveComparisonChain extends ComparisonChain
      * @return ComparisonChain
      * @throws ClassCastException if the arguments' types prevent them from being compared by this comparator
      */
-    public function withComparator($left, $right, Comparator $comparator)
+    public function withComparator($left, $right, Comparator $comparator) : ComparisonChain
     {
         return $this->classify($comparator->compare($left, $right));
     }
@@ -119,7 +99,7 @@ final class ActiveComparisonChain extends ComparisonChain
      * @param Closure $closure
      * @return ComparisonChain
      */
-    public function withClosure($left, $right, Closure $closure)
+    public function withClosure($left, $right, Closure $closure) : ComparisonChain
     {
         return $this->classify(Functions::call($closure, $left, $right));
     }
@@ -129,7 +109,7 @@ final class ActiveComparisonChain extends ComparisonChain
      * @param Comparable $right
      * @return ComparisonChain
      */
-    public function compare(Comparable $left, Comparable $right)
+    public function compare(Comparable $left, Comparable $right) : ComparisonChain
     {
         return $this->classify($left->compareTo($right));
     }
@@ -137,7 +117,7 @@ final class ActiveComparisonChain extends ComparisonChain
     /**
      * @return int
      */
-    public function result()
+    public function result() : int
     {
         return 0;
     }
@@ -146,7 +126,7 @@ final class ActiveComparisonChain extends ComparisonChain
      * @param int $result
      * @return ComparisonChain
      */
-    private function classify($result)
+    private function classify($result) : ComparisonChain
     {
         return $result < 0 ? $this->less : ($result > 0 ? $this->greater : $this);
     }
@@ -173,7 +153,7 @@ final class InactiveComparisonChain extends ComparisonChain
      * @param Comparator $comparator
      * @return ComparisonChain
      */
-    public function withComparator($left, $right, Comparator $comparator)
+    public function withComparator($left, $right, Comparator $comparator) : ComparisonChain
     {
         return $this;
     }
@@ -184,7 +164,7 @@ final class InactiveComparisonChain extends ComparisonChain
      * @param Closure $closure
      * @return ComparisonChain
      */
-    public function withClosure($left, $right, Closure $closure)
+    public function withClosure($left, $right, Closure $closure) : ComparisonChain
     {
         return $this;
     }
@@ -194,7 +174,7 @@ final class InactiveComparisonChain extends ComparisonChain
      * @param Comparable $right
      * @return ComparisonChain
      */
-    public function compare(Comparable $left, Comparable $right)
+    public function compare(Comparable $left, Comparable $right) : ComparisonChain
     {
         return $this;
     }
@@ -202,7 +182,7 @@ final class InactiveComparisonChain extends ComparisonChain
     /**
      * @return int
      */
-    public function result()
+    public function result() : int
     {
         return $this->result;
     }

@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -39,7 +19,7 @@ final class ComparableComparator implements Comparator
      */
     private static $instance;
 
-    public static function init()
+    public static function init() : void
     {
         self::$instance = new self();
     }
@@ -47,7 +27,7 @@ final class ComparableComparator implements Comparator
     /**
      * @return ComparableComparator
      */
-    public static function instance()
+    public static function instance() : ComparableComparator
     {
         return self::$instance;
     }
@@ -59,7 +39,7 @@ final class ComparableComparator implements Comparator
      *         as the first argument is less than, equal to, or greater than the second.
      * @throws ClassCastException - if the arguments' types prevent them from being compared by this comparator.
      */
-    public function compare($object1, $object2)
+    public function compare($object1, $object2) : int
     {
         $this->checkType($object1);
         $this->checkType($object2);
@@ -67,7 +47,7 @@ final class ComparableComparator implements Comparator
         return $object1->compareTo($object2);
     }
 
-    private function checkType($object)
+    private function checkType($object) : void
     {
         if (!($object instanceof Comparable)) {
             throw new ClassCastException(sprintf("Object must be an instance of 'precore\\lang\\Comparable'"));

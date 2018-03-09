@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -27,7 +7,7 @@ use Countable;
 use Iterator;
 use IteratorAggregate;
 use OutOfBoundsException;
-use precore\lang\Object;
+use precore\lang\BaseObject;
 use Traversable;
 
 /**
@@ -48,7 +28,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class FluentIterable extends Object implements IteratorAggregate, Countable
+final class FluentIterable extends BaseObject implements IteratorAggregate, Countable
 {
     /**
      * @var IteratorAggregate
@@ -66,7 +46,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param array $array
      * @return FluentIterable
      */
-    public static function of(array $array)
+    public static function of(array $array) : FluentIterable
     {
         return self::from(Iterables::fromArray($array));
     }
@@ -77,7 +57,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param Traversable $traversable
      * @return FluentIterable
      */
-    public static function from(Traversable $traversable)
+    public static function from(Traversable $traversable) : FluentIterable
     {
         return new FluentIterable(Iterables::from($traversable));
     }
@@ -89,7 +69,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param IteratorAggregate $other
      * @return FluentIterable
      */
-    public function append(IteratorAggregate $other)
+    public function append(IteratorAggregate $other) : FluentIterable
     {
         return self::from(Iterables::concat($this, $other));
     }
@@ -100,7 +80,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param callable $predicate
      * @return FluentIterable
      */
-    public function filter(callable $predicate)
+    public function filter(callable $predicate) : FluentIterable
     {
         return self::from(Iterables::filter($this, $predicate));
     }
@@ -111,7 +91,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param string $className
      * @return FluentIterable
      */
-    public function filterBy($className)
+    public function filterBy(string $className) : FluentIterable
     {
         return self::from(Iterables::filterBy($this, $className));
     }
@@ -122,7 +102,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param callable $predicate
      * @return boolean
      */
-    public function anyMatch(callable $predicate)
+    public function anyMatch(callable $predicate) : bool
     {
         return Iterables::any($this, $predicate);
     }
@@ -134,7 +114,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param callable $predicate
      * @return boolean
      */
-    public function allMatch(callable $predicate)
+    public function allMatch(callable $predicate) : bool
     {
         return Iterables::all($this, $predicate);
     }
@@ -145,7 +125,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param callable $transformer
      * @return FluentIterable
      */
-    public function transform(callable $transformer)
+    public function transform(callable $transformer) : FluentIterable
     {
         return self::from(Iterables::transform($this, $transformer));
     }
@@ -156,7 +136,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param callable $mapper
      * @return FluentIterable
      */
-    public function map(callable $mapper)
+    public function map(callable $mapper) : FluentIterable
     {
         return $this->transform($mapper);
     }
@@ -169,7 +149,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @return FluentIterable
      * @see flatMap
      */
-    public function transformAndConcat(callable $transformer)
+    public function transformAndConcat(callable $transformer) : FluentIterable
     {
         return self::from(Iterables::concatIterables($this->transform($transformer)));
     }
@@ -181,7 +161,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param callable $transformer
      * @return FluentIterable
      */
-    public function flatMap(callable $transformer)
+    public function flatMap(callable $transformer) : FluentIterable
     {
         return $this->transformAndConcat($transformer);
     }
@@ -194,7 +174,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param $limit
      * @return FluentIterable
      */
-    public function limit($limit)
+    public function limit($limit) : FluentIterable
     {
         return self::from(Iterables::limit($this, $limit));
     }
@@ -207,7 +187,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param $numberToSkip
      * @return FluentIterable
      */
-    public function skip($numberToSkip)
+    public function skip($numberToSkip) : FluentIterable
     {
         return self::from(Iterables::skip($this, $numberToSkip));
     }
@@ -218,7 +198,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param Joiner $joiner
      * @return string
      */
-    public function join(Joiner $joiner)
+    public function join(Joiner $joiner) : string
     {
         return $joiner->join($this);
     }
@@ -228,7 +208,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      *
      * @return Optional
      */
-    public function first()
+    public function first() : Optional
     {
         try {
             return Optional::ofNullable($this->get(0));
@@ -244,7 +224,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param callable $predicate
      * @return Optional
      */
-    public function firstMatch(callable $predicate)
+    public function firstMatch(callable $predicate) : Optional
     {
         return $this->filter($predicate)->first();
     }
@@ -252,7 +232,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
     /**
      * @return Optional
      */
-    public function last()
+    public function last() : Optional
     {
         return Optional::ofNullable(Iterators::getLast($this->iterator()));
     }
@@ -274,7 +254,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      *
      * @return boolean
      */
-    public function isEmpty()
+    public function isEmpty() : bool
     {
         return Iterables::isEmpty($this);
     }
@@ -285,7 +265,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param $element
      * @return boolean
      */
-    public function contains($element)
+    public function contains($element) : bool
     {
         return Iterables::contains($this, $element);
     }
@@ -295,7 +275,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      *
      * @return int
      */
-    public function size()
+    public function size() : int
     {
         return Iterators::size($this->iterator());
     }
@@ -305,7 +285,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      *
      * @return Iterator
      */
-    public function iterator()
+    public function iterator() : Iterator
     {
         return Iterators::from($this->iterable);
     }
@@ -316,7 +296,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param callable $function
      * @return void
      */
-    public function each(callable $function)
+    public function each(callable $function) : void
     {
         Iterators::each($this->iterator(), $function);
     }
@@ -327,7 +307,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param Comparator $comparator
      * @return FluentIterable
      */
-    public function sorted(Comparator $comparator)
+    public function sorted(Comparator $comparator) : FluentIterable
     {
         $array = $this->toArray();
         Arrays::sort($array, $comparator);
@@ -338,7 +318,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      * @param $size
      * @return FluentIterable
      */
-    public function partition($size)
+    public function partition($size) : FluentIterable
     {
         return FluentIterable::from(Iterables::partition($this, $size));
     }
@@ -349,7 +329,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
      *
      * @return array
      */
-    public function toArray()
+    public function toArray() : array
     {
         $res = [];
         Iterators::each($this->iterator(), function ($element) use (&$res) {
@@ -384,7 +364,7 @@ final class FluentIterable extends Object implements IteratorAggregate, Countabl
         return $this->size();
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Iterables::toString($this);
     }

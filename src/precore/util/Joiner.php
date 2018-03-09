@@ -1,31 +1,11 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
 use ArrayIterator;
 use BadMethodCallException;
-use precore\lang\Object;
+use precore\lang\BaseObject;
 use precore\lang\ObjectInterface;
 use Traversable;
 
@@ -46,17 +26,15 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Joiner extends Object
+abstract class Joiner extends BaseObject
 {
     private $separator;
 
     /**
      * @param string $separator
-     * @throws \InvalidArgumentException if separator is not a string
      */
-    protected function __construct($separator)
+    protected function __construct(string $separator)
     {
-        Preconditions::checkArgument(is_string($separator), 'separator must be a string');
         $this->separator = $separator;
     }
 
@@ -67,7 +45,7 @@ abstract class Joiner extends Object
      * @return Joiner
      * @throws \InvalidArgumentException if separator is not a string
      */
-    public static function on($separator)
+    public static function on($separator) : Joiner
     {
         return new SimpleJoiner($separator);
     }
@@ -78,7 +56,7 @@ abstract class Joiner extends Object
      *
      * @return Joiner
      */
-    public function skipNulls()
+    public function skipNulls() : Joiner
     {
         return new SkipNullJoiner($this->separator);
     }
@@ -90,7 +68,7 @@ abstract class Joiner extends Object
      * @param $nullText
      * @return Joiner
      */
-    public function useForNull($nullText)
+    public function useForNull(string $nullText) : Joiner
     {
         return new UseForNullJoiner($this->separator, $nullText);
     }
@@ -99,7 +77,7 @@ abstract class Joiner extends Object
      * @param FluentIterable $iterable
      * @return FluentIterable
      */
-    protected abstract function modifyIterable(FluentIterable $iterable);
+    protected abstract function modifyIterable(FluentIterable $iterable) : FluentIterable;
 
     /**
      * Returns a string containing the string representation of each element of $parts, using the previously
@@ -109,7 +87,7 @@ abstract class Joiner extends Object
      * @return string
      * @throws \InvalidArgumentException if $parts is not an array or a Traversable
      */
-    final public function join($parts)
+    final public function join($parts) : string
     {
         if (is_array($parts)) {
             $parts = new ArrayIterator($parts);
@@ -133,14 +111,14 @@ abstract class Joiner extends Object
         return $res;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)
             ->add('separator', $this->separator)
             ->toString();
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         /* @var $object Joiner */
         return $object !== null
@@ -161,7 +139,7 @@ final class SimpleJoiner extends Joiner
      * @param FluentIterable $iterable
      * @return FluentIterable
      */
-    protected function modifyIterable(FluentIterable $iterable)
+    protected function modifyIterable(FluentIterable $iterable) : FluentIterable
     {
         return $iterable->filter(
             function ($element) {
@@ -183,12 +161,12 @@ final class SimpleJoiner extends Joiner
  */
 final class SkipNullJoiner extends Joiner
 {
-    public function skipNulls()
+    public function skipNulls() : Joiner
     {
         throw new BadMethodCallException('already specified skipNulls');
     }
 
-    public function useForNull($nullText)
+    public function useForNull(string $nullText) : Joiner
     {
         throw new BadMethodCallException('already specified skipNulls');
     }
@@ -197,7 +175,7 @@ final class SkipNullJoiner extends Joiner
      * @param FluentIterable $iterable
      * @return FluentIterable
      */
-    protected function modifyIterable(FluentIterable $iterable)
+    protected function modifyIterable(FluentIterable $iterable) : FluentIterable
     {
         return $iterable->filter(Predicates::notNull());
     }
@@ -213,19 +191,18 @@ final class UseForNullJoiner extends Joiner
 {
     private $useForNull;
 
-    public function __construct($separator, $nullText)
+    public function __construct(string $separator, string $nullText)
     {
         parent::__construct($separator);
-        Preconditions::checkArgument(is_string($nullText), 'nullText must be a string');
         $this->useForNull = $nullText;
     }
 
-    public function skipNulls()
+    public function skipNulls() : Joiner
     {
         throw new BadMethodCallException('already specified useForNull');
     }
 
-    public function useForNull($nullText)
+    public function useForNull(string $nullText) : Joiner
     {
         throw new BadMethodCallException('already specified useForNull');
     }
@@ -234,7 +211,7 @@ final class UseForNullJoiner extends Joiner
      * @param FluentIterable $iterable
      * @return FluentIterable
      */
-    protected function modifyIterable(FluentIterable $iterable)
+    protected function modifyIterable(FluentIterable $iterable) : FluentIterable
     {
         return $iterable->transform(
             function ($element) {
@@ -243,13 +220,13 @@ final class UseForNullJoiner extends Joiner
         );
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         /* @var $object UseForNullJoiner */
         return parent::equals($object) && $this->useForNull === $object->useForNull;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)
             ->add('parent', parent::toString())

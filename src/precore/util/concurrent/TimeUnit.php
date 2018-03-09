@@ -1,25 +1,6 @@
 <?php
-/*
- * Copyright (c) 2012 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+
+declare(strict_types=1);
 
 namespace precore\util\concurrent;
 
@@ -102,7 +83,7 @@ class TimeUnit extends Enum
      * @param $duration float
      * @return float
      */
-    public function toMicros($duration)
+    public function toMicros(float $duration) : float
     {
         return TimeUnit::$MICROSECONDS->convert($duration, $this);
     }
@@ -113,7 +94,7 @@ class TimeUnit extends Enum
      * @param $duration float
      * @return float
      */
-    public function toMillis($duration)
+    public function toMillis(float $duration) : float
     {
         return TimeUnit::$MILLISECONDS->convert($duration, $this);
     }
@@ -124,7 +105,7 @@ class TimeUnit extends Enum
      * @param $duration float
      * @return float
      */
-    public function toSeconds($duration)
+    public function toSeconds(float $duration) : float
     {
         return TimeUnit::$SECONDS->convert($duration, $this);
     }
@@ -135,7 +116,7 @@ class TimeUnit extends Enum
      * @param $duration float
      * @return float
      */
-    public function toMinutes($duration)
+    public function toMinutes(float $duration) : float
     {
         return TimeUnit::$MINUTES->convert($duration, $this);
     }
@@ -146,7 +127,7 @@ class TimeUnit extends Enum
      * @param $duration float
      * @return float
      */
-    public function toHours($duration)
+    public function toHours(float $duration) : float
     {
         return TimeUnit::$HOURS->convert($duration, $this);
     }
@@ -157,7 +138,7 @@ class TimeUnit extends Enum
      * @param $duration float
      * @return float
      */
-    public function toDays($duration)
+    public function toDays(float $duration) : float
     {
         return TimeUnit::$DAYS->convert($duration, $this);
     }
@@ -165,11 +146,11 @@ class TimeUnit extends Enum
     /**
      * Creates a DateInterval with the given duration and this unit.
      *
-     * @param $duration int
-     * @throws IllegalStateException if this object does not have proper DateInterval format string
+     * @param $duration float
+     * @throws \Exception if this object does not have proper DateInterval format string
      * @return DateInterval
      */
-    public function toDateInterval($duration)
+    public function toDateInterval(float $duration) : DateInterval
     {
         Preconditions::checkState($this->dateIntervalFormat !== null, '[%s] does not support toDateInterval()', $this);
         return new DateInterval(sprintf($this->dateIntervalFormat, $duration));
@@ -184,7 +165,7 @@ class TimeUnit extends Enum
      * @param TimeUnit $timeUnit the unit of the sourceDuration argument
      * @return float the converted duration in this unit
      */
-    public function convert($duration, TimeUnit $timeUnit)
+    public function convert(float $duration, TimeUnit $timeUnit) : float
     {
         return $duration * ($timeUnit->inMicros / $this->inMicros);
     }
@@ -194,9 +175,9 @@ class TimeUnit extends Enum
      *
      * @param $duration
      */
-    public function sleep($duration)
+    public function sleep(float $duration) : void
     {
-        usleep($this->toMicros($duration));
+        usleep(intval($this->toMicros($duration)));
     }
 }
 TimeUnit::init();

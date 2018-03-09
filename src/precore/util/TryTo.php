@@ -1,31 +1,11 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
 use Exception;
 use precore\lang\NullPointerException;
-use precore\lang\Object;
+use precore\lang\BaseObject;
 use precore\lang\ObjectInterface;
 
 /**
@@ -34,7 +14,7 @@ use precore\lang\ObjectInterface;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class TryTo extends Object
+abstract class TryTo extends BaseObject
 {
     /**
      * Builder method for a try-catch-finally definition.
@@ -42,7 +22,7 @@ abstract class TryTo extends Object
      * @param Exception[] $exceptions should be caught, all exceptions will be handled if empty
      * @return TryCatch
      */
-    public static function catchExceptions(array $exceptions = [])
+    public static function catchExceptions(array $exceptions = []) : TryCatch
     {
         return new TryCatch($exceptions);
     }
@@ -56,7 +36,7 @@ abstract class TryTo extends Object
      * @return TryTo
      * @throws Exception the thrown exception if it is not handled by this TryTo
      */
-    public static function run(callable $tryBlock, array $exceptions = [], callable $finallyBlock = null)
+    public static function run(callable $tryBlock, array $exceptions = [], callable $finallyBlock = null) : TryTo
     {
         try {
             return Success::of(Functions::call($tryBlock));
@@ -83,7 +63,7 @@ abstract class TryTo extends Object
      * @param callable|null $consumer
      * @return TryTo
      */
-    public abstract function onFail($exceptionClass = '\Exception', callable $consumer = null);
+    public abstract function onFail($exceptionClass = '\Exception', callable $consumer = null) : TryTo;
 
     /**
      * Map success value. Do nothing if Failure (return this).
@@ -91,35 +71,35 @@ abstract class TryTo extends Object
      * @param callable|null $mapper
      * @return TryTo
      */
-    public abstract function map(callable $mapper = null);
+    public abstract function map(callable $mapper = null) : TryTo;
 
     /**
      * True if Failure / false if Success.
      *
      * @return boolean
      */
-    public abstract function isFailure();
+    public abstract function isFailure() : bool;
 
     /**
      * True if Success / false if Failure.
      *
      * @return boolean
      */
-    public abstract function isSuccess();
+    public abstract function isSuccess() : bool;
 
     /**
      * Optional present if Success, Optional empty if failure
      *
      * @return Optional
      */
-    public abstract function toOptional();
+    public abstract function toOptional() : Optional;
 
     /**
      * Optional present if Failure (with Exception), Optional absent if Success.
      *
      * @return Optional
      */
-    public abstract function toFailedOptional();
+    public abstract function toFailedOptional() : Optional;
 
     /**
      * Convert a Success to a Failure (with a null value for Exception) if predicate does not hold.
@@ -129,7 +109,7 @@ abstract class TryTo extends Object
      * @return Optional
      * @throw NullPointerException if Success and predicate is null
      */
-    public abstract function filter(callable $predicate = null);
+    public abstract function filter(callable $predicate = null) : Optional;
 
     /**
      * Get the contained value.
@@ -171,7 +151,7 @@ abstract class TryTo extends Object
      * @param callable|null $recoverFunction
      * @return TryTo
      */
-    public abstract function recoverFor($exceptionClass = '\Exception', callable $recoverFunction = null);
+    public abstract function recoverFor($exceptionClass = '\Exception', callable $recoverFunction = null) : TryTo;
 
     /**
      * If a value is present, apply the provided mapping function to it, return that result,
@@ -181,7 +161,7 @@ abstract class TryTo extends Object
      * @return TryTo
      * @throws NullPointerException if Success and mapper is null
      */
-    public abstract function flatMap(callable $mapper = null);
+    public abstract function flatMap(callable $mapper = null) : TryTo;
 
     /**
      * Throw exception if Failure, do nothing if success.
@@ -189,14 +169,14 @@ abstract class TryTo extends Object
      * @return void
      * @throws \Exception
      */
-    public abstract function throwException();
+    public abstract function throwException() : void;
 
     /**
      * Flatten a nested TryTo Structure.
      *
      * @return TryTo
      */
-    public abstract function flatten();
+    public abstract function flatten() : TryTo;
 }
 
 final class Success extends TryTo
@@ -213,12 +193,12 @@ final class Success extends TryTo
         return new Success($value);
     }
 
-    public function onFail($exceptionClass = '\Exception', callable $consumer = null)
+    public function onFail($exceptionClass = '\Exception', callable $consumer = null) : TryTo
     {
         return $this;
     }
 
-    public function map(callable $mapper = null)
+    public function map(callable $mapper = null) : TryTo
     {
         return Success::of(Functions::call(Preconditions::checkNotNull($mapper), $this->value));
     }
@@ -228,22 +208,22 @@ final class Success extends TryTo
         return $this->value;
     }
 
-    public function isFailure()
+    public function isFailure() : bool
     {
         return false;
     }
 
-    public function isSuccess()
+    public function isSuccess() : bool
     {
         return true;
     }
 
-    public function toOptional()
+    public function toOptional() : Optional
     {
         return Optional::of($this->value);
     }
 
-    public function filter(callable $predicate = null)
+    public function filter(callable $predicate = null) : Optional
     {
         return Predicates::call(Preconditions::checkNotNull($predicate), $this->value)
             ? Optional::of($this->value)
@@ -265,40 +245,40 @@ final class Success extends TryTo
         return $this->value;
     }
 
-    public function flatMap(callable $mapper = null)
+    public function flatMap(callable $mapper = null) : TryTo
     {
         $result = Functions::call(Preconditions::checkNotNull($mapper), $this->value);
         Preconditions::checkState($result instanceof TryTo, "result of the mapper must be a TryTo");
         return $result;
     }
 
-    public function recoverFor($exceptionClass = '\Exception', callable $recoverFunction = null)
+    public function recoverFor($exceptionClass = '\Exception', callable $recoverFunction = null) : TryTo
     {
         return $this;
     }
 
-    public function throwException()
+    public function throwException() : void
     {
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         return $object instanceof Success && $object->value === $this->value;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)->add($this->value)->toString();
     }
 
-    public function flatten()
+    public function flatten() : TryTo
     {
         return $this->value instanceof TryTo
             ? $this->value->flatten()
             : $this;
     }
 
-    public function toFailedOptional()
+    public function toFailedOptional() : Optional
     {
         return Optional::absent();
     }
@@ -315,7 +295,7 @@ final class Failure extends TryTo
         return $failure;
     }
 
-    public function onFail($exceptionClass = '\Exception', callable $consumer = null)
+    public function onFail($exceptionClass = '\Exception', callable $consumer = null) : TryTo
     {
         if (is_a($this->exception, $exceptionClass)) {
             Functions::call(Preconditions::checkNotNull($consumer), $this->exception);
@@ -323,7 +303,7 @@ final class Failure extends TryTo
         return $this;
     }
 
-    public function map(callable $mapper = null)
+    public function map(callable $mapper = null) : TryTo
     {
         return $this;
     }
@@ -333,22 +313,22 @@ final class Failure extends TryTo
         throw $this->exception;
     }
 
-    public function isFailure()
+    public function isFailure() : bool
     {
         return true;
     }
 
-    public function isSuccess()
+    public function isSuccess() : bool
     {
         return false;
     }
 
-    public function toOptional()
+    public function toOptional() : Optional
     {
         return Optional::absent();
     }
 
-    public function filter(callable $predicate = null)
+    public function filter(callable $predicate = null) : Optional
     {
         return Optional::absent();
     }
@@ -368,39 +348,39 @@ final class Failure extends TryTo
         return Functions::call(Preconditions::checkNotNull($supplier));
     }
 
-    public function flatMap(callable $mapper = null)
+    public function flatMap(callable $mapper = null) : TryTo
     {
         return $this;
     }
 
-    public function recoverFor($exceptionClass = '\Exception', callable $recoverFunction = null)
+    public function recoverFor($exceptionClass = '\Exception', callable $recoverFunction = null) : TryTo
     {
         return is_a($this->exception, $exceptionClass)
             ? Success::of(Functions::call(Preconditions::checkNotNull($recoverFunction), $this->exception))
             : $this;
     }
 
-    public function throwException()
+    public function throwException() : void
     {
         throw $this->exception;
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         return $object instanceof Failure && $this->exception === $object->exception;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)->add($this->exception)->toString();
     }
 
-    public function flatten()
+    public function flatten() : TryTo
     {
         return $this;
     }
 
-    public function toFailedOptional()
+    public function toFailedOptional() : Optional
     {
         return Optional::of($this->exception);
     }
@@ -420,7 +400,7 @@ final class Init
      * @return TryTo
      * @throws Exception the thrown exception if it is not handled by this TryTo
      */
-    public function run(callable $supplier)
+    public function run(callable $supplier) : TryTo
     {
         return TryTo::run($supplier, $this->exceptions);
     }
@@ -428,7 +408,7 @@ final class Init
     /**
      * @return TryCatch
      */
-    public function init()
+    public function init() : TryCatch
     {
         return new TryCatch($this->exceptions);
     }
@@ -450,7 +430,7 @@ final class TryCatch
      * @return TryTo
      * @throws Exception the thrown exception if it is not handled by this TryTo
      */
-    public function run(callable $tryBlock)
+    public function run(callable $tryBlock) : TryTo
     {
         return TryTo::run($tryBlock, $this->exceptions);
     }
@@ -461,7 +441,7 @@ final class TryCatch
      * @param callable $tryBlock
      * @return AndFinally
      */
-    public function whenRun(callable $tryBlock)
+    public function whenRun(callable $tryBlock) : AndFinally
     {
         return new AndFinally($this->exceptions, $tryBlock);
     }
@@ -486,7 +466,7 @@ final class AndFinally
      * @return TryTo
      * @throws Exception the thrown exception if it is not handled by this TryTo
      */
-    public function andFinally(callable $finallyBlock)
+    public function andFinally(callable $finallyBlock) : TryTo
     {
         return TryTo::run($this->tryBlock, $this->exceptions, $finallyBlock);
     }

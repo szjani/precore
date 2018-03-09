@@ -1,30 +1,10 @@
 <?php
-/*
- * Copyright (c) 2012-2014 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
 use precore\lang\IllegalStateException;
-use precore\lang\Object;
+use precore\lang\BaseObject;
 use precore\util\concurrent\TimeUnit;
 use RuntimeException;
 
@@ -68,7 +48,7 @@ use RuntimeException;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Stopwatch extends Object
+final class Stopwatch extends BaseObject
 {
     /**
      * @var Ticker
@@ -101,7 +81,7 @@ final class Stopwatch extends Object
     /**
      * @return Stopwatch
      */
-    public static function createUnstarted()
+    public static function createUnstarted() : Stopwatch
     {
         return new Stopwatch(Ticker::systemTicker());
     }
@@ -109,7 +89,7 @@ final class Stopwatch extends Object
     /**
      * @return Stopwatch
      */
-    public static function createStarted()
+    public static function createStarted() : Stopwatch
     {
         return self::createUnstarted()->start();
     }
@@ -118,7 +98,7 @@ final class Stopwatch extends Object
      * @param Ticker $ticker
      * @return Stopwatch
      */
-    public static function createUnstartedWith(Ticker $ticker)
+    public static function createUnstartedWith(Ticker $ticker) : Stopwatch
     {
         return new Stopwatch($ticker);
     }
@@ -127,7 +107,7 @@ final class Stopwatch extends Object
      * @param Ticker $ticker
      * @return Stopwatch
      */
-    public static function createStartedWith(Ticker $ticker)
+    public static function createStartedWith(Ticker $ticker) : Stopwatch
     {
         return self::createUnstartedWith($ticker)->start();
     }
@@ -138,7 +118,7 @@ final class Stopwatch extends Object
      * @return $this
      * @throws IllegalStateException if this Stopwatch is already running
      */
-    public function start()
+    public function start() : Stopwatch
     {
         Preconditions::checkState(!$this->isRunning, 'This stopwatch is already running.');
         $this->isRunning = true;
@@ -154,7 +134,7 @@ final class Stopwatch extends Object
      * @return $this
      * @throws IllegalStateException if this Stopwatch is already stopped
      */
-    public function stop()
+    public function stop() : Stopwatch
     {
         $tick = $this->ticker->read();
         Preconditions::checkState($this->isRunning, 'This stopwatch is already stopped.');
@@ -169,7 +149,7 @@ final class Stopwatch extends Object
      *
      * @return $this
      */
-    public function reset()
+    public function reset() : Stopwatch
     {
         $this->elapsedMicros = 0;
         $this->isRunning = false;
@@ -179,7 +159,7 @@ final class Stopwatch extends Object
     /**
      * @return boolean
      */
-    public function isRunning()
+    public function isRunning() : bool
     {
         return $this->isRunning;
     }
@@ -188,7 +168,7 @@ final class Stopwatch extends Object
      * @param TimeUnit $desiredUnit
      * @return float
      */
-    public function elapsed(TimeUnit $desiredUnit)
+    public function elapsed(TimeUnit $desiredUnit) : float
     {
         return $desiredUnit->convert($this->elapsedMicros(), TimeUnit::$MICROSECONDS);
     }
@@ -196,14 +176,14 @@ final class Stopwatch extends Object
     /**
      * @return float
      */
-    private function elapsedMicros()
+    private function elapsedMicros() : float
     {
         return $this->isRunning
             ? $this->ticker->read() - $this->startTick
             : $this->elapsedMicros;
     }
 
-    public function toString()
+    public function toString() : string
     {
         $micros = $this->elapsedMicros();
 
@@ -221,7 +201,7 @@ final class Stopwatch extends Object
         return sprintf("%.4g %s", $value, self::abbreviate($resultUnit));
     }
 
-    private static function abbreviate(TimeUnit $unit)
+    private static function abbreviate(TimeUnit $unit) : string
     {
         switch ($unit) {
             case TimeUnit::$MICROSECONDS:

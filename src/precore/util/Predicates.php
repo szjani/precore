@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -45,7 +25,7 @@ final class Predicates
      *
      * @return callable
      */
-    public static function alwaysTrue()
+    public static function alwaysTrue() : callable
     {
         return function () {
             return true;
@@ -57,7 +37,7 @@ final class Predicates
      *
      * @return callable
      */
-    public static function alwaysFalse()
+    public static function alwaysFalse() : callable
     {
         return function () {
             return false;
@@ -70,7 +50,7 @@ final class Predicates
      * @param callable $predicate
      * @return callable
      */
-    public static function not(callable $predicate)
+    public static function not(callable $predicate) : callable
     {
         return function ($element) use ($predicate) {
             return !self::call($predicate, $element);
@@ -82,7 +62,7 @@ final class Predicates
      *
      * @return callable
      */
-    public static function isNull()
+    public static function isNull() : callable
     {
         return function ($element) {
             return $element === null;
@@ -94,7 +74,7 @@ final class Predicates
      *
      * @return callable
      */
-    public static function notNull()
+    public static function notNull() : callable
     {
         return function ($element) {
             return $element !== null;
@@ -108,7 +88,7 @@ final class Predicates
      * @param $element
      * @return boolean
      */
-    public static function call(callable $predicate, $element)
+    public static function call(callable $predicate, $element) : bool
     {
         return (boolean) Functions::call($predicate, $element);
     }
@@ -116,10 +96,10 @@ final class Predicates
     /**
      * Returns true if and only if all given predicates return true.
      *
-     * @param callable... $predicates
+     * @param callable[] ...$predicates
      * @return callable
      */
-    public static function ands(callable $predicates)
+    public static function ands(callable ...$predicates) : callable
     {
         $predicates = func_get_args();
         return function ($element) use ($predicates) {
@@ -138,7 +118,7 @@ final class Predicates
      * @param callable $predicates
      * @return callable
      */
-    public static function ors(callable $predicates)
+    public static function ors(callable $predicates) : callable
     {
         $predicates = func_get_args();
         return function ($element) use ($predicates) {
@@ -158,7 +138,7 @@ final class Predicates
      * @param $target
      * @return callable
      */
-    public static function equalTo($target)
+    public static function equalTo($target) : callable
     {
         return function ($element) use ($target) {
             return Objects::equal($element, $target);
@@ -171,7 +151,7 @@ final class Predicates
      * @param $class
      * @return callable
      */
-    public static function instance($class)
+    public static function instance(string $class) : callable
     {
         return function ($element) use ($class) {
             return is_a($element, $class);
@@ -184,7 +164,7 @@ final class Predicates
      * @param Traversable $traversable
      * @return callable
      */
-    public static function in(Traversable $traversable)
+    public static function in(Traversable $traversable) : callable
     {
         return function ($element) use ($traversable) {
             return Iterators::contains(Iterators::from($traversable), $element);
@@ -197,7 +177,7 @@ final class Predicates
      * @param array $array
      * @return callable
      */
-    public static function inArray(array $array)
+    public static function inArray(array $array) : callable
     {
         return self::in(new ArrayObject($array));
     }
@@ -208,7 +188,7 @@ final class Predicates
      * @param $pattern
      * @return callable
      */
-    public static function matches($pattern)
+    public static function matches(string $pattern) : callable
     {
         return function ($element) use ($pattern) {
             return preg_match($pattern, $element) === 1;
@@ -222,7 +202,7 @@ final class Predicates
      * @param callable $function
      * @return callable
      */
-    public static function compose(callable $predicate, callable $function)
+    public static function compose(callable $predicate, callable $function) : callable
     {
         return function ($element) use ($predicate, $function) {
             return Predicates::call($predicate, Functions::call($function, $element));
@@ -233,7 +213,7 @@ final class Predicates
      * @param string $class
      * @return callable
      */
-    public static function assignableFrom($class)
+    public static function assignableFrom(string $class) : callable
     {
         return function ($inputClass) use ($class) {
             return ObjectClass::forName($inputClass)->isAssignableFrom(ObjectClass::forName($class));

@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -49,7 +29,7 @@ final class Iterators
      * @param Traversable $traversable
      * @return Iterator
      */
-    public static function from(Traversable $traversable)
+    public static function from(Traversable $traversable) : Iterator
     {
         Preconditions::checkArgument($traversable instanceof Iterator || $traversable instanceof IteratorAggregate);
         return $traversable instanceof Iterator
@@ -63,7 +43,7 @@ final class Iterators
      * @param array $array
      * @return Iterator
      */
-    public static function forArray(array $array)
+    public static function forArray(array $array) : Iterator
     {
         return new ArrayIterator($array);
     }
@@ -74,7 +54,7 @@ final class Iterators
      * @param mixed $value
      * @return Iterator
      */
-    public static function singletonIterator($value)
+    public static function singletonIterator($value) : Iterator
     {
         return self::forArray([$value]);
     }
@@ -86,7 +66,7 @@ final class Iterators
      * @param callable $predicate
      * @return Iterator
      */
-    public static function filter(Iterator $unfiltered, callable $predicate)
+    public static function filter(Iterator $unfiltered, callable $predicate) : Iterator
     {
         return new FilterIterator($unfiltered, $predicate);
     }
@@ -99,7 +79,7 @@ final class Iterators
      * @param string $className
      * @return Iterator
      */
-    public static function filterBy(Iterator $unfiltered, $className)
+    public static function filterBy(Iterator $unfiltered, string $className) : Iterator
     {
         return self::filter($unfiltered, Predicates::instance($className));
     }
@@ -112,7 +92,7 @@ final class Iterators
      * @param Iterator $b
      * @return Iterator
      */
-    public static function concat(Iterator $a, Iterator $b)
+    public static function concat(Iterator $a, Iterator $b) : Iterator
     {
         return self::concatIterators(new ArrayIterator([$a, $b]));
     }
@@ -124,7 +104,7 @@ final class Iterators
      * @param Iterator $inputs
      * @return Iterator
      */
-    public static function concatIterators(Iterator $inputs)
+    public static function concatIterators(Iterator $inputs) : Iterator
     {
         return new ConcatIterator($inputs);
     }
@@ -136,7 +116,7 @@ final class Iterators
      * @param callable $predicate
      * @return boolean
      */
-    public static function any(Iterator $iterator, callable $predicate)
+    public static function any(Iterator $iterator, callable $predicate) : bool
     {
         return self::indexOf($iterator, $predicate) !== -1;
     }
@@ -149,7 +129,7 @@ final class Iterators
      * @param callable $predicate
      * @return boolean
      */
-    public static function all(Iterator $iterator, callable $predicate)
+    public static function all(Iterator $iterator, callable $predicate) : bool
     {
         while ($iterator->valid()) {
             if (!Predicates::call($predicate, $iterator->current())) {
@@ -168,7 +148,7 @@ final class Iterators
      * @param callable $predicate
      * @return int
      */
-    public static function indexOf(Iterator $iterator, callable $predicate)
+    public static function indexOf(Iterator $iterator, callable $predicate) : int
     {
         $i = 0;
         while ($iterator->valid()) {
@@ -188,7 +168,7 @@ final class Iterators
      * @param callable $transformer
      * @return Iterator
      */
-    public static function transform(Iterator $fromIterator, callable $transformer)
+    public static function transform(Iterator $fromIterator, callable $transformer) : Iterator
     {
         return new TransformerIterator($fromIterator, $transformer);
     }
@@ -203,9 +183,9 @@ final class Iterators
      * @return Iterator
      * @throws \InvalidArgumentException if $limit is negative
      */
-    public static function limit(Iterator $iterator, $limitSize)
+    public static function limit(Iterator $iterator, int $limitSize) : Iterator
     {
-        Preconditions::checkArgument(is_int($limitSize) && 0 <= $limitSize);
+        Preconditions::checkArgument(0 <= $limitSize);
         return new NoRewindNecessaryLimitIterator($iterator, $limitSize);
     }
 
@@ -215,9 +195,9 @@ final class Iterators
      * @return integer
      * @throws \InvalidArgumentException if $numberToSkip is < 0
      */
-    public static function advance(Iterator $iterator, $numberToSkip)
+    public static function advance(Iterator $iterator, int $numberToSkip) : int
     {
-        Preconditions::checkArgument(is_int($numberToSkip) && 0 <= $numberToSkip);
+        Preconditions::checkArgument(0 <= $numberToSkip);
         for ($i = 0; $i < $numberToSkip && $iterator->valid(); $i++) {
             $iterator->next();
         }
@@ -228,11 +208,11 @@ final class Iterators
      * Advances iterator position times, returning the element at the positionth position.
      *
      * @param Iterator $iterator
-     * @param $position
+     * @param int $position
      * @return mixed
      * @throws OutOfBoundsException if position does not exist
      */
-    public static function get(Iterator $iterator, $position)
+    public static function get(Iterator $iterator, int $position)
     {
         Iterators::advance($iterator, $position);
         if (!$iterator->valid()) {
@@ -276,7 +256,7 @@ final class Iterators
      * @param $element
      * @return boolean
      */
-    public static function contains(Iterator $iterator, $element)
+    public static function contains(Iterator $iterator, $element) : bool
     {
         while ($iterator->valid()) {
             if (Objects::equal($iterator->current(), $element)) {
@@ -295,7 +275,7 @@ final class Iterators
      * @param $element
      * @return int
      */
-    public static function frequency(Iterator $iterator, $element)
+    public static function frequency(Iterator $iterator, $element) : int
     {
         $frequency = 0;
         Iterators::each($iterator, function ($item) use (&$frequency, $element) {
@@ -318,9 +298,9 @@ final class Iterators
      * @return Iterator
      * @throws \InvalidArgumentException if $limit is non positive
      */
-    public static function partition(Iterator $iterator, $size)
+    public static function partition(Iterator $iterator, int $size) : Iterator
     {
-        Preconditions::checkArgument(is_int($size) && 0 < $size);
+        Preconditions::checkArgument(0 < $size);
         return new PartitionIterator($iterator, $size);
     }
 
@@ -337,9 +317,9 @@ final class Iterators
      * @return Iterator
      * @throws \InvalidArgumentException if $limit is non positive
      */
-    public static function paddedPartition(Iterator $iterator, $size)
+    public static function paddedPartition(Iterator $iterator, int $size) : Iterator
     {
-        Preconditions::checkArgument(is_int($size) && 0 < $size);
+        Preconditions::checkArgument(0 < $size);
         return new PartitionIterator($iterator, $size, true);
     }
 
@@ -374,7 +354,7 @@ final class Iterators
      * @param callable $predicate
      * @return Optional
      */
-    public static function tryFind(Iterator $iterator, callable $predicate)
+    public static function tryFind(Iterator $iterator, callable $predicate) : Optional
     {
         return Optional::ofNullable(self::find($iterator, $predicate));
     }
@@ -383,7 +363,7 @@ final class Iterators
      * @param Iterator $iterator
      * @return boolean
      */
-    public static function isEmpty(Iterator $iterator)
+    public static function isEmpty(Iterator $iterator) : bool
     {
         return !$iterator->valid();
     }
@@ -430,7 +410,7 @@ final class Iterators
      * @param Iterator $iterator2
      * @return bool
      */
-    public static function elementsEqual(Iterator $iterator1, Iterator $iterator2)
+    public static function elementsEqual(Iterator $iterator1, Iterator $iterator2) : bool
     {
         while ($iterator1->valid() && $iterator2->valid()) {
             if (!Objects::equal($iterator1->current(), $iterator2->current())) {
@@ -448,7 +428,7 @@ final class Iterators
      * @param Iterator $iterator
      * @return string
      */
-    public static function toString(Iterator $iterator)
+    public static function toString(Iterator $iterator) : string
     {
         return '[' . Collections::standardJoiner()->join($iterator) . ']';
     }
