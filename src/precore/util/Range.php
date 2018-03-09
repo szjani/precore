@@ -379,7 +379,7 @@ abstract class Cut extends BaseObject implements Comparable
      * @throws ClassCastException - if the specified object's type prevents it from being compared to this object.
      * @throws NullPointerException if the specified object is null
      */
-    public function compareTo(?object $object) : int
+    public function compareTo($object) : int
     {
         Cut::objectClass()->cast(Preconditions::checkNotNull($object));
         /* @var $object Cut */
@@ -429,7 +429,7 @@ final class BelowAll extends Cut
         return true;
     }
 
-    public function compareTo(?object $object) : int
+    public function compareTo($object) : int
     {
         return $object === $this ? 0 : -1;
     }
@@ -515,7 +515,7 @@ final class AboveAll extends Cut
         return false;
     }
 
-    public function compareTo(?object $object) : int
+    public function compareTo($object) : int
     {
         return $object === $this ? 0 : 1;
     }

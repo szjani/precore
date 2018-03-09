@@ -210,7 +210,7 @@ abstract class Enum extends BaseObject implements Comparable
      * @throws ClassCastException - if the specified object's type prevents it from being compared to this object.
      * @throws NullPointerException if the specified object is null
      */
-    public function compareTo(?object $object) : int
+    public function compareTo($object) : int
     {
         Preconditions::checkNotNull($object, 'The given object is null');
         if (!($object instanceof static)) {
