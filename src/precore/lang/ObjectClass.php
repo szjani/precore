@@ -99,7 +99,7 @@ class ObjectClass extends ReflectionClass
      * @return object $object itself
      * @throws ClassCastException
      */
-    public function cast(?object $object) : ?object
+    public function cast($object)
     {
         if ($object !== null && !$this->isInstance($object)) {
             $objectClass = get_class($object);
