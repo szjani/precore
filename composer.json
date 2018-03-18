@@ -21,6 +21,6 @@
         "phpunit/phpunit": "7.0.2",
         "php-coveralls/php-coveralls": "2.0.0",
         "goaop/framework": "2.2.0",
-        "lf4php/lf4php-log4php": "~2.1"
+        "lf4php/lf4php-log4php": "~3.0"
     }
 }
