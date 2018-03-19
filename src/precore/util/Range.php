@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -27,7 +7,7 @@ use BadMethodCallException;
 use precore\lang\ClassCastException;
 use precore\lang\Comparable;
 use precore\lang\NullPointerException;
-use precore\lang\Object;
+use precore\lang\BaseObject;
 use precore\lang\ObjectInterface;
 use Traversable;
 
@@ -50,7 +30,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Range extends Object
+final class Range extends BaseObject
 {
     private static $ALL;
 
@@ -76,12 +56,12 @@ final class Range extends Object
         $this->upperBound = $upperBound;
     }
 
-    private static function toStringBounds(Cut $lower, Cut $upper)
+    private static function toStringBounds(Cut $lower, Cut $upper) : string
     {
         return $lower->describeAsLowerBound() . '..' . $upper->describeAsUpperBound();
     }
 
-    private static function comparatorOrNatural($endpoint, Comparator $comparator = null)
+    private static function comparatorOrNatural($endpoint, Comparator $comparator = null) : Comparator
     {
         $result = Ordering::natural();
         if ($comparator !== null) {
@@ -98,7 +78,7 @@ final class Range extends Object
         return $result;
     }
 
-    public static function init()
+    public static function init() : void
     {
         self::$ALL = new Range(Cut::belowAll(), Cut::aboveAll());
     }
@@ -109,7 +89,7 @@ final class Range extends Object
      * @param Comparator $comparator
      * @return Range
      */
-    public static function open($lower, $upper, Comparator $comparator = null)
+    public static function open($lower, $upper, Comparator $comparator = null) : Range
     {
         $comparator = self::comparatorOrNatural($lower, $comparator);
         return new Range(Cut::aboveValue($lower, $comparator), Cut::belowValue($upper, $comparator));
@@ -121,7 +101,7 @@ final class Range extends Object
      * @param Comparator $comparator
      * @return Range
      */
-    public static function closed($lower, $upper, Comparator $comparator = null)
+    public static function closed($lower, $upper, Comparator $comparator = null) : Range
     {
         $comparator = self::comparatorOrNatural($lower, $comparator);
         return new Range(Cut::belowValue($lower, $comparator), Cut::aboveValue($upper, $comparator));
@@ -133,7 +113,7 @@ final class Range extends Object
      * @param Comparator $comparator
      * @return Range
      */
-    public static function openClosed($lower, $upper, Comparator $comparator = null)
+    public static function openClosed($lower, $upper, Comparator $comparator = null) : Range
     {
         $comparator = self::comparatorOrNatural($lower, $comparator);
         return new Range(Cut::aboveValue($lower, $comparator), Cut::aboveValue($upper, $comparator));
@@ -145,7 +125,7 @@ final class Range extends Object
      * @param Comparator $comparator
      * @return Range
      */
-    public static function closedOpen($lower, $upper, Comparator $comparator = null)
+    public static function closedOpen($lower, $upper, Comparator $comparator = null) : Range
     {
         $comparator = self::comparatorOrNatural($lower, $comparator);
         return new Range(Cut::belowValue($lower, $comparator), Cut::belowValue($upper, $comparator));
@@ -154,7 +134,7 @@ final class Range extends Object
     /**
      * @return Range
      */
-    public static function all()
+    public static function all() : Range
     {
         return self::$ALL;
     }
@@ -164,7 +144,7 @@ final class Range extends Object
      * @param Comparator $comparator
      * @return Range
      */
-    public static function greaterThan($endpoint, Comparator $comparator = null)
+    public static function greaterThan($endpoint, Comparator $comparator = null) : Range
     {
         $comparator = self::comparatorOrNatural($endpoint, $comparator);
         return new Range(Cut::aboveValue($endpoint, $comparator), Cut::aboveAll());
@@ -175,7 +155,7 @@ final class Range extends Object
      * @param Comparator $comparator
      * @return Range
      */
-    public static function lessThan($endpoint, Comparator $comparator = null)
+    public static function lessThan($endpoint, Comparator $comparator = null) : Range
     {
         $comparator = self::comparatorOrNatural($endpoint, $comparator);
         return new Range(Cut::belowAll(), Cut::belowValue($endpoint, $comparator));
@@ -186,7 +166,7 @@ final class Range extends Object
      * @param Comparator $comparator
      * @return Range
      */
-    public static function atLeast($endpoint, Comparator $comparator = null)
+    public static function atLeast($endpoint, Comparator $comparator = null) : Range
     {
         $comparator = self::comparatorOrNatural($endpoint, $comparator);
         return new Range(Cut::belowValue($endpoint, $comparator), Cut::aboveAll());
@@ -197,7 +177,7 @@ final class Range extends Object
      * @param Comparator $comparator
      * @return Range
      */
-    public static function atMost($endpoint, Comparator $comparator = null)
+    public static function atMost($endpoint, Comparator $comparator = null) : Range
     {
         $comparator = self::comparatorOrNatural($endpoint, $comparator);
         return new Range(Cut::belowAll(), Cut::aboveValue($endpoint, $comparator));
@@ -213,7 +193,7 @@ final class Range extends Object
      * @return bool
      * @throws NullPointerException if $value is null
      */
-    public function contains($value)
+    public function contains($value) : bool
     {
         Preconditions::checkNotNull($value);
         return $this->lowerBound->isLessThan($value) && !$this->upperBound->isLessThan($value);
@@ -223,12 +203,12 @@ final class Range extends Object
      * @param Traversable $elements
      * @return bool
      */
-    public function containsAll(Traversable $elements)
+    public function containsAll(Traversable $elements) : bool
     {
         return Iterators::all(Iterators::from($elements), $this);
     }
 
-    public function isEmpty()
+    public function isEmpty() : bool
     {
         return $this->lowerBound->equals($this->upperBound);
     }
@@ -247,13 +227,13 @@ final class Range extends Object
      * @param Range $other
      * @return boolean
      */
-    public function encloses(Range $other)
+    public function encloses(Range $other) : bool
     {
         return $this->lowerBound->compareTo($other->lowerBound) <= 0
             && $this->upperBound->compareTo($other->upperBound) >= 0;
     }
 
-    public function isConnected(Range $other)
+    public function isConnected(Range $other) : bool
     {
         return $this->lowerBound->compareTo($other->upperBound) <= 0
             && $other->lowerBound->compareTo($this->upperBound) <= 0;
@@ -263,7 +243,7 @@ final class Range extends Object
      * @param Range $connectedRange
      * @return Range
      */
-    public function intersection(Range $connectedRange)
+    public function intersection(Range $connectedRange) : Range
     {
         $lowerCmp = $this->lowerBound->compareTo($connectedRange->lowerBound);
         $upperCmp = $this->upperBound->compareTo($connectedRange->upperBound);
@@ -282,7 +262,7 @@ final class Range extends Object
      * @param Range $other
      * @return Range
      */
-    public function span(Range $other)
+    public function span(Range $other) : Range
     {
         $lowerCmp = $this->lowerBound->compareTo($other->lowerBound);
         $upperCmp = $this->upperBound->compareTo($other->upperBound);
@@ -297,14 +277,14 @@ final class Range extends Object
         }
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         return $object instanceof Range
             && $this->lowerBound->equals($object->lowerBound)
             && $this->upperBound->equals($object->upperBound);
     }
 
-    public function toString()
+    public function toString() : string
     {
         return self::toStringBounds($this->lowerBound, $this->upperBound);
     }
@@ -316,7 +296,7 @@ final class Range extends Object
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Cut extends Object implements Comparable
+abstract class Cut extends BaseObject implements Comparable
 {
     private $endpoint;
 
@@ -334,17 +314,17 @@ abstract class Cut extends Object implements Comparable
     /**
      * @return string
      */
-    public abstract function describeAsLowerBound();
+    public abstract function describeAsLowerBound() : string;
 
     /**
      * @return string
      */
-    public abstract function describeAsUpperBound();
+    public abstract function describeAsUpperBound() : string;
 
     /**
      * @return Cut
      */
-    public static function belowAll()
+    public static function belowAll() : Cut
     {
         return BelowAll::instance();
     }
@@ -352,7 +332,7 @@ abstract class Cut extends Object implements Comparable
     /**
      * @return Cut
      */
-    public static function aboveAll()
+    public static function aboveAll() : Cut
     {
         return AboveAll::instance();
     }
@@ -362,7 +342,7 @@ abstract class Cut extends Object implements Comparable
      * @param Comparator $comparator
      * @return Cut
      */
-    public static function belowValue($value, Comparator $comparator)
+    public static function belowValue($value, Comparator $comparator) : Cut
     {
         return new BelowValue($value, $comparator);
     }
@@ -372,12 +352,12 @@ abstract class Cut extends Object implements Comparable
      * @param Comparator $comparator
      * @return Cut
      */
-    public static function aboveValue($value, Comparator $comparator)
+    public static function aboveValue($value, Comparator $comparator) : Cut
     {
         return new AboveValue($value, $comparator);
     }
 
-    public abstract function isLessThan($value);
+    public abstract function isLessThan($value) : bool;
 
     public function endpoint()
     {
@@ -387,7 +367,7 @@ abstract class Cut extends Object implements Comparable
     /**
      * @return Comparator
      */
-    protected function comparator()
+    protected function comparator() : Comparator
     {
         return $this->comparator;
     }
@@ -399,7 +379,7 @@ abstract class Cut extends Object implements Comparable
      * @throws ClassCastException - if the specified object's type prevents it from being compared to this object.
      * @throws NullPointerException if the specified object is null
      */
-    public function compareTo($object)
+    public function compareTo($object) : int
     {
         Cut::objectClass()->cast(Preconditions::checkNotNull($object));
         /* @var $object Cut */
@@ -416,7 +396,7 @@ abstract class Cut extends Object implements Comparable
         return Booleans::compare($this instanceof AboveValue, $object instanceof AboveValue);
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         return $object !== null
             && $this->getClassName() === $object->getClassName()
@@ -439,22 +419,22 @@ final class BelowAll extends Cut
         self::$INSTANCE = new BelowAll(null, null);
     }
 
-    public static function instance()
+    public static function instance() : BelowAll
     {
         return self::$INSTANCE;
     }
 
-    public function isLessThan($value)
+    public function isLessThan($value) : bool
     {
         return true;
     }
 
-    public function compareTo($object)
+    public function compareTo($object) : int
     {
         return $object === $this ? 0 : -1;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return '-?';
     }
@@ -462,7 +442,7 @@ final class BelowAll extends Cut
     /**
      * @return string
      */
-    public function describeAsLowerBound()
+    public function describeAsLowerBound() : string
     {
         return '(' . $this->toString();
     }
@@ -470,7 +450,7 @@ final class BelowAll extends Cut
     /**
      * @return string
      */
-    public function describeAsUpperBound()
+    public function describeAsUpperBound() : string
     {
         throw new BadMethodCallException();
     }
@@ -483,12 +463,12 @@ final class BelowValue extends Cut
         parent::__construct(Preconditions::checkNotNull($endpoint), Preconditions::checkNotNull($comparator));
     }
 
-    public function isLessThan($value)
+    public function isLessThan($value) : bool
     {
         return $this->comparator()->compare($this->endpoint(), $value) <= 0;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return ToStringHelper::valueToString($this->endpoint());
     }
@@ -496,7 +476,7 @@ final class BelowValue extends Cut
     /**
      * @return string
      */
-    public function describeAsLowerBound()
+    public function describeAsLowerBound() : string
     {
         return '[' . $this->toString();
     }
@@ -504,7 +484,7 @@ final class BelowValue extends Cut
     /**
      * @return string
      */
-    public function describeAsUpperBound()
+    public function describeAsUpperBound() : string
     {
         return $this->toString() . ')';
     }
@@ -530,17 +510,17 @@ final class AboveAll extends Cut
         return self::$INSTANCE;
     }
 
-    public function isLessThan($value)
+    public function isLessThan($value) : bool
     {
         return false;
     }
 
-    public function compareTo($object)
+    public function compareTo($object) : int
     {
         return $object === $this ? 0 : 1;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return '?';
     }
@@ -548,7 +528,7 @@ final class AboveAll extends Cut
     /**
      * @return string
      */
-    public function describeAsLowerBound()
+    public function describeAsLowerBound() : string
     {
         throw new BadMethodCallException();
     }
@@ -556,7 +536,7 @@ final class AboveAll extends Cut
     /**
      * @return string
      */
-    public function describeAsUpperBound()
+    public function describeAsUpperBound() : string
     {
         return $this->toString() . ')';
     }
@@ -575,12 +555,12 @@ final class AboveValue extends Cut
         parent::__construct(Preconditions::checkNotNull($endpoint), Preconditions::checkNotNull($comparator));
     }
 
-    public function isLessThan($value)
+    public function isLessThan($value) : bool
     {
         return $this->comparator()->compare($this->endpoint(), $value) < 0;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return ToStringHelper::valueToString($this->endpoint());
     }
@@ -588,7 +568,7 @@ final class AboveValue extends Cut
     /**
      * @return string
      */
-    public function describeAsLowerBound()
+    public function describeAsLowerBound() : string
     {
         return '(' . $this->toString();
     }
@@ -596,7 +576,7 @@ final class AboveValue extends Cut
     /**
      * @return string
      */
-    public function describeAsUpperBound()
+    public function describeAsUpperBound() : string
     {
         return $this->toString() . ']';
     }

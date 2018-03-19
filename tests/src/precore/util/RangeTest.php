@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace precore\util;
 
 use DateTime;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 use precore\util\concurrent\TimeUnit;
 
 /**
@@ -12,7 +13,7 @@ use precore\util\concurrent\TimeUnit;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class RangeTest extends PHPUnit_Framework_TestCase
+class RangeTest extends TestCase
 {
     private $input = ['a', 'b', 'c', 'd', 'e', 'f'];
 

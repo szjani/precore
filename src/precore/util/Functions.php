@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -38,7 +18,7 @@ final class Functions
     {
     }
 
-    public static function init()
+    public static function init() : void
     {
         self::$IDENTITY = function ($input) {
             return $input;
@@ -54,7 +34,7 @@ final class Functions
      * @param $value
      * @return callable
      */
-    public static function constant($value)
+    public static function constant($value) : callable
     {
         return function () use ($value) {
             return $value;
@@ -66,7 +46,7 @@ final class Functions
      *
      * @return callable
      */
-    public static function identity()
+    public static function identity() : callable
     {
         return self::$IDENTITY;
     }
@@ -76,7 +56,7 @@ final class Functions
      *
      * @return callable
      */
-    public static function toStringFunction()
+    public static function toStringFunction() : callable
     {
         return self::$TO_STRING;
     }
@@ -90,7 +70,7 @@ final class Functions
      * @param callable $f
      * @return callable
      */
-    public static function compose(callable $g, callable $f)
+    public static function compose(callable $g, callable $f) : callable
     {
         return function ($input) use ($g, $f) {
             return Functions::call($g, Functions::call($f, $input));
@@ -104,7 +84,7 @@ final class Functions
      * @return callable
      * @throws \InvalidArgumentException if given a key that does not exist in the map
      */
-    public static function forMap(array $map)
+    public static function forMap(array $map) : callable
     {
         return function ($index) use ($map) {
             Preconditions::checkArgument(
@@ -123,7 +103,7 @@ final class Functions
      * @param mixed $default the value to return for inputs that aren't map keys
      * @return callable
      */
-    public static function forMapOr(array $map, $default)
+    public static function forMapOr(array $map, $default) : callable
     {
         return function ($index) use ($map, $default) {
             return array_key_exists($index, $map)

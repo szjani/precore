@@ -1,35 +1,13 @@
 <?php
-/*
- * Copyright (c) 2012-2014 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
-use ArrayIterator;
-use ArrayObject;
-use PHPUnit_Framework_TestCase;
-use precore\lang\Object;
+use PHPUnit\Framework\TestCase;
+use precore\lang\BaseObject;
 use precore\lang\ObjectInterface;
 
-class ObjectsTest extends PHPUnit_Framework_TestCase
+class ObjectsTest extends TestCase
 {
     /**
      * @test
@@ -45,8 +23,8 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
     public function equalByEquals()
     {
         $string = 'Hello World!';
-        $str1 = new String($string);
-        $str2 = new String($string);
+        $str1 = new StringClass($string);
+        $str2 = new StringClass($string);
         self::assertTrue(Objects::equal($str1, $str2));
     }
 
@@ -56,7 +34,7 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
     public function checkEqualityIfSecondParameterIsNull()
     {
         $string = 'Hello World!';
-        $str1 = new String($string);
+        $str1 = new StringClass($string);
         self::assertFalse(Objects::equal($str1, null));
     }
 
@@ -101,7 +79,7 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
     public function reflectionBasedToStringHelper()
     {
         $helper = Objects::toStringHelper(UUID::objectClass());
-        self::assertStringStartsWith(UUID::className(), $helper->toString());
+        self::assertStringStartsWith(UUID::class, $helper->toString());
     }
 
     /**
@@ -109,7 +87,10 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
      */
     public function shouldCheckReferenceFirst()
     {
-        $obj = $this->getMock(String::className(), ['equals'], ['any']);
+        $obj = $this->getMockBuilder(StringClass::class)
+            ->setMethods(['equals'])
+            ->setConstructorArgs(['any'])
+            ->getMock();
         $obj
             ->expects(self::never())
             ->method('equals');
@@ -117,7 +98,7 @@ class ObjectsTest extends PHPUnit_Framework_TestCase
     }
 }
 
-class String extends Object
+class StringClass extends BaseObject
 {
     private $data;
 
@@ -134,7 +115,7 @@ class String extends Object
         return $this->data;
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         if ($object === null) {
             return false;

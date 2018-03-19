@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -110,7 +90,7 @@ final class BufferedIterable implements IteratorAggregate
      * @param ChunkProvider $chunkProvider
      * @return BufferedIterable
      */
-    public static function withChunkProvider(ChunkProvider $chunkProvider)
+    public static function withChunkProvider(ChunkProvider $chunkProvider) : BufferedIterable
     {
         return new BufferedIterable($chunkProvider);
     }
@@ -122,7 +102,7 @@ final class BufferedIterable implements IteratorAggregate
      * @param callable $function
      * @return BufferedIterable
      */
-    public static function withChunkFunction(callable $function)
+    public static function withChunkFunction(callable $function) : BufferedIterable
     {
         return self::withChunkProvider(new FunctionalChunkProvider($function));
     }
@@ -134,9 +114,9 @@ final class BufferedIterable implements IteratorAggregate
      * @return BufferedIterable
      * @throws \InvalidArgumentException if $limit is not a number or <= 0
      */
-    public function limit($limit)
+    public function limit(int $limit) : BufferedIterable
     {
-        Preconditions::checkArgument(is_int($limit) && 0 < $limit, 'Limit must be a positive integer!');
+        Preconditions::checkArgument(0 < $limit, 'Limit must be a positive integer!');
         return new BufferedIterable($this->chunkProvider, $this->filter, $limit, $this->providerCallLimit);
     }
 
@@ -147,9 +127,9 @@ final class BufferedIterable implements IteratorAggregate
      * @return BufferedIterable
      * @throws \InvalidArgumentException if $limit is <= 0
      */
-    public function providerCallLimit($limit)
+    public function providerCallLimit(int $limit) : BufferedIterable
     {
-        Preconditions::checkArgument(is_int($limit) && 0 < $limit, 'Limit must be a positive integer!');
+        Preconditions::checkArgument(0 < $limit, 'Limit must be a positive integer!');
         return new BufferedIterable($this->chunkProvider, $this->filter, $this->limit, $limit);
     }
 
@@ -159,7 +139,7 @@ final class BufferedIterable implements IteratorAggregate
      * @param callable $predicate
      * @return BufferedIterable
      */
-    public function filter(callable $predicate)
+    public function filter(callable $predicate) : BufferedIterable
     {
         return new BufferedIterable($this->chunkProvider, $predicate, $this->limit, $this->providerCallLimit);
     }
@@ -222,7 +202,7 @@ final class BufferedIterator implements Iterator
      * @param int $limit
      * @param $providerCallLimit
      */
-    public function __construct(ChunkProvider $chunkProvider, callable $filter, $limit, $providerCallLimit)
+    public function __construct(ChunkProvider $chunkProvider, callable $filter, int $limit, int $providerCallLimit)
     {
         $this->chunkProvider = $chunkProvider;
         $this->filter = $filter;
@@ -303,9 +283,9 @@ final class FunctionalChunkProvider implements ChunkProvider
 
     /**
      * @param $offset
-     * @return Iterator
+     * @return Optional
      */
-    public function getChunk($offset)
+    public function getChunk($offset) : Optional
     {
         return Functions::call($this->function, $offset);
     }

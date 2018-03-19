@@ -1,29 +1,9 @@
 <?php
-/*
- * Copyright (c) 2012-2014 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
-use precore\lang\Object;
+use precore\lang\BaseObject;
 
 /**
  * <p> Helps collection execution times in a programmatic way.
@@ -40,7 +20,7 @@ use precore\lang\Object;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-final class Profiler extends Object
+final class Profiler extends BaseObject
 {
     const ENTRY_FORMAT = "%-13s%30s%10s.";
     const ENTRY_PREFIX = ' |-- ';
@@ -92,7 +72,7 @@ final class Profiler extends Object
      * @param string $name The name of this profile
      * @param Ticker $ticker should not be used in production code
      */
-    public function __construct($name, Ticker $ticker = null)
+    public function __construct(string $name, Ticker $ticker = null)
     {
         $this->name = $name;
         if ($ticker === null) {
@@ -111,7 +91,7 @@ final class Profiler extends Object
      * @param string $name The name of the next entry
      * @return $this
      */
-    public function start($name)
+    public function start($name) : Profiler
     {
         if (!$this->globalStopwatch->isRunning()) {
             $this->globalStopwatch->start();
@@ -129,7 +109,7 @@ final class Profiler extends Object
      *
      * @return $this
      */
-    public function stop()
+    public function stop() : Profiler
     {
         $this->recordEntry();
         $this->globalStopwatch->stop();
@@ -142,7 +122,7 @@ final class Profiler extends Object
      * @param string $name
      * @return $this
      */
-    public function startNested($name)
+    public function startNested($name) : Profiler
     {
         $nestedProfiler = new Profiler($name, $this->ticker);
         $nestedProfiler->parent = $this;
@@ -152,7 +132,7 @@ final class Profiler extends Object
         return $this;
     }
 
-    public function toString()
+    public function toString() : string
     {
         $res = sprintf('%' . (($this->level - 1) * 4) . "s+ Profiler [%s]" . PHP_EOL, self::HEAD_PREFIX, $this->name);
         foreach ($this->entries as $entry) {
@@ -165,7 +145,7 @@ final class Profiler extends Object
     /**
      * Sends the {@link Profiler::toString()} to the standard output.
      */
-    public function printOut()
+    public function printOut() : void
     {
         echo $this->toString();
     }
@@ -173,19 +153,19 @@ final class Profiler extends Object
     /**
      * Creates a log entry on DEBUG level.
      */
-    public function log()
+    public function log() : void
     {
         self::getLogger()->debug("Profiler output:{}{}", [PHP_EOL, $this]);
     }
 
-    private function recordEntry()
+    private function recordEntry() : void
     {
         $this->entryStopwatch->stop();
         $this->entries[] = $this->entryString('elapsed time', '[' . $this->currentName . ']', $this->entryStopwatch);
         $this->entryStopwatch->reset();
     }
 
-    private function entryString($title, $stopwatchName, Stopwatch $stopwatch)
+    private function entryString($title, $stopwatchName, Stopwatch $stopwatch) : string
     {
         $format = '%' . ($this->level * 4) . 's' . self::ENTRY_FORMAT . PHP_EOL;
         return sprintf($format, self::ENTRY_PREFIX, $title, $stopwatchName, $stopwatch);

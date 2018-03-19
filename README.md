@@ -27,21 +27,21 @@ Precore is a common library which based on ideas coming from the Java world.
 
 For more information, click on the items. If you need even more information, check the phpdoc.
 
-1. Object and ObjectClass
+1. BaseObject and ObjectClass
 -------------------------
 
-In Java, all objects are implicitly extend the `Object` class. It is really convenient since some common methods are defined for all objects.
-This behavior is missing from PHP, therefore precore provides `precore\lang\Object`. Sometimes it is required to be able to enforce in an interface, that
-the implementation must be an `Object`, thus `precore\lang\ObjectInterface` can be used for that.
+In Java, all objects are implicitly extend the `BaseObject` class. It is really convenient since some common methods are defined for all objects.
+This behavior is missing from PHP, therefore precore provides `precore\lang\BaseObject`. Sometimes it is required to be able to enforce in an interface, that
+the implementation must be an `BaseObject`, thus `precore\lang\ObjectInterface` can be used for that.
 
-* `Object::objectClass()` static function, returns the `ObjectClass` for the particular class
-* `Object::getObjectClass()` the same, but non-static method
-* `Object::className()` the same as `AnyClass::class` in PHP 5.5
-* `Object::getClassName()` returns the class name of the actual object
-* `Object::hashCode()` returns `spl_object_hash($this)`
-* `Object::equals(ObjectInterface $object)` returns true if the actual object and the argument are equal
-* `Object::toString()` and `Object::__toString()`: both return the string representation of the object (the default format is: `{className}@{hashCode}`)
-* `Object::getLogger()` retrieves an [lf4php](https://github.com/szjani/lf4php) logger object for the actual class
+* `BaseObject::objectClass()` static function, returns the `ObjectClass` for the particular class
+* `BaseObject::getObjectClass()` the same, but non-static method
+* `BaseObject::className()` the same as `AnyClass::class` in PHP 5.5
+* `BaseObject::getClassName()` returns the class name of the actual object
+* `BaseObject::hashCode()` returns `spl_object_hash($this)`
+* `BaseObject::equals(ObjectInterface $object)` returns true if the actual object and the argument are equal
+* `BaseObject::toString()` and `BaseObject::__toString()`: both return the string representation of the object (the default format is: `{className}@{hashCode}`)
+* `BaseObject::getLogger()` retrieves an [lf4php](https://github.com/szjani/lf4php) logger object for the actual class
 
 The `ObjectClass` class extends `ReflectionClass` and gives some more features. These objects are cached if we get them through `ObjectClass::forName($className)` function.
 `ObjectClass` also supports resources (almost as in Java) in case of classes follow PSR-0.

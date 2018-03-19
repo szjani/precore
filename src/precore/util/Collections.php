@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -45,7 +25,7 @@ abstract class Collections
     {
     }
 
-    public static function init()
+    public static function init() : void
     {
         self::$STANDARD_JOINER = Joiner::on(', ')->useForNull('null');
     }
@@ -53,7 +33,7 @@ abstract class Collections
     /**
      * @return Joiner
      */
-    public static function standardJoiner()
+    public static function standardJoiner() : Joiner
     {
         return self::$STANDARD_JOINER;
     }
@@ -65,7 +45,7 @@ abstract class Collections
      * @param Comparator $comparator
      * @return callable
      */
-    public static function compareFunctionFor(Comparator $comparator)
+    public static function compareFunctionFor(Comparator $comparator) : callable
     {
         return function ($object1, $object2) use ($comparator) {
             return $comparator->compare($object1, $object2);
@@ -80,7 +60,7 @@ abstract class Collections
      * @param callable $comparator
      * @return Comparator
      */
-    public static function comparatorFrom(callable $comparator)
+    public static function comparatorFrom(callable $comparator) : Comparator
     {
         return new CallableBasedComparator($comparator);
     }
@@ -99,7 +79,7 @@ abstract class Collections
      * @param ArrayObject $arrayObject
      * @param Comparator $comparator
      */
-    public static function sort(ArrayObject $arrayObject, Comparator $comparator = null)
+    public static function sort(ArrayObject $arrayObject, Comparator $comparator = null) : void
     {
         if ($comparator === null) {
             $comparator = ComparableComparator::instance();
@@ -129,7 +109,7 @@ abstract class Collections
      * @param Comparator $comparator
      * @return Comparator
      */
-    public static function reverseOrder(Comparator $comparator = null)
+    public static function reverseOrder(Comparator $comparator = null) : Comparator
     {
         if ($comparator === null) {
             $comparator = ComparableComparator::instance();
@@ -150,7 +130,7 @@ abstract class Collections
      * @param Comparator $comparator
      * @return SplHeap
      */
-    public static function createHeap(Comparator $comparator = null)
+    public static function createHeap(Comparator $comparator = null) : SplHeap
     {
         if ($comparator === null) {
             $comparator = ComparableComparator::instance();
@@ -161,7 +141,7 @@ abstract class Collections
     /**
      * @return \Iterator
      */
-    public static function emptyIterator()
+    public static function emptyIterator() : \Iterator
     {
         return new EmptyIterator();
     }
@@ -203,7 +183,7 @@ final class ComparatorBasedHeap extends SplHeap
      * <p>
      * Having multiple elements with the same value in a Heap is not recommended. They will end up in an arbitrary relative position.
      */
-    protected function compare($value1, $value2)
+    protected function compare($value1, $value2) : int
     {
         return $this->comparator->compare($value1, $value2);
     }
@@ -237,7 +217,7 @@ final class ReverseComparator implements Comparator
      *         as the first argument is less than, equal to, or greater than the second.
      * @throws ClassCastException - if the arguments' types prevent them from being compared by this comparator.
      */
-    public function compare($object1, $object2)
+    public function compare($object1, $object2) : int
     {
         return $this->comparator->compare($object2, $object1);
     }
@@ -273,7 +253,7 @@ final class CallableBasedComparator implements Comparator
      *         as the first argument is less than, equal to, or greater than the second.
      * @throws ClassCastException - if the arguments' types prevent them from being compared by this comparator.
      */
-    public function compare($object1, $object2)
+    public function compare($object1, $object2) : int
     {
         return Functions::call($this->callable, $object1, $object2);
     }

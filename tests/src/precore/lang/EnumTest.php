@@ -1,30 +1,10 @@
 <?php
-/*
- * Copyright (c) 2012 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\lang;
 
 use InvalidArgumentException;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 require_once 'Color.php';
 require_once 'Animal.php';
@@ -37,12 +17,12 @@ require_once 'MissingConstructorArgs.php';
  *
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class EnumTest extends PHPUnit_Framework_TestCase
+class EnumTest extends TestCase
 {
     public function testCreate()
     {
         $red = Color::$RED;
-        self::assertInstanceOf(Color::className(), $red);
+        self::assertInstanceOf(Color::class, $red);
         self::assertEquals('RED', $red->name());
         self::assertTrue($red->equals(Color::valueOf('RED')));
         self::assertEquals(2, count(Color::values()));

@@ -1,31 +1,11 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
 use precore\lang\IllegalStateException;
 use precore\lang\NullPointerException;
-use precore\lang\Object;
+use precore\lang\BaseObject;
 use precore\lang\ObjectInterface;
 
 /**
@@ -36,11 +16,11 @@ use precore\lang\ObjectInterface;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Optional extends Object
+abstract class Optional extends BaseObject
 {
     private static $ABSENT;
 
-    public static function init()
+    public static function init() : void
     {
         self::$ABSENT = new Absent();
     }
@@ -52,7 +32,7 @@ abstract class Optional extends Object
      * @return Optional
      * @throws NullPointerException if the given instance is null
      */
-    public static function of($instance)
+    public static function of($instance) : Optional
     {
         return new Present($instance);
     }
@@ -64,7 +44,7 @@ abstract class Optional extends Object
      * @param $nullableReference
      * @return Optional
      */
-    public static function ofNullable($nullableReference)
+    public static function ofNullable($nullableReference) : Optional
     {
         return $nullableReference === null
             ? Optional::absent()
@@ -74,7 +54,7 @@ abstract class Optional extends Object
     /**
      * @return Optional
      */
-    public static function absent()
+    public static function absent() : Optional
     {
         return self::$ABSENT;
     }
@@ -90,7 +70,7 @@ abstract class Optional extends Object
      *
      * @return boolean
      */
-    public abstract function isPresent();
+    public abstract function isPresent() : bool;
 
     /**
      * If a value is present, invoke the specified consumer with the value, otherwise do nothing.
@@ -99,7 +79,7 @@ abstract class Optional extends Object
      * @return void
      * @throws NullPointerException if value is present and consumer is null
      */
-    public abstract function ifPresent(callable $consumer = null);
+    public abstract function ifPresent(callable $consumer = null) : void;
 
     /**
      * Returns the contained instance if it is present; null otherwise. If the
@@ -143,7 +123,7 @@ abstract class Optional extends Object
      * @param callable $predicate
      * @return Optional
      */
-    public abstract function filter(callable $predicate);
+    public abstract function filter(callable $predicate) : Optional;
 
     /**
      * If a value is present, apply the provided mapping function to it,
@@ -154,7 +134,7 @@ abstract class Optional extends Object
      * @param callable $mapper
      * @return Optional
      */
-    public abstract function map(callable $mapper);
+    public abstract function map(callable $mapper) : Optional;
 
     /**
      * If a value is present, apply the provided Optional-bearing mapping function to it, return that result,
@@ -163,7 +143,7 @@ abstract class Optional extends Object
      * @param callable $mapper
      * @return Optional
      */
-    public abstract function flatMap(callable $mapper);
+    public abstract function flatMap(callable $mapper) : Optional;
 }
 
 /**
@@ -179,7 +159,7 @@ final class Absent extends Optional
         throw new IllegalStateException("This instance is absent");
     }
 
-    public function isPresent()
+    public function isPresent() : bool
     {
         return false;
     }
@@ -194,12 +174,12 @@ final class Absent extends Optional
         return $defaultValue;
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         return $object instanceof Absent;
     }
 
-    public function filter(callable $predicate)
+    public function filter(callable $predicate) : Optional
     {
         return $this;
     }
@@ -209,26 +189,26 @@ final class Absent extends Optional
         return Functions::call(Preconditions::checkNotNull($supplier));
     }
 
-    public function ifPresent(callable $consumer = null)
+    public function ifPresent(callable $consumer = null) : void
     {
     }
 
-    public function toString()
+    public function toString() : string
     {
         return $this->getClassName();
     }
 
-    public function flatMap(callable $mapper)
+    public function flatMap(callable $mapper) : Optional
     {
         return $this;
     }
 
-    public function map(callable $mapper)
+    public function map(callable $mapper) : Optional
     {
         return $this;
     }
 
-    public function orElseThrow(callable $exceptionSupplier = null)
+    public function orElseThrow(callable $exceptionSupplier = null) : void
     {
         $exception = Functions::call(Preconditions::checkNotNull($exceptionSupplier));
         Preconditions::checkState($exception instanceof \Exception, '$exceptionSupplier must create an Exception');
@@ -256,7 +236,7 @@ final class Present extends Optional
         return $this->instance;
     }
 
-    public function isPresent()
+    public function isPresent() : bool
     {
         return true;
     }
@@ -271,13 +251,13 @@ final class Present extends Optional
         return $this->instance;
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         return $object instanceof Present
             && Objects::equal($this->instance, $object->instance);
     }
 
-    public function filter(callable $predicate)
+    public function filter(callable $predicate) : Optional
     {
         return Predicates::call($predicate, $this->instance)
             ? $this
@@ -289,24 +269,24 @@ final class Present extends Optional
         return $this->instance;
     }
 
-    public function ifPresent(callable $consumer = null)
+    public function ifPresent(callable $consumer = null) : void
     {
         Functions::call(Preconditions::checkNotNull($consumer), $this->instance);
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)->add($this->instance)->toString();
     }
 
-    public function flatMap(callable $mapper)
+    public function flatMap(callable $mapper) : Optional
     {
         $result = Functions::call($mapper, $this->instance);
         Preconditions::checkState($result instanceof Optional, "result of the mapper must be an Optional");
         return $result;
     }
 
-    public function map(callable $mapper)
+    public function map(callable $mapper) : Optional
     {
         return Optional::ofNullable(Functions::call($mapper, $this->instance));
     }

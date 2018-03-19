@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace precore\util;
 
 use ArrayObject;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class PredicatesTest
@@ -11,7 +12,7 @@ use PHPUnit_Framework_TestCase;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class PredicatesTest extends PHPUnit_Framework_TestCase
+class PredicatesTest extends TestCase
 {
     /**
      * @test
@@ -59,7 +60,7 @@ class PredicatesTest extends PHPUnit_Framework_TestCase
      */
     public function shouldInstanceOf()
     {
-        self::assertTrue(Predicates::call(Predicates::instance(UUID::className()), UUID::randomUUID()));
+        self::assertTrue(Predicates::call(Predicates::instance(UUID::class), UUID::randomUUID()));
     }
 
     /**

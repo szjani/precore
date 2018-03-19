@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\lang;
 
@@ -57,7 +37,7 @@ use ReflectionProperty;
  *
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Enum extends Object implements Comparable
+abstract class Enum extends BaseObject implements Comparable
 {
     private static $cache = [];
     private static $ordinals = [];
@@ -98,7 +78,7 @@ abstract class Enum extends Object implements Comparable
      * @param array $constructorArgs
      * @return static
      */
-    private static function newInstance($name, array $constructorArgs)
+    private static function newInstance($name, array $constructorArgs) : self
     {
         $reflectionClass = self::objectClass();
         $obj = $reflectionClass->newInstanceWithoutConstructor();
@@ -114,7 +94,7 @@ abstract class Enum extends Object implements Comparable
                     array_key_exists($name, $constructorArgs) && is_array($constructorArgs[$name])
                         && $numOfParams === count($constructorArgs[$name]),
                     'Invalid arguments are provided for constructor in %s:$%s',
-                    self::className(),
+                    static::class,
                     $name
                 );
                 $constructor->invokeArgs($obj, $constructorArgs[$name]);
@@ -126,9 +106,9 @@ abstract class Enum extends Object implements Comparable
     /**
      * Must be called after your class definition!
      */
-    final public static function init()
+    final public static function init() : void
     {
-        $className = self::className();
+        $className = static::class;
         self::$cache[$className] = [];
         $reflectionClass = self::objectClass();
         $constructorParams = static::constructorArgs();
@@ -151,9 +131,9 @@ abstract class Enum extends Object implements Comparable
      * @return static
      * @throws InvalidArgumentException
      */
-    final public static function valueOf($name)
+    final public static function valueOf($name) : self
     {
-        $className = self::className();
+        $className = static::class;
         Preconditions::checkArgument(
             array_key_exists($className, self::$cache) && array_key_exists($name, self::$cache[$className]),
             "The enum '%s' type has no constant with name '%s'",
@@ -166,9 +146,9 @@ abstract class Enum extends Object implements Comparable
     /**
      * @return static[]
      */
-    final public static function values()
+    final public static function values() : array
     {
-        $className = self::className();
+        $className = static::class;
         return array_key_exists($className, self::$cache)
             ? self::$cache[$className]
             : [];
@@ -181,7 +161,7 @@ abstract class Enum extends Object implements Comparable
      * @param ObjectInterface $object
      * @return bool
      */
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         return $object instanceof static && $object->name === $this->name;
     }
@@ -194,7 +174,7 @@ abstract class Enum extends Object implements Comparable
      *
      * @return string
      */
-    final public function name()
+    final public function name() : string
     {
         return $this->name;
     }
@@ -206,7 +186,7 @@ abstract class Enum extends Object implements Comparable
      *
      * @return int
      */
-    final public function ordinal()
+    final public function ordinal() : int
     {
         return self::$ordinals[$this->getClassName()][$this->name()];
     }
@@ -218,7 +198,7 @@ abstract class Enum extends Object implements Comparable
      *
      * @return string
      */
-    public function toString()
+    public function toString() : string
     {
         return $this->name;
     }
@@ -230,7 +210,7 @@ abstract class Enum extends Object implements Comparable
      * @throws ClassCastException - if the specified object's type prevents it from being compared to this object.
      * @throws NullPointerException if the specified object is null
      */
-    public function compareTo($object)
+    public function compareTo($object) : int
     {
         Preconditions::checkNotNull($object, 'The given object is null');
         if (!($object instanceof static)) {

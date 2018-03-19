@@ -1,9 +1,10 @@
 <?php
+declare(strict_types=1);
 
 namespace precore\util;
 
 use ArrayIterator;
-use PHPUnit_Framework_TestCase;
+use PHPUnit\Framework\TestCase;
 
 /**
  * Class BufferedIterableTest
@@ -11,7 +12,7 @@ use PHPUnit_Framework_TestCase;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-class BufferedIterableTest extends PHPUnit_Framework_TestCase
+class BufferedIterableTest extends TestCase
 {
     /**
      * @test

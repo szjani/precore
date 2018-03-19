@@ -1,25 +1,5 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
@@ -51,7 +31,7 @@ final class Ordering implements Comparator
         $this->comparator = $comparator;
     }
 
-    public static function init()
+    public static function init() : void
     {
         self::$NATURAL = Ordering::from(ComparableComparator::instance());
         self::$TO_STRING = Ordering::from(StringComparator::$BINARY)->onResultOf(Functions::toStringFunction());
@@ -63,7 +43,7 @@ final class Ordering implements Comparator
      * @param Comparator $comparator
      * @return Ordering
      */
-    public static function from(Comparator $comparator)
+    public static function from(Comparator $comparator) : Ordering
     {
         return new Ordering($comparator);
     }
@@ -74,7 +54,7 @@ final class Ordering implements Comparator
      *
      * @return Ordering
      */
-    public static function natural()
+    public static function natural() : Ordering
     {
         return self::$NATURAL;
     }
@@ -85,7 +65,7 @@ final class Ordering implements Comparator
      *
      * @return Ordering
      */
-    public static function usingToString()
+    public static function usingToString() : Ordering
     {
         return self::$TO_STRING;
     }
@@ -95,7 +75,7 @@ final class Ordering implements Comparator
      *
      * @return Ordering
      */
-    public function reverse()
+    public function reverse() : Ordering
     {
         return Ordering::from(Collections::reverseOrder($this));
     }
@@ -105,7 +85,7 @@ final class Ordering implements Comparator
      *
      * @return Ordering
      */
-    public function nullsFirst()
+    public function nullsFirst() : Ordering
     {
         return Ordering::from(Collections::comparatorFrom(
             function ($object1, $object2) {
@@ -124,7 +104,7 @@ final class Ordering implements Comparator
      *
      * @return Ordering
      */
-    public function nullsLast()
+    public function nullsLast() : Ordering
     {
         return Ordering::from(Collections::comparatorFrom(
             function ($object1, $object2) {
@@ -144,7 +124,7 @@ final class Ordering implements Comparator
      * @param callable $function
      * @return Ordering
      */
-    public function onResultOf(callable $function)
+    public function onResultOf(callable $function) : Ordering
     {
         return Ordering::from(Collections::comparatorFrom(
             function ($object1, $object2) use ($function) {
@@ -163,7 +143,7 @@ final class Ordering implements Comparator
      * @param Comparator $secondaryComparator
      * @return Ordering
      */
-    public function compound(Comparator $secondaryComparator)
+    public function compound(Comparator $secondaryComparator) : Ordering
     {
         return Ordering::from(Collections::comparatorFrom(
             function ($object1, $object2) use ($secondaryComparator) {
@@ -206,7 +186,7 @@ final class Ordering implements Comparator
      *         as the first argument is less than, equal to, or greater than the second.
      * @throws ClassCastException - if the arguments' types prevent them from being compared by this comparator.
      */
-    public function compare($object1, $object2)
+    public function compare($object1, $object2) : int
     {
         return $this->comparator->compare($object1, $object2);
     }

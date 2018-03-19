@@ -1,31 +1,11 @@
 <?php
-/*
- * Copyright (c) 2012-2015 Janos Szurovecz
- *
- * Permission is hereby granted, free of charge, to any person obtaining a copy of
- * this software and associated documentation files (the "Software"), to deal in
- * the Software without restriction, including without limitation the rights to
- * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies
- * of the Software, and to permit persons to whom the Software is furnished to do
- * so, subject to the following conditions:
- *
- * The above copyright notice and this permission notice shall be included in all
- * copies or substantial portions of the Software.
- *
- * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
- * SOFTWARE.
- */
+declare(strict_types=1);
 
 namespace precore\util;
 
 use ArrayIterator;
 use Iterator;
-use precore\lang\Object;
+use precore\lang\BaseObject;
 use precore\lang\ObjectInterface;
 use RuntimeException;
 use Traversable;
@@ -68,7 +48,7 @@ use Traversable;
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
-abstract class Splitter extends Object
+abstract class Splitter extends BaseObject
 {
     const UTF_8 = 'UTF-8';
 
@@ -79,45 +59,45 @@ abstract class Splitter extends Object
      * @param $delimiter
      * @return SimpleSplitter
      */
-    public static function on($delimiter)
+    public static function on(string $delimiter) : SimpleSplitter
     {
         return new SimpleSplitter($delimiter, false, false);
     }
 
     /**
      * @param string $pattern
-     * @return PatternSplitter
+     * @return Splitter
      */
-    public static function onPattern($pattern)
+    public static function onPattern(string $pattern) : Splitter
     {
         return new PatternSplitter($pattern, false, false);
     }
 
     /**
      * @param int $length
-     * @return FixedLengthSplitter
+     * @return Splitter
      */
-    public static function fixedLength($length)
+    public static function fixedLength(int $length) : Splitter
     {
         return new FixedLengthSplitter($length, false, false);
     }
 
-    protected function __construct($trimResult, $omitEmptyStrings)
+    protected function __construct(bool $trimResult, bool $omitEmptyStrings)
     {
-        $this->trimResults = (boolean) $trimResult;
-        $this->omitEmptyStrings = (boolean) $omitEmptyStrings;
+        $this->trimResults = $trimResult;
+        $this->omitEmptyStrings = $omitEmptyStrings;
     }
 
     /**
      * @return static
      */
-    protected abstract function copy();
+    protected abstract function copy() : Splitter;
 
     /**
      * @param $input
      * @return Iterator
      */
-    protected abstract function rawSplitIterator($input);
+    protected abstract function rawSplitIterator(string $input) : Iterator;
 
     /**
      * Returns a splitter that behaves equivalently to this splitter, but
@@ -130,7 +110,7 @@ abstract class Splitter extends Object
      *
      * @return static
      */
-    public final function trimResults()
+    public final function trimResults() : Splitter
     {
         $splitter = $this->copy();
         $splitter->omitEmptyStrings = $this->omitEmptyStrings;
@@ -148,7 +128,7 @@ abstract class Splitter extends Object
      *
      * @return static
      */
-    public final function omitEmptyStrings()
+    public final function omitEmptyStrings() : Splitter
     {
         $splitter = $this->copy();
         $splitter->omitEmptyStrings = true;
@@ -159,11 +139,9 @@ abstract class Splitter extends Object
     /**
      * @param string $input
      * @return Traversable
-     * @throws \InvalidArgumentException if $input is not a string
      */
-    public final function split($input)
+    public final function split(string $input) : Traversable
     {
-        Preconditions::checkArgument(is_string($input), 'input must be a string');
         return FluentIterable::from($this->rawSplitIterator($input))
             ->transform(
                 function ($element) {
@@ -177,7 +155,7 @@ abstract class Splitter extends Object
             );
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         /* @var $object Splitter */
         return $object !== null
@@ -187,7 +165,7 @@ abstract class Splitter extends Object
     }
 
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)
             ->add('trimResults', $this->trimResults)
@@ -199,8 +177,6 @@ abstract class Splitter extends Object
 }
 
 /**
- * It is not intended to be used in your code.
- *
  * @package precore\util
  * @author Janos Szurovecz <szjani@szjani.hu>
  */
@@ -223,10 +199,9 @@ final class SimpleSplitter extends Splitter
      * @param boolean $eager
      * @throws \InvalidArgumentException if $delimiter is not a string
      */
-    public function __construct($delimiter, $trimResult, $omitEmptyStrings, $eager = false)
+    public function __construct(string $delimiter, bool $trimResult, bool $omitEmptyStrings, $eager = false)
     {
         parent::__construct($trimResult, $omitEmptyStrings);
-        Preconditions::checkArgument(is_string($delimiter), 'delimiter must be a string');
         $this->delimiter = $delimiter;
         $this->eager = $eager;
     }
@@ -234,7 +209,7 @@ final class SimpleSplitter extends Splitter
     /**
      * @return SimpleSplitter
      */
-    public function eager()
+    public function eager() : SimpleSplitter
     {
         return new SimpleSplitter($this->delimiter, $this->trimResults, $this->omitEmptyStrings, true);
     }
@@ -242,7 +217,7 @@ final class SimpleSplitter extends Splitter
     /**
      * @return Splitter
      */
-    protected function copy()
+    protected function copy() : Splitter
     {
         return new SimpleSplitter($this->delimiter, $this->trimResults, $this->omitEmptyStrings, $this->eager);
     }
@@ -251,14 +226,14 @@ final class SimpleSplitter extends Splitter
      * @param $input
      * @return Iterator
      */
-    protected function rawSplitIterator($input)
+    protected function rawSplitIterator(string $input) : Iterator
     {
         return $this->eager
             ? new ArrayIterator(explode($this->delimiter, $input))
             : new SimpleSplitIterator($this->delimiter, $input);
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         /* @var $object SimpleSplitter */
         return parent::equals($object)
@@ -266,7 +241,7 @@ final class SimpleSplitter extends Splitter
             && $this->delimiter === $object->delimiter;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)
             ->add('parent', parent::toString())
@@ -295,17 +270,16 @@ final class PatternSplitter extends Splitter
      * @param $omitEmptyStrings
      * @throws \InvalidArgumentException if $pattern is not a string
      */
-    public function __construct($pattern, $trimResult, $omitEmptyStrings)
+    public function __construct(string $pattern, bool $trimResult, bool $omitEmptyStrings)
     {
         parent::__construct($trimResult, $omitEmptyStrings);
-        Preconditions::checkArgument(is_string($pattern), 'pattern must be a string');
         $this->pattern = $pattern;
     }
 
     /**
      * @return Splitter
      */
-    protected function copy()
+    protected function copy() : Splitter
     {
         return new PatternSplitter($this->pattern, $this->trimResults, $this->omitEmptyStrings);
     }
@@ -314,19 +288,19 @@ final class PatternSplitter extends Splitter
      * @param $input
      * @return Iterator
      */
-    protected function rawSplitIterator($input)
+    protected function rawSplitIterator(string $input) : Iterator
     {
         return new ArrayIterator(preg_split($this->pattern, $input));
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         /* @var $object PatternSplitter */
         return parent::equals($object)
             && $this->pattern === $object->pattern;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)
             ->add('parent', parent::toString())
@@ -354,10 +328,10 @@ final class FixedLengthSplitter extends Splitter
      * @param $omitEmptyStrings
      * @throws \InvalidArgumentException if $length is not a positive integer
      */
-    public function __construct($length, $trimResult, $omitEmptyStrings)
+    public function __construct(int $length, bool $trimResult, bool $omitEmptyStrings)
     {
         parent::__construct($trimResult, $omitEmptyStrings);
-        Preconditions::checkArgument(is_int($length) && 0 < $length, 'length must be a positive integer');
+        Preconditions::checkArgument(0 < $length, 'length must be a positive integer');
         $this->length = $length;
     }
 
@@ -365,7 +339,7 @@ final class FixedLengthSplitter extends Splitter
     /**
      * @return Splitter
      */
-    protected function copy()
+    protected function copy() : Splitter
     {
         return new FixedLengthSplitter($this->length, $this->trimResults, $this->omitEmptyStrings);
     }
@@ -374,19 +348,19 @@ final class FixedLengthSplitter extends Splitter
      * @param $input
      * @return Iterator
      */
-    protected function rawSplitIterator($input)
+    protected function rawSplitIterator(string $input) : Iterator
     {
         return new FixedLengthSplitIterator($this->length, $input);
     }
 
-    public function equals(ObjectInterface $object = null)
+    public function equals(ObjectInterface $object = null) : bool
     {
         /* @var $object FixedLengthSplitter */
         return parent::equals($object)
             && $this->length === $object->length;
     }
 
-    public function toString()
+    public function toString() : string
     {
         return Objects::toStringHelper($this)
             ->add('parent', parent::toString())
@@ -410,7 +384,7 @@ final class SimpleSplitIterator implements Iterator
     private $current;
     private $started = false;
 
-    public function __construct($delimiter, $input)
+    public function __construct(string $delimiter, string $input)
     {
         $this->delimiter = $delimiter;
         $this->delimiterLength = mb_strlen($delimiter, Splitter::UTF_8);
@@ -451,9 +425,9 @@ final class SimpleSplitIterator implements Iterator
         }
     }
 
-    private function calculateCurrent()
+    private function calculateCurrent() : void
     {
-        $delimiterPos = mb_strpos($this->input, $this->delimiter, null, Splitter::UTF_8);
+        $delimiterPos = mb_strpos($this->input, $this->delimiter, 0, Splitter::UTF_8);
         if ($delimiterPos === false) {
             $this->end = true;
             $this->current = $this->input;
@@ -478,7 +452,7 @@ final class FixedLengthSplitIterator implements Iterator
     private $current;
     private $pos = 0;
 
-    public function __construct($limitLength, $input)
+    public function __construct(int $limitLength, string $input)
     {
         $this->fullLength = mb_strlen($input, Splitter::UTF_8);
         $this->limitLength = $limitLength;
